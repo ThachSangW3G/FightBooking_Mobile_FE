@@ -204,10 +204,13 @@ class FlightInfoWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          Center(
-            child: Text(
-              'Total Flights: ' + totalFlight,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10.0),
+            child: Center(
+              child: Text(
+                'Total Flights: ' + totalFlight,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ],

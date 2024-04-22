@@ -1,5 +1,5 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
-import 'package:flightbooking_mobile_fe/widgets/flight_info_widget.dart';
+import 'package:flightbooking_mobile_fe/widgets/checkout/flight_info_widget.dart';
 import 'package:flutter/material.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -77,8 +77,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.white,
+          border: Border.all(width: 0.1),
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: SingleChildScrollView(
@@ -87,7 +88,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
               _buildFlightList(), // Danh sách chuyến bay
-              const SizedBox(height: 10),
+              const SizedBox(height: 0),
               const Text(
                 'Chi tiết giá',
                 style: TextStyle(
@@ -96,7 +97,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
               // Thêm danh sách các mục chi tiết giá ở đây
-              const SizedBox(height: 10),
+              const SizedBox(height: 0),
               const Text(
                 'Thông tin khách hàng',
                 style: TextStyle(
@@ -153,7 +154,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               final flight = flights[index];
               return Padding(
                 padding:
-                    const EdgeInsets.only(bottom: 8.0), // Add padding bottom
+                    const EdgeInsets.only(bottom: 15.0), // Add padding bottom
                 child: FlightInfoWidget(
                   // Truyền dữ liệu chuyến bay vào FlightInfoWidget
                   flightName: flight['flightName'],

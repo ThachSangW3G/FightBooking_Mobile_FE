@@ -52,6 +52,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
     // Add more flight data here if needed
   ];
+  bool isExpanded = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,40 +85,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10), // Add space above "Chi tiết đơn hàng"
-              const Text(
-                'Chi tiết đơn hàng',
-                style: TextStyle(
-                  fontSize: 18, // Increase font size for "Chi tiết đơn hàng"
-                  fontWeight: FontWeight.bold, // Make it bold
-                ),
-              ),
-              const SizedBox(height: 10), // Add space below "Chi tiết đơn hàng"
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: flights.length,
-                itemBuilder: (context, index) {
-                  final flight = flights[index];
-                  return Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 15), // Add bottom padding
-                    child: FlightInfoWidget(
-                      flightName: flight['flightName'],
-                      airlineLogo: flight['airlineLogo'],
-                      airlineName: flight['airlineName'],
-                      airlineNumber: flight['airlineNumber'],
-                      seatClass: flight['seatClass'],
-                      depart: flight['depart'],
-                      arrive: flight['arrive'],
-                      departTime: flight['departTime'],
-                      arriveTime: flight['arriveTime'],
-                      totalFlight: flight['totalFlight'],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
+              _buildFlightList(), // Danh sách chuyến bay
+              const SizedBox(height: 10),
               const Text(
                 'Chi tiết giá',
                 style: TextStyle(
@@ -125,8 +96,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
               // Thêm danh sách các mục chi tiết giá ở đây
-
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               const Text(
                 'Thông tin khách hàng',
                 style: TextStyle(
@@ -139,6 +109,68 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFlightList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0), // Add padding bottom
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Chi tiết đơn hàng',
+                style: TextStyle(
+                  fontSize: 18, // Increase font size for "Chi tiết đơn hàng"
+                  fontWeight: FontWeight.bold, // Make it bold
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    isExpanded = !isExpanded;
+                  });
+                },
+                icon: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (isExpanded)
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: flights.length,
+            itemBuilder: (context, index) {
+              final flight = flights[index];
+              return Padding(
+                padding:
+                    const EdgeInsets.only(bottom: 8.0), // Add padding bottom
+                child: FlightInfoWidget(
+                  // Truyền dữ liệu chuyến bay vào FlightInfoWidget
+                  flightName: flight['flightName'],
+                  airlineLogo: flight['airlineLogo'],
+                  airlineName: flight['airlineName'],
+                  airlineNumber: flight['airlineNumber'],
+                  seatClass: flight['seatClass'],
+                  depart: flight['depart'],
+                  arrive: flight['arrive'],
+                  departTime: flight['departTime'],
+                  arriveTime: flight['arriveTime'],
+                  totalFlight: flight['totalFlight'],
+                ),
+              );
+            },
+          ),
+      ],
     );
   }
 }

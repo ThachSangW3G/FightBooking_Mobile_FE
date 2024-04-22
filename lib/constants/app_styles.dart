@@ -45,3 +45,7 @@ final kLableSize15Grey = GoogleFonts.inter(
 final kLableSize15w400Grey = GoogleFonts.inter(
     textStyle: const TextStyle(
         color: AppColors.gray, fontWeight: FontWeight.w400, fontSize: 15.0));
+
+final kLableSize18w500Bule = GoogleFonts.inter(
+    textStyle: const TextStyle(
+        color: AppColors.blue, fontWeight: FontWeight.w500, fontSize: 18.0));

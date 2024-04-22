@@ -1,4 +1,6 @@
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_date.dart';
+import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_departurepoint.dart';
+import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_destinationpoint.dart';
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_passenger.dart';
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_seatclass.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
@@ -37,90 +39,8 @@ class _FindFlightState extends State<FindFlight> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // SliverAppBar(
-          //   expandedHeight: 90,
-          //   leadingWidth: 60,
-          //   leading: Container(
-          //     decoration: const BoxDecoration(),
-          //     child: Center(
-          //       child: Container(
-          //         padding: const EdgeInsets.all(8),
-          //         height: 45,
-          //         width: 45,
-          //         decoration: BoxDecoration(
-          //             border: Border.all(
-          //                 color: const Color.fromARGB(193, 165, 161, 161)),
-          //             shape: BoxShape.circle,
-          //             color: const Color(0x34707070)),
-          //         child: SvgPicture.asset('assets/icons/close.svg'),
-          //       ),
-          //     ),
-          //   ),
-          //   flexibleSpace: Container(
-          //     decoration: const BoxDecoration(
-          //         image: DecorationImage(
-          //             fit: BoxFit.cover,
-          //             image: AssetImage(
-          //               'assets/images/banner.png',
-          //             ))),
-          //   ),
-          //   actions: [
-          //     Container(
-          //       height: 50,
-          //       width: 50,
-          //       padding: const EdgeInsets.all(10),
-          //       decoration: BoxDecoration(
-          //           border: Border.all(
-          //               color: const Color.fromARGB(193, 165, 161, 161)),
-          //           shape: BoxShape.circle,
-          //           color: const Color(0x34707070)),
-          //       child: SvgPicture.asset(
-          //         'assets/icons/system.svg',
-          //       ),
-          //     ),
-          //     const SizedBox(
-          //       width: 10.0,
-          //     ),
-          //     Container(
-          //       height: 50,
-          //       width: 50,
-          //       padding: const EdgeInsets.all(10),
-          //       decoration: BoxDecoration(
-          //           border: Border.all(
-          //               color: const Color.fromARGB(193, 165, 161, 161)),
-          //           shape: BoxShape.circle,
-          //           color: const Color(0x34707070)),
-          //       child: SvgPicture.asset(
-          //         'assets/icons/option.svg',
-          //       ),
-          //     ),
-          //     const SizedBox(
-          //       width: 10.0,
-          //     ),
-          //     Container(
-          //       height: 50,
-          //       width: 50,
-          //       padding: const EdgeInsets.all(10),
-          //       decoration: BoxDecoration(
-          //           border: Border.all(
-          //               color: const Color.fromARGB(193, 165, 161, 161)),
-          //           shape: BoxShape.circle,
-          //           color: const Color(0x34707070)),
-          //       child: SvgPicture.asset(
-          //         'assets/icons/more.svg',
-          //       ),
-          //     ),
-          //     const SizedBox(
-          //       width: 10.0,
-          //     )
-          //   ],
-          //   title: Text(
-          //     'Golobe',
-          //     style: kLableTitleWhite,
-          //   ),
-          // ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: Stack(
@@ -128,7 +48,7 @@ class _FindFlightState extends State<FindFlight> {
                 children: [
                   Container(
                     height: 150,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: const BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.cover,
@@ -140,19 +60,25 @@ class _FindFlightState extends State<FindFlight> {
                       children: [
                         Row(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: const Color.fromARGB(
-                                          193, 165, 161, 161)),
-                                  shape: BoxShape.circle,
-                                  color: const Color(0x34707070)),
-                              child: SvgPicture.asset('assets/icons/close.svg'),
+                            InkWell(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                height: 45,
+                                width: 45,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: const Color.fromARGB(
+                                            193, 165, 161, 161)),
+                                    shape: BoxShape.circle,
+                                    color: const Color(0x34707070)),
+                                child:
+                                    SvgPicture.asset('assets/icons/close.svg'),
+                              ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
@@ -233,7 +159,8 @@ class _FindFlightState extends State<FindFlight> {
                             ),
                           ],
                           color: AppColors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(15))),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15))),
                       child: Column(
                         children: [
                           Row(
@@ -241,58 +168,74 @@ class _FindFlightState extends State<FindFlight> {
                               Expanded(
                                 child: Column(
                                   children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            'assets/icons/planeup.svg'),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Điểm đi',
-                                              style: kLableSize18Black,
-                                            ),
-                                            Text(
-                                              'Chọn điểm đi',
-                                              style: kLableSize18Grey,
-                                            )
-                                          ],
-                                        )
-                                      ],
+                                    InkWell(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (_) =>
+                                                const BottomSheetDeparturePoint());
+                                      },
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              'assets/icons/planeup.svg'),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Điểm đi',
+                                                style: kLableSize18Black,
+                                              ),
+                                              Text(
+                                                'Chọn điểm đi',
+                                                style: kLableSize18Grey,
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            'assets/icons/planedown.svg'),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Điểm đến',
-                                              style: kLableSize18Black,
-                                            ),
-                                            Text(
-                                              'Chọn điểm đến',
-                                              style: kLableSize18Grey,
-                                            )
-                                          ],
-                                        )
-                                      ],
+                                    InkWell(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (_) =>
+                                                const BottomSheetDestinationPoint());
+                                      },
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              'assets/icons/planedown.svg'),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Điểm đến',
+                                                style: kLableSize18Black,
+                                              ),
+                                              Text(
+                                                'Chọn điểm đến',
+                                                style: kLableSize18Grey,
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     )
                                   ],
                                 ),

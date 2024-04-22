@@ -10,4 +10,5 @@ class AppColors {
   static const Color shamrock = Color(0xff2DCC70);
   static const Color concrete = Color(0xfff2f2f2);
   static const Color whisper = Color(0xffF4F5F9);
+  static const Color dodger = Color(0xff1A94FF);
 }

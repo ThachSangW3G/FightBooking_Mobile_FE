@@ -3,10 +3,10 @@ import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/checkout_screen.
 import 'package:flightbooking_mobile_fe/screens/PaymentScreens/payment_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/TicketScreens/export_ticket_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/TicketScreens/view_ticket_screen.dart';
-import 'package:flightbooking_mobile_fe/widgets/checkout/flight_info_widget.dart';
-import 'package:flightbooking_mobile_fe/widgets/checkout/flight_passenger_contact_widget.dart';
-import 'package:flightbooking_mobile_fe/widgets/checkout/flight_passenger_info_widget.dart';
-import 'package:flightbooking_mobile_fe/widgets/checkout/flight_price_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_info_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_passenger_contact_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_passenger_info_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_price_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

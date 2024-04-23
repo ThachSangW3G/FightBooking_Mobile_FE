@@ -66,10 +66,8 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/svgs/
-    - assets/icons/nav_back_icon.png
-    - assets/logo/visa.png
-    - assets/logo/vnpay.png
-    - assets/images/airplane.jpg
+    - assets/icons/
+    - assets/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

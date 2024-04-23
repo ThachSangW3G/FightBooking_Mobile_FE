@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
-import 'package:flightbooking_mobile_fe/screens/TicketScreens/ticket_details_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/TicketScreens/view_ticket_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/tickets/ticket_details_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/tickets/view_ticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';

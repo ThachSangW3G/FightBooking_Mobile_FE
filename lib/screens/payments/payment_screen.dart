@@ -1,4 +1,4 @@
-import 'package:flightbooking_mobile_fe/screens/PaymentScreens/payment_successful.dart';
+import 'package:flightbooking_mobile_fe/screens/payments/payment_successful.dart';
 import 'package:flutter/material.dart';
 
 class PaymentScreen extends StatefulWidget {

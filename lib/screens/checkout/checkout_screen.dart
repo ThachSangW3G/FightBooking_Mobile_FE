@@ -1,10 +1,10 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
-import 'package:flightbooking_mobile_fe/screens/PaymentScreens/payment_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_info_widget.dart';
-import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_passenger_contact_widget.dart';
-import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_passenger_info_widget.dart';
-import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/widgets/checkout/flight_price_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_info_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_passenger_contact_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_passenger_info_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_price_widget.dart';
 import 'package:flutter/material.dart';
 
 class CheckoutScreen extends StatefulWidget {

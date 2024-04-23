@@ -1,5 +1,5 @@
-import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/checkout_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/TicketScreens/view_ticket_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/tickets/view_ticket_screen.dart';
 import 'package:flutter/material.dart';
 
 class DefaultScreen extends StatelessWidget {

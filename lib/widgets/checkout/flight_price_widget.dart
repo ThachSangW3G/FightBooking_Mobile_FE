@@ -2,28 +2,22 @@ import 'package:flutter/material.dart';
 
 class FlightPriceDetailsWidget extends StatelessWidget {
   final int adults;
-  final double priceAdult;
-  final int infants;
-  final double priceInfant;
   final int children;
-  final double priceChild;
-  final String tax;
-  final String baggage;
-  final double priceBaggage;
-  final double priceInsurance;
+  final int infants;
+  final int priceAdult;
+  final int priceChild;
+  final int priceInfant;
+  final int totalPrice;
 
   const FlightPriceDetailsWidget({
     Key? key,
     required this.adults,
-    required this.priceAdult,
-    required this.infants,
-    required this.priceInfant,
     required this.children,
+    required this.infants,
+    required this.priceAdult,
     required this.priceChild,
-    required this.tax,
-    required this.baggage,
-    required this.priceBaggage,
-    required this.priceInsurance,
+    required this.priceInfant,
+    required this.totalPrice,
   }) : super(key: key);
 
   @override
@@ -31,21 +25,61 @@ class FlightPriceDetailsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Chi tiết giá',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+        if (adults > 0)
+          _buildPriceRow("người lớn", adults, priceAdult * adults),
+        if (children > 0)
+          _buildPriceRow("trẻ em", children, priceChild * children),
+        if (infants > 0)
+          _buildPriceRow("em bé", infants, priceInfant * infants),
+        _buildTotalRow("Tổng cộng", totalPrice),
+      ],
+    );
+  }
+
+  Widget _buildPriceRow(String title, int count, int price) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "$count $title",
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            Text(
+              "\$$price",
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 8),
-        Text('Adults: $adults - Price: $priceAdult'),
-        Text('Infants: $infants - Price: $priceInfant'),
-        Text('Children: $children - Price: $priceChild'),
-        Text('Tax: $tax'),
-        Text('Baggage: $baggage - Price Baggage: $priceBaggage'),
-        Text('Price Insurance: $priceInsurance'),
-        // Các thông tin khác có thể thêm vào ở đây
+        SizedBox(height: 5),
+        Divider(),
+      ],
+    );
+  }
+
+  Widget _buildTotalRow(String title, int totalPrice) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "$title",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "\$$totalPrice",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ],
     );
   }

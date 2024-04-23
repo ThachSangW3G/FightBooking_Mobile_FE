@@ -499,12 +499,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 backgroundColor: AppColors.dodger, // Màu nền của nút
                 shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(10), // Bo tròn góc của nút
+                      BorderRadius.circular(20), // Bo tròn góc của nút
                 ),
                 padding: EdgeInsets.symmetric(
                     vertical: 10), // Đệm dọc lớn hơn để nút cao hơn
                 minimumSize: Size(double.infinity,
-                    56), // Chiều dài tối thiểu của nút (double.infinity sẽ làm nút dài ra cùng với chiều rộng của parent widget)
+                    40), // Chiều dài tối thiểu của nút (double.infinity sẽ làm nút dài ra cùng với chiều rộng của parent widget)
                 textStyle: TextStyle(fontSize: 18), // Kích thước chữ của nút
               ),
               child: Text(

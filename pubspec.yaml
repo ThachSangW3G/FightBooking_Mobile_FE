@@ -36,11 +36,13 @@ dependencies:
   cupertino_icons: ^1.0.6
   google_fonts: ^6.2.1
   intl: ^0.19.0
-
+  barcode_widget: ^2.0.4
+  image_gallery_saver: ^2.0.3
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -61,6 +63,7 @@ flutter:
     - assets/icons/nav_back_icon.png
     - assets/logo/visa.png
     - assets/logo/vnpay.png
+    - assets/images/airplane.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

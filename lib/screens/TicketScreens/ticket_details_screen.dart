@@ -1,5 +1,7 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/checkout_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/PaymentScreens/payment_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/TicketScreens/export_ticket_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/TicketScreens/view_ticket_screen.dart';
 import 'package:flightbooking_mobile_fe/widgets/checkout/flight_info_widget.dart';
 import 'package:flightbooking_mobile_fe/widgets/checkout/flight_passenger_contact_widget.dart';
@@ -121,6 +123,18 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
       'email': 'ledangthuongsp@gmail.com'
     }
   ];
+  // Dữ liệu mẫu cho card vé
+  final FlightTicket sampleTicket = FlightTicket(
+    departureAirport: 'SGN',
+    arrivalAirport: 'HAN',
+    departureCity: 'Hồ Chí Minh',
+    arrivalCity: 'Hà Nội',
+    departureDate: 'Dec 11, 2023',
+    departureTime: '07:00 PM',
+    seatClass: 'Economy',
+    seatNumber: 'B4',
+    barcodeData: '1234567890',
+  );
   bool isExpandedDetails = true;
   bool isExpandedPriceDetails = true;
   bool isExpandedPassenger = true;
@@ -562,12 +576,10 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             ElevatedButton(
               onPressed: () {
                 // Chuyển đến màn hình xem vé
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) =>
-                //           ViewTicketScreen(ticketId: widget.ticketId)),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ExportTicketWidget()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.dodger, // Màu nút là màu xanh
@@ -600,7 +612,10 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         child: ElevatedButton(
           onPressed: () {
             // Mở dialog hoặc chuyển đến màn hình thanh toán
-            _buildPaymentDialog(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CheckoutScreen()),
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.dodger, // Màu nút là màu xanh
@@ -608,7 +623,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                 horizontal: 20, vertical: 12), // Padding của nút
           ),
           child: Text('Thanh toán ngay',
-              style: TextStyle(color: Colors.white)), // Màu chữ trắng
+              style: TextStyle(
+                  color: Colors.white, fontSize: 14)), // Màu chữ trắng
         ),
       ),
     );

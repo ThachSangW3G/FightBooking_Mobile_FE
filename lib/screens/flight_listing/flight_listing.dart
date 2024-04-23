@@ -1,7 +1,9 @@
 import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_filter.dart';
+import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_sort.dart';
 import 'package:flightbooking_mobile_fe/components/flight_listing/flight_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -28,6 +30,7 @@ class _FlightListingState extends State<FlightListing> {
   int selectDate = 0;
 
   final DateTimeController dateTimeController = Get.put(DateTimeController());
+  final SortController sortController = Get.put(SortController());
 
   @override
   Widget build(BuildContext context) {
@@ -226,23 +229,33 @@ class _FlightListingState extends State<FlightListing> {
                     ),
                   ),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(25)),
-                      border: Border.all(color: AppColors.blue)),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset('assets/icons/switch.svg'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Giá thấp nhất',
-                        style: kLableSize18w500Bule,
-                      )
-                    ],
+                InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (_) => const BottomSheetSort());
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(25)),
+                        border: Border.all(color: AppColors.blue)),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset('assets/icons/switch.svg'),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Obx(() => Text(
+                              sortController
+                                  .sorts[sortController.selectedSort.value]
+                                  .title,
+                              style: kLableSize18w500Bule,
+                            ))
+                      ],
+                    ),
                   ),
                 )
               ],

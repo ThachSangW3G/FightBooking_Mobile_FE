@@ -1,20 +1,28 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/screens/PaymentScreens/payment_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/TicketScreens/view_ticket_screen.dart';
 import 'package:flightbooking_mobile_fe/widgets/checkout/flight_info_widget.dart';
 import 'package:flightbooking_mobile_fe/widgets/checkout/flight_passenger_contact_widget.dart';
 import 'package:flightbooking_mobile_fe/widgets/checkout/flight_passenger_info_widget.dart';
 import 'package:flightbooking_mobile_fe/widgets/checkout/flight_price_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+class TicketDetailsScreen extends StatefulWidget {
+  final String ticketId;
+  final String status;
+
+  const TicketDetailsScreen({
+    Key? key,
+    required this.ticketId,
+    required this.status,
+  }) : super(key: key);
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  State<TicketDetailsScreen> createState() => _TicketDetailsScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
   final List<Map<String, dynamic>> flights = [
     {
       'flightName': 'Hồ Chí Minh - Hà Nội',
@@ -116,7 +124,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool isExpandedDetails = true;
   bool isExpandedPriceDetails = true;
   bool isExpandedPassenger = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +135,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DefaultScreen()),
+              MaterialPageRoute(builder: (context) => TicketScreenWidget()),
             );
           },
         ),
@@ -147,6 +154,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildStatusWidget(widget.status),
               const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
               _buildFlightList(), // Danh sách chuyến bay
               Divider(),
@@ -164,7 +172,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildTotalSection(),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -462,57 +470,145 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildTotalSection() {
+  Widget _buildStatusWidget(String status) {
     return Container(
-      color: Colors.white, // Màu nền cho container
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 10),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      margin: EdgeInsets.only(top: 20.0),
+      decoration: BoxDecoration(
+        color: _getStatusColor(status),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Text(
+        status,
+        style: TextStyle(
+          color: _getTextColor(status),
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Xuất vé thành công':
+        return Colors.lightGreen;
+      case 'Đang giữ chỗ':
+        return Colors.yellow;
+      case 'Xuất vé thất bại':
+        return Colors.red;
+      default:
+        return Colors.grey; // Màu mặc định nếu không phải 3 trạng thái trên
+    }
+  }
+
+  Color _getTextColor(String status) {
+    switch (status) {
+      case 'Xuất vé thành công':
+        return Colors.green[700]!; // Sử dụng mã màu đậm hơn
+      case 'Đang giữ chỗ':
+        return Colors.brown; // Hoặc màu nào đó phù hợp với thiết kế của bạn
+      case 'Xuất vé thất bại':
+        return Colors.white;
+      default:
+        return Colors.black;
+    }
+  }
+
+  Widget _buildBottomNavigationBar() {
+    switch (widget.status) {
+      case 'Xuất vé thành công':
+        return _buildSuccessBottomNavigationBar();
+      case 'Đang giữ chỗ':
+        return _buildHoldBottomNavigationBar();
+      case 'Xuất vé thất bại':
+        return SizedBox.shrink(); // Không hiển thị gì cả
+      default:
+        return SizedBox.shrink(); // Trường hợp mặc định
+    }
+  }
+
+  Widget _buildSuccessBottomNavigationBar() {
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 3,
+              offset: Offset(0, -1),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Tổng cộng:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '12.400.000 đ', // Cập nhật giá tiền đúng
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue),
+                SelectableText(widget.ticketId), // Cho phép sao chép
+                IconButton(
+                  onPressed: () {
+                    // Sao chép mã vé
+                    Clipboard.setData(ClipboardData(text: widget.ticketId));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Đã sao chép mã vé')),
+                    );
+                  },
+                  icon: Icon(Icons.content_copy),
                 ),
               ],
             ),
-            SizedBox(height: 15), // Khoảng cách giữa text và button
             ElevatedButton(
               onPressed: () {
-                // Xử lý sự kiện khi nhấn nút thanh toán
-                showDialog(
-                  context: context,
-                  builder: (context) => _buildPaymentDialog(context),
-                );
+                // Chuyển đến màn hình xem vé
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) =>
+                //           ViewTicketScreen(ticketId: widget.ticketId)),
+                // );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dodger, // Màu nền của nút
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10), // Bo tròn góc của nút
-                ),
+                backgroundColor: AppColors.dodger, // Màu nút là màu xanh
                 padding: EdgeInsets.symmetric(
-                    vertical: 10), // Đệm dọc lớn hơn để nút cao hơn
-                minimumSize: Size(double.infinity,
-                    56), // Chiều dài tối thiểu của nút (double.infinity sẽ làm nút dài ra cùng với chiều rộng của parent widget)
-                textStyle: TextStyle(fontSize: 18), // Kích thước chữ của nút
+                    horizontal: 20, vertical: 12), // Padding của nút
               ),
-              child: Text(
-                'Thanh toán',
-                style: TextStyle(color: Colors.white), // Màu chữ của nút
-              ),
+              child: Text('Xem vé',
+                  style: TextStyle(color: Colors.white)), // Màu chữ trắng
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHoldBottomNavigationBar() {
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 3,
+              offset: Offset(0, -1),
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            // Mở dialog hoặc chuyển đến màn hình thanh toán
+            _buildPaymentDialog(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.dodger, // Màu nút là màu xanh
+            padding: EdgeInsets.symmetric(
+                horizontal: 20, vertical: 12), // Padding của nút
+          ),
+          child: Text('Thanh toán ngay',
+              style: TextStyle(color: Colors.white)), // Màu chữ trắng
         ),
       ),
     );

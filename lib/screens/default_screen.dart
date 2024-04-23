@@ -1,15 +1,49 @@
+import 'package:flightbooking_mobile_fe/screens/CheckOutScreens/checkout_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/TicketScreens/view_ticket_screen.dart';
 import 'package:flutter/material.dart';
 
-class DefaultScreen extends StatefulWidget {
+class DefaultScreen extends StatelessWidget {
   const DefaultScreen({super.key});
 
   @override
-  State<DefaultScreen> createState() => _DefaultScreenState();
-}
-
-class _DefaultScreenState extends State<DefaultScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Default Screen'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CheckoutScreen()),
+                );
+              },
+              child: Text('Checkout'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Xử lý sự kiện khi nhấn nút View Checkout
+              },
+              child: Text('View Checkout'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TicketScreenWidget()),
+                );
+              },
+              child: Text('View Ticket'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

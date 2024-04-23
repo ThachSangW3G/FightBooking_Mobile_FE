@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Passenger {
-  final String name;
-  final String email;
-  final DateTime birthday;
-
-  Passenger({
-    required this.name,
-    required this.email,
-    required this.birthday,
-  });
-}
-
 class FlightPassengerContactWidget extends StatelessWidget {
-  final Passenger representative; // Thông tin người đại diện
-  final List<Passenger> passengers; // Danh sách hành khách
+  final String contactName;
+  final String contactPhoneNumber;
+  final String contactEmail;
 
   const FlightPassengerContactWidget({
     Key? key,
-    required this.representative,
-    required this.passengers,
+    required this.contactEmail,
+    required this.contactName,
+    required this.contactPhoneNumber,
   }) : super(key: key);
 
   @override
@@ -27,6 +17,7 @@ class FlightPassengerContactWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 8),
         Text(
           'Thông tin liên hệ',
           style: TextStyle(
@@ -35,34 +26,43 @@ class FlightPassengerContactWidget extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8),
-        // Hiển thị thông tin người đại diện
-        Text('Người đại diện: ${representative.name}'),
-        Text('Email: ${representative.email}'),
-        Text('Ngày sinh: ${representative.birthday}'),
-        SizedBox(height: 8),
-        // Hiển thị danh sách hành khách
-        Text(
-          'Danh sách hành khách:',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: passengers
-              .map(
-                (passenger) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Hành khách: ${passenger.name}'),
-                    Text('Email: ${passenger.email}'),
-                    Text('Ngày sinh: ${passenger.birthday}'),
-                    SizedBox(height: 8),
-                  ],
+        _buildTableRow('Họ tên', contactName),
+        Divider(),
+        _buildTableRow('Số điện thoại', contactPhoneNumber),
+        Divider(),
+        _buildTableRow('Email', contactEmail),
+      ],
+    );
+  }
+
+  Widget _buildTableRow(String title, String content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 8), // Khoảng cách giữa các dòng
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
                 ),
-              )
-              .toList(),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            Expanded(
+              flex: 7,
+              child: Text(
+                content,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
         ),
       ],
     );

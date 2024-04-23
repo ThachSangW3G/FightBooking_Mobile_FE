@@ -6,6 +6,17 @@ class DateTimeController extends GetxController {
   var rangeStart = DateTime.now().obs;
   var rangeEnd = Rx<DateTime?>(null);
 
+  var listDate = [
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+    DateTime(2024, 04, 22),
+  ];
+
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     rangeStart.value = selectedDay;
   }

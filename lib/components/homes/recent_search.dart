@@ -16,7 +16,7 @@ class RecentSearch extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'HAN - Hà Nội, Việt Nam',
+            title,
             style: kLableSize15Black,
           ),
           SvgPicture.asset(

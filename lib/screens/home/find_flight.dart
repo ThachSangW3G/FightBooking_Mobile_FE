@@ -5,6 +5,7 @@ import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_passenger.d
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_seatclass.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/screens/flight_listing/flight_listing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -466,7 +467,7 @@ class _FindFlightState extends State<FindFlight> {
                           ),
                           InkWell(
                             onTap: () {
-                              Get.to(const FindFlight());
+                              Get.to(const FlightListing());
                             },
                             child: Container(
                               height: 50,

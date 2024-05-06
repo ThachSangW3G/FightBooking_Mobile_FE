@@ -1,3 +1,4 @@
+import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Đảm bảo đã thêm thư viện intl vào pubspec.yaml
 
@@ -23,11 +24,11 @@ class FlightTicketWidget extends StatelessWidget {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Xuất vé thành công':
-        return Colors.lightGreen;
+        return AppColors.aero_blue;
       case 'Đang giữ chỗ':
-        return Colors.yellow;
+        return AppColors.lemon_chiffon;
       case 'Xuất vé thất bại':
-        return Colors.red;
+        return Color.fromARGB(255, 255, 199, 203);
       default:
         return Colors.grey; // Màu mặc định nếu không phải 3 trạng thái trên
     }
@@ -36,11 +37,12 @@ class FlightTicketWidget extends StatelessWidget {
   Color _getTextColor(String status) {
     switch (status) {
       case 'Xuất vé thành công':
-        return Colors.green[700]!; // Sử dụng mã màu đậm hơn
+        return AppColors.philippine_green; // Sử dụng mã màu đậm hơn
       case 'Đang giữ chỗ':
-        return Colors.brown; // Hoặc màu nào đó phù hợp với thiết kế của bạn
+        return AppColors
+            .mustard_brown; // Hoặc màu nào đó phù hợp với thiết kế của bạn
       case 'Xuất vé thất bại':
-        return Colors.white;
+        return AppColors.sunburnt_cyclops;
       default:
         return Colors.black;
     }

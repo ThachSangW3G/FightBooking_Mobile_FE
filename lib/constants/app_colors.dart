@@ -13,6 +13,11 @@ class AppColors {
   static const Color dodger = Color(0xff1A94FF);
   static const Color theme = Color(0xffF5F5FA);
 
-
+  static const Color lemon_chiffon = Color(0xffFFF5C7);
+  static const Color mustard_brown = Color(0xffCC8100);
+  static const Color aero_blue = Color(0xffD7FAE0);
+  static const Color philippine_green = Color(0xff007D3A);
+  static const Color lavender_brush = Color(0xffFFF0F1);
+  static const Color sunburnt_cyclops = Color(0xffFF424F);
   static const Color blue = Color(0xff1A94FF);
 }

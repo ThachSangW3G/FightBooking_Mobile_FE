@@ -5,7 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 class ButtonBlue extends StatelessWidget {
   final String des;
   final VoidCallback onPress;
-  const ButtonBlue({super.key, required this.des, required this.onPress});
+  final bool? isLoading;
+  const ButtonBlue(
+      {super.key, required this.des, required this.onPress, this.isLoading});
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +22,18 @@ class ButtonBlue extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         ),
         child: Center(
-          child: Text(
-            des,
-            style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600)),
-          ),
+          child: isLoading != null && isLoading == true
+              ? const CircularProgressIndicator(
+                  color: AppColors.white,
+                )
+              : Text(
+                  des,
+                  style: GoogleFonts.montserrat(
+                      textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600)),
+                ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flightbooking_mobile_fe/components/splash/line_blue_long.dart';
 import 'package:flightbooking_mobile_fe/components/splash/line_blue_short.dart';
 import 'package:flightbooking_mobile_fe/screens/splash/splash_three_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SplashTwoScreen extends StatefulWidget {
@@ -52,11 +53,8 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
                     ),
                     ButtonNext(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const SplashThreeScreen()));
+                        Get.to(() => const SplashThreeScreen(),
+                            transition: Transition.rightToLeft);
                       },
                     )
                   ],

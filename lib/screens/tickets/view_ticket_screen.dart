@@ -55,7 +55,7 @@ class TicketScreenWidget extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DefaultScreen()),
+              MaterialPageRoute(builder: (context) => const DefaultScreen()),
             );
           },
         ),
@@ -89,12 +89,12 @@ class TicketScreenWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
-        Padding(
-          padding: const EdgeInsets.only(bottom: 2.0), // Add padding bottom
+        const Padding(
+          padding: EdgeInsets.only(bottom: 2.0), // Add padding bottom
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Tìm kiếm vé',
                 style: TextStyle(
                   fontSize: 18, // Increase font size for "Chi tiết đơn hàng"
@@ -106,7 +106,7 @@ class TicketScreenWidget extends StatelessWidget {
         ),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: flightTickets.length,
           itemBuilder: (context, index) {
             final flightTicket = flightTickets[index];

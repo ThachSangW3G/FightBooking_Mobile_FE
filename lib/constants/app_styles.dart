@@ -25,6 +25,9 @@ final kLableSize22White = GoogleFonts.inter(
 final kLableSize18Black = GoogleFonts.inter(
     textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18.0));
 
+final kLableSize16Black = GoogleFonts.inter(
+    textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0));
+
 final kLableSize18w700Black = GoogleFonts.inter(
     textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0));
 
@@ -38,6 +41,9 @@ final kLableSize18Grey = GoogleFonts.inter(
 
 final kLableSize15Black = GoogleFonts.inter(
     textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0));
+
+final kLableSize13Black = GoogleFonts.inter(
+    textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.0));
 
 final kLableSize16ww600Black = GoogleFonts.inter(
     textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0));
@@ -64,3 +70,6 @@ final kLableSize18w500Bule = GoogleFonts.inter(
 final kLableSize20w700Bule = GoogleFonts.inter(
     textStyle: const TextStyle(
         color: AppColors.blue, fontWeight: FontWeight.w500, fontSize: 18.0));
+final kLableSize20w700White = GoogleFonts.inter(
+    textStyle: const TextStyle(
+        color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20.0));

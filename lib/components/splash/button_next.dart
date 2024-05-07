@@ -20,7 +20,7 @@ class ButtonNext extends StatelessWidget {
             style: GoogleFonts.montserrat(
                 textStyle: const TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400)),
           ),
         ),

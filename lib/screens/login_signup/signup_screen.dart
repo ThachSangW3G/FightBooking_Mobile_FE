@@ -1,8 +1,11 @@
 import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -17,18 +20,110 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _isChecked = false;
   bool _isObscured = false;
   bool _isObscuredConfirm = false;
-  DateTime? selectedDate;
+
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController dayOfBirthController = TextEditingController();
+  DateTime dayOfBirth = DateTime.now();
+
+  AuthController authController = Get.put(AuthController());
+
+  String formatDate(DateTime dateTime) {
+    return DateFormat('dd/MM/yyyy').format(dateTime);
+  }
+
+  String formatDatePostAPI(DateTime dateTime) {
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  }
+
+  bool _isLoading = false;
+
+  Future<void> signup() async {
+    final fullname = fullNameController.text;
+    final email = emailController.text;
+    final username = usernameController.text;
+    final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    if (fullname.isEmpty ||
+        email.isEmpty ||
+        username.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty ||
+        !_isChecked) {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Vui lòng điền đầu đủ thông tin!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+
+      return;
+    }
+
+    if (password != confirmPassword) {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Xác nhận mật khẩu không chính xác!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success = await authController.signup(
+        email, username, fullname, password, dayOfBirth.toIso8601String());
+
+    if (success) {
+      Get.to(() => const LoginScreen());
+    } else {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Đăng ký không thành công!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: dayOfBirth,
       firstDate: DateTime(2000),
       lastDate: DateTime(2025),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null && picked != dayOfBirth) {
       setState(() {
-        selectedDate = picked;
+        dayOfBirth = picked;
+        dayOfBirthController.text = formatDate(dayOfBirth);
       });
     }
   }
@@ -80,10 +175,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 25,
               ),
               TextFormField(
+                  controller: fullNameController,
                   onChanged: (value) {},
+                  style: kLableTextBlackMinium,
                   decoration: InputDecoration(
                       labelText: 'Full Name',
-                      hintText: 'trungtinh1620@gmail.com',
                       enabledBorder: const OutlineInputBorder(
                         // viền khi không có focus
                         borderSide: BorderSide(color: AppColors.stack),
@@ -104,10 +200,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 20,
               ),
               TextFormField(
+                  controller: emailController,
                   onChanged: (value) {},
+                  style: kLableTextBlackMinium,
                   decoration: InputDecoration(
                       labelText: 'Email',
-                      hintText: 'trungtinh1620@gmail.com',
                       enabledBorder: const OutlineInputBorder(
                         // viền khi không có focus
                         borderSide: BorderSide(color: AppColors.stack),
@@ -128,10 +225,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 20,
               ),
               TextFormField(
+                  controller: usernameController,
                   onChanged: (value) {},
+                  style: kLableTextBlackMinium,
                   decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      hintText: 'trungtinh1620@gmail.com',
+                      labelText: 'Username',
                       enabledBorder: const OutlineInputBorder(
                         // viền khi không có focus
                         borderSide: BorderSide(color: AppColors.stack),
@@ -147,22 +245,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fontWeight: FontWeight.w400),
                       ),
                       filled: true,
-                      fillColor: AppColors.white),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly]),
+                      fillColor: AppColors.white)),
               const SizedBox(
                 height: 20,
               ),
               TextFormField(
+                  controller: dayOfBirthController,
                   onChanged: (value) {},
+                  style: kLableTextBlackMinium,
                   readOnly: true,
-                  controller: TextEditingController(
-                    text: selectedDate != null
-                        ? DateFormat('dd/MM/yyyy').format(selectedDate!)
-                        : '',
-                  ),
+                  // controller: TextEditingController(
+                  //   text: selectedDate != null
+                  //       ? DateFormat('dd/MM/yyyy').format(selectedDate!)
+                  //       : '',
+                  // ),
                   decoration: InputDecoration(
                       labelText: 'Day of birth',
-                      hintText: '16/12/2003',
                       enabledBorder: const OutlineInputBorder(
                         // viền khi không có focus
                         borderSide: BorderSide(color: AppColors.stack),
@@ -187,11 +285,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 20,
               ),
               TextFormField(
+                  controller: passwordController,
                   obscureText: _isObscured,
+                  style: kLableTextBlackMinium,
                   onChanged: (value) {},
                   decoration: InputDecoration(
                       labelText: 'Password',
-                      hintText: '***********',
                       suffixIcon: IconButton(
                         icon: _isObscured
                             ? const Icon(Icons.visibility)
@@ -222,11 +321,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 20,
               ),
               TextFormField(
+                controller: confirmPasswordController,
                 obscureText: _isObscuredConfirm,
+                style: kLableTextBlackMinium,
                 onChanged: (value) {},
                 decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    hintText: '***********',
                     suffixIcon: IconButton(
                       icon: _isObscuredConfirm
                           ? const Icon(Icons.visibility)
@@ -294,7 +394,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 10,
               ),
               ButtonBlue(
-                onPress: () {},
+                isLoading: _isLoading,
+                onPress: signup,
                 des: 'Sign Up',
               ),
               const SizedBox(

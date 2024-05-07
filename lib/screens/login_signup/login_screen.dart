@@ -2,11 +2,16 @@ import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart
 import 'package:flightbooking_mobile_fe/components/login_signup/button_icon.dart';
 import 'package:flightbooking_mobile_fe/components/splash/button_next.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
+import 'package:flightbooking_mobile_fe/screens/bottom_nav/bottom_nav.dart';
+import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/forgot_password_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,6 +24,49 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _isChecked = false;
   bool _isObscured = true;
+
+  bool _isLoading = false;
+  AuthController authController = Get.put(AuthController());
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success = await authController.login(username, password);
+    if (success) {
+      //final prefs = await _prefs;
+
+      //final accessToken = prefs.getString('tokenAccess');
+
+      //await userController.getUserByToken(accessToken!);
+
+      Get.to(() => const BottomNavigation());
+    } else {
+      // Đăng nhập thất bại, hiển thị thông báo cho người dùn
+      final snackdemo = SnackBar(
+        content: Text(
+          'Đăng nhập không thành công!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,9 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               TextFormField(
                   onChanged: (value) {},
+                  style: kLableTextBlackMinium,
+                  controller: _usernameController,
                   decoration: InputDecoration(
                       labelText: 'Username',
-                      hintText: 'trungtinh1620@gmail.com',
                       enabledBorder: const OutlineInputBorder(
                         // viền khi không có focus
                         borderSide: BorderSide(color: AppColors.stack),
@@ -92,9 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
               TextFormField(
                   obscureText: _isObscured,
                   onChanged: (value) {},
+                  controller: _passwordController,
+                  style: kLableTextBlackMinium,
                   decoration: InputDecoration(
                       labelText: 'Password',
-                      hintText: '***********',
                       suffixIcon: IconButton(
                         icon: _isObscured
                             ? const Icon(Icons.visibility)
@@ -172,7 +222,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 5,
               ),
               ButtonBlue(
-                onPress: () {},
+                isLoading: _isLoading,
+                onPress: _login,
                 des: 'Login',
               ),
               const SizedBox(

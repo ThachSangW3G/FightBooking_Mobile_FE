@@ -7,6 +7,7 @@ import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/screens/splash/logo_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/splash/splash_two_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SplashOneScreen extends StatefulWidget {
@@ -57,10 +58,8 @@ class _SplashOneScreenState extends State<SplashOneScreen> {
                     ),
                     ButtonNext(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SplashTwoScreen()));
+                        Get.to(() => const SplashTwoScreen(),
+                            transition: Transition.rightToLeft);
                       },
                     )
                   ],

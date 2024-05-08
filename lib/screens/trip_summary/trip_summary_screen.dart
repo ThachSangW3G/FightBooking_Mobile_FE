@@ -6,6 +6,7 @@ import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_price_widget.dart';
+import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -117,7 +118,7 @@ class _TripSummaryState extends State<TripSummary> {
                   ButtonBlue(
                       des: 'Tiếp tục',
                       onPress: () {
-                        Get.to(() => const CheckoutScreen());
+                        Get.to(() => const InfoGuestScreen());
                       })
                 ],
               ),

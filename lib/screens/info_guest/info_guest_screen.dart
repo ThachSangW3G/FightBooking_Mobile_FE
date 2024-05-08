@@ -3,9 +3,11 @@ import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart
 import 'package:flightbooking_mobile_fe/components/trip_summary/price_details.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
 import 'package:flightbooking_mobile_fe/widgets/info_guest/info_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class InfoGuestScreen extends StatefulWidget {
   const InfoGuestScreen({super.key});
@@ -258,7 +260,11 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                     ),
                   ],
                 ),
-                ButtonBlue(des: 'Tiếp tục', onPress: () {})
+                ButtonBlue(
+                    des: 'Tiếp tục',
+                    onPress: () {
+                      Get.to(() => const CheckoutScreen());
+                    })
               ],
             ),
           ),

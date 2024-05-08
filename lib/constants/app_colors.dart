@@ -20,4 +20,7 @@ class AppColors {
   static const Color lavender_brush = Color(0xffFFF0F1);
   static const Color sunburnt_cyclops = Color(0xffFF424F);
   static const Color blue = Color(0xff1A94FF);
+  static const Color greyIron = Color.fromRGBO(225, 226, 227, 1);
+  static const Color greyShuttle = Color.fromRGBO(99, 103, 115, 1);
+  static const Color whitePorcelain = Color.fromRGBO(242, 243, 244, 1);
 }

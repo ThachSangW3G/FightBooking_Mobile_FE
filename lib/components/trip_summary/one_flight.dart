@@ -135,7 +135,7 @@ class OnFlight extends StatelessWidget {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Color.fromARGB(255, 211, 211, 214),
+                          color: const Color.fromARGB(255, 211, 211, 214),
                         )),
                     child: SvgPicture.asset('assets/icons/arrowdown.svg',
                         colorFilter: const ColorFilter.mode(

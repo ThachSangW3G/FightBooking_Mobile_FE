@@ -4,6 +4,7 @@ import 'package:flightbooking_mobile_fe/screens/tickets/ticket_details_screen.da
 import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/ticket/flight_ticket.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TicketScreenWidget extends StatelessWidget {
   final List<Map<String, dynamic>> flightTickets = [
@@ -53,10 +54,7 @@ class TicketScreenWidget extends StatelessWidget {
           color: AppColors.white,
           icon: Image.asset('assets/icons/nav_back_icon.png'),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DefaultScreen()),
-            );
+            Get.back();
           },
         ),
         title: const Text(
@@ -113,13 +111,11 @@ class TicketScreenWidget extends StatelessWidget {
             return InkWell(
               onTap: () {
                 // Chuyển đến màn hình chi tiết khi người dùng chọn một vé
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TicketDetailsScreen(
-                      ticketId: flightTicket['ticketId'],
-                      status: flightTicket['status'],
-                    ),
+
+                Get.to(
+                  () => TicketDetailsScreen(
+                    ticketId: flightTicket['ticketId'],
+                    status: flightTicket['status'],
                   ),
                 );
               },

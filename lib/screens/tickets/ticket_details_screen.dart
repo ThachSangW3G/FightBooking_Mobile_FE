@@ -9,6 +9,7 @@ import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_price_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class TicketDetailsScreen extends StatefulWidget {
   final String ticketId;
@@ -147,10 +148,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
           color: AppColors.white,
           icon: Image.asset('assets/icons/nav_back_icon.png'),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TicketScreenWidget()),
-            );
+            Get.back();
           },
         ),
         title: const Text(
@@ -171,14 +169,14 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
               _buildStatusWidget(widget.status),
               const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
               _buildFlightList(), // Danh sách chuyến bay
-              Divider(),
+              const Divider(),
               const SizedBox(height: 0),
               _buildPriceList(),
-              Divider(),
+              const Divider(),
               // Thêm danh sách các mục chi tiết giá ở đây
               const SizedBox(height: 0),
               _buildPassengerList(),
-              Divider(),
+              const Divider(),
               // Thêm danh sách thông tin khách hàng ở đây
               const SizedBox(height: 0),
               _buildPassengerContact(),
@@ -223,7 +221,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         if (isExpandedDetails)
           ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: flights.length,
             itemBuilder: (context, index) {
               final flight = flights[index];
@@ -283,7 +281,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         if (isExpandedPriceDetails)
           ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: flightPrice.length,
             itemBuilder: (context, index) {
               final flightPrices = flightPrice[index];
@@ -340,7 +338,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         if (isExpandedPassenger)
           ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: flightPassenger.length,
             itemBuilder: (context, index) {
               final flightPassengerInfo = flightPassenger[index];
@@ -394,7 +392,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -402,7 +400,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
+                const Text(
                   'Số tiền phải thanh toán',
                   style: TextStyle(
                     fontSize: 18,
@@ -410,8 +408,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                     color: Colors.blue, // Assuming AppColors.dodger is blue
                   ),
                 ),
-                Divider(),
-                Text(
+                const Divider(),
+                const Text(
                   '12.400.000 đ', // Số tiền cần thanh toán
                   style: TextStyle(
                     fontSize: 24,
@@ -419,7 +417,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                     color: Colors.blue, // Assuming AppColors.dodger is blue
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -431,7 +429,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                         });
                       },
                     ),
-                    Flexible(
+                    const Flexible(
                       child: Text(
                         'Tôi đã đọc, hiểu và đồng ý Điều kiện giá vé, Điều kiện vận chuyển, Điều kiện đặt vé trực tuyến, Chính sách bảo mật và các nội dung khác',
                         overflow: TextOverflow.ellipsis,
@@ -441,14 +439,14 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isChecked
                         ? Colors.blue
                         : Colors
                             .red, // Change button color based on checkbox state
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -456,22 +454,19 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                   onPressed: isChecked
                       ? () {
                           // Navigate to payment screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PaymentScreen()),
-                          );
+
+                          Get.to(() => PaymentScreen());
                         }
                       : null, // Disable button if checkbox is unchecked
-                  child: Text(
+                  child: const Text(
                     'Thanh toán',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 InkWell(
                   onTap: () => Navigator.of(context).pop(), // Đóng dialog
-                  child: Icon(
+                  child: const Icon(
                     Icons.close,
                     color: Colors.blue, // Assuming AppColors.dodger is blue
                   ),
@@ -486,8 +481,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
 
   Widget _buildStatusWidget(String status) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      margin: EdgeInsets.only(top: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      margin: const EdgeInsets.only(top: 20.0),
       decoration: BoxDecoration(
         color: _getStatusColor(status),
         borderRadius: BorderRadius.circular(20.0),
@@ -509,7 +504,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
       case 'Đang giữ chỗ':
         return AppColors.lemon_chiffon;
       case 'Xuất vé thất bại':
-        return Color.fromARGB(255, 255, 199, 203);
+        return const Color.fromARGB(255, 255, 199, 203);
       default:
         return Colors.grey; // Màu mặc định nếu không phải 3 trạng thái trên
     }
@@ -536,17 +531,17 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
       case 'Đang giữ chỗ':
         return _buildHoldBottomNavigationBar();
       case 'Xuất vé thất bại':
-        return SizedBox.shrink(); // Không hiển thị gì cả
+        return const SizedBox.shrink(); // Không hiển thị gì cả
       default:
-        return SizedBox.shrink(); // Trường hợp mặc định
+        return const SizedBox.shrink(); // Trường hợp mặc định
     }
   }
 
   Widget _buildSuccessBottomNavigationBar() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 6),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6),
+        decoration: const BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -567,27 +562,25 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                     // Sao chép mã vé
                     Clipboard.setData(ClipboardData(text: widget.ticketId));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Đã sao chép mã vé')),
+                      const SnackBar(content: Text('Đã sao chép mã vé')),
                     );
                   },
-                  icon: Icon(Icons.content_copy),
+                  icon: const Icon(Icons.content_copy),
                 ),
               ],
             ),
             ElevatedButton(
               onPressed: () {
                 // Chuyển đến màn hình xem vé
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ExportTicketWidget()),
-                );
+
+                Get.to(() => ExportTicketWidget());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.dodger, // Màu nút là màu xanh
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                     horizontal: 20, vertical: 12), // Padding của nút
               ),
-              child: Text('Xem vé',
+              child: const Text('Xem vé',
                   style: TextStyle(color: Colors.white)), // Màu chữ trắng
             ),
           ],
@@ -599,8 +592,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
   Widget _buildHoldBottomNavigationBar() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+        decoration: const BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -613,17 +606,15 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
         child: ElevatedButton(
           onPressed: () {
             // Mở dialog hoặc chuyển đến màn hình thanh toán
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CheckoutScreen()),
-            );
+
+            Get.to(() => const CheckoutScreen());
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.dodger, // Màu nút là màu xanh
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
                 horizontal: 20, vertical: 12), // Padding của nút
           ),
-          child: Text('Thanh toán ngay',
+          child: const Text('Thanh toán ngay',
               style: TextStyle(
                   color: Colors.white, fontSize: 14)), // Màu chữ trắng
         ),

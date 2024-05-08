@@ -1,5 +1,6 @@
 import 'package:flightbooking_mobile_fe/screens/payments/payment_successful.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class PaymentScreen extends StatefulWidget {
   @override
@@ -36,11 +37,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               onPressed: () {
                 if (selectedPaymentMethod != null &&
                     selectedPaymentMethod!.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PaymentSuccessfulWidget()),
-                  );
+                  Get.to(() => const PaymentSuccessfulWidget());
                 } else {
                   showDialog(
                     context: context,

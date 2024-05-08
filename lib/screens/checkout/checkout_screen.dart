@@ -6,6 +6,7 @@ import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_passenger_info_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_price_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -122,16 +123,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.dodger,
-        leading: IconButton(
-          color: AppColors.white,
-          icon: Image.asset('assets/icons/nav_back_icon.png'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DefaultScreen()),
-            );
-          },
-        ),
+        // leading: IconButton(
+        //   color: AppColors.white,
+        //   icon: Image.asset('assets/icons/nav_back_icon.png'),
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        // ),
         title: const Text(
           'Thông tin thanh toán',
           style: TextStyle(
@@ -434,11 +432,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   onPressed: isChecked
                       ? () {
                           // Navigate to payment screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PaymentScreen()),
-                          );
+
+                          Get.to(() => PaymentScreen());
                         }
                       : null, // Disable button if checkbox is unchecked
                   child: Text(

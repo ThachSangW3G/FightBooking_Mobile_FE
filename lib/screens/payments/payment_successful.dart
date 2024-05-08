@@ -1,6 +1,9 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/tickets/ticket_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class PaymentSuccessfulWidget extends StatelessWidget {
   const PaymentSuccessfulWidget({Key? key});
@@ -46,11 +49,7 @@ class PaymentSuccessfulWidget extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DefaultScreen()),
-                      );
+                      Get.off(() => HomeScreen());
                     },
                     child: Text(
                       'Trang chủ',
@@ -70,7 +69,10 @@ class PaymentSuccessfulWidget extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Handle navigation to ticket details
+                      Get.to(() => TicketDetailsScreen(
+                            ticketId: '185457675675',
+                            status: 'Xuất vé thành công',
+                          ));
                     },
                     child: Text(
                       'Chi tiết vé',

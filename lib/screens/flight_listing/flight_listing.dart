@@ -4,6 +4,7 @@ import 'package:flightbooking_mobile_fe/components/flight_listing/flight_item.da
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
+import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -311,11 +312,31 @@ class _FlightListingState extends State<FlightListing> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const FlightItem(),
-                          const FlightItem(),
-                          const FlightItem(),
-                          const FlightItem(),
-                          const FlightItem(),
+                          InkWell(
+                              onTap: () {
+                                Get.to(() => const TripSummary());
+                              },
+                              child: const FlightItem()),
+                          InkWell(
+                              onTap: () {
+                                Get.to(() => const TripSummary());
+                              },
+                              child: const FlightItem()),
+                          InkWell(
+                              onTap: () {
+                                Get.to(() => const TripSummary());
+                              },
+                              child: const FlightItem()),
+                          InkWell(
+                              onTap: () {
+                                Get.to(() => const TripSummary());
+                              },
+                              child: const FlightItem()),
+                          InkWell(
+                              onTap: () {
+                                Get.to(() => const TripSummary());
+                              },
+                              child: const FlightItem()),
                         ],
                       ),
                     ),

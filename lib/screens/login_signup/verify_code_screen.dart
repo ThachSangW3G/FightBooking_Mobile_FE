@@ -1,9 +1,13 @@
 import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/components/login_signup/otp_input.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/set_password_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VerifyCodeScreen extends StatefulWidget {
   const VerifyCodeScreen({super.key});
@@ -14,6 +18,96 @@ class VerifyCodeScreen extends StatefulWidget {
 
 class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   List<String> otpValues = List.filled(6, '');
+
+  AuthController authController = Get.put(AuthController());
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  bool _isLoading = false;
+
+  Future<void> verifyCode() async {
+    String code = '';
+    otpValues.forEach((element) {
+      if (element.isEmpty) {
+        final snackdemo = SnackBar(
+          content: Text(
+            'Vui lòng điền đầy đủ mã OPT!',
+            style: kLableW800White,
+          ),
+          backgroundColor: Colors.red,
+          elevation: 10,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(5),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+        return;
+      }
+
+      code += element.toString();
+    });
+
+    int otp = int.parse(code);
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success = await authController.verifyCode(otp);
+
+    if (success) {
+      Get.to(() => const SetPasswordScreen());
+    } else {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Mã OPT không đúng!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> resend() async {
+    final prefs = await _prefs;
+
+    final email = prefs.getString('email');
+
+    final success = await authController.forgotPassword(email!);
+
+    if (success) {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Đã gửi lại mã OTP!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.green,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    } else {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Gửi lại mã OTP thất bại!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +186,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                     width: 5,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: resend,
                     child: Text(
                       'Resend',
                       style: GoogleFonts.montserrat(
@@ -108,12 +202,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                 height: 40,
               ),
               ButtonBlue(
-                onPress: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SetPasswordScreen()));
-                },
+                isLoading: _isLoading,
+                onPress: verifyCode,
                 des: 'Verify',
               ),
             ],

@@ -9,6 +9,7 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class FlightTicket {
@@ -59,10 +60,7 @@ class ExportTicketWidget extends StatelessWidget {
           color: AppColors.white,
           icon: Image.asset('assets/icons/nav_back_icon.png'),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TicketScreenWidget()),
-            );
+            Get.back();
           },
         ),
         actions: [

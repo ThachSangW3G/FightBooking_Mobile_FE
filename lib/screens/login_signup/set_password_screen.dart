@@ -1,8 +1,11 @@
 import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/successfull_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/login_signup/verify_code_screen.dart';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SetPasswordScreen extends StatefulWidget {
@@ -15,6 +18,60 @@ class SetPasswordScreen extends StatefulWidget {
 class _SetPasswordScreenState extends State<SetPasswordScreen> {
   bool _isObscured = false;
   bool _isObscuredConfirm = false;
+
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  AuthController authController = Get.put(AuthController());
+
+  bool _isLoading = false;
+
+  Future<void> resetPassword() async {
+    final newPassword = newPasswordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Vui lòng điền đầy đủ thông tin!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success =
+        await authController.resetPassword(newPassword, confirmPassword);
+
+    if (success) {
+      Get.to(() => const SuccessfullScreen());
+    } else {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Đổi mật khẩu không thành công!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,9 +121,10 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
               TextFormField(
                   obscureText: _isObscured,
                   onChanged: (value) {},
+                  controller: newPasswordController,
+                  style: kLableTextBlackMinium,
                   decoration: InputDecoration(
                       labelText: 'Password',
-                      hintText: '***********',
                       suffixIcon: IconButton(
                         icon: _isObscured
                             ? const Icon(Icons.visibility)
@@ -99,9 +157,10 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
               TextFormField(
                 obscureText: _isObscuredConfirm,
                 onChanged: (value) {},
+                controller: confirmPasswordController,
+                style: kLableTextBlackMinium,
                 decoration: InputDecoration(
                     labelText: 'Re-Enter Password',
-                    hintText: '***********',
                     suffixIcon: IconButton(
                       icon: _isObscuredConfirm
                           ? const Icon(Icons.visibility)
@@ -133,12 +192,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 height: 40,
               ),
               ButtonBlue(
-                onPress: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SuccessfullScreen()));
-                },
+                isLoading: _isLoading,
+                onPress: resetPassword,
                 des: 'Set new password',
               ),
             ],

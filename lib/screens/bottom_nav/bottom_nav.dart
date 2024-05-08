@@ -5,6 +5,7 @@ import 'package:flightbooking_mobile_fe/screens/bottom_nav/nav_bar.dart';
 import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/tickets/view_ticket_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -34,7 +35,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         navKey: homeNavKey,
       ),
       NavModel(
-        page: const Scaffold(),
+        page: const TripSummary(),
         navKey: ticketKey,
       ),
       NavModel(

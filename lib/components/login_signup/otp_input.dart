@@ -17,7 +17,7 @@ class _OTPInputState extends State<OTPInput> {
       height: 58,
       width: 55,
       decoration: ShapeDecoration(
-          color: AppColors.gray,
+          color: Color.fromARGB(255, 177, 182, 177),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
       child: TextFormField(

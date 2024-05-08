@@ -1,10 +1,13 @@
 import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/components/login_signup/button_icon.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/set_password_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/verify_code_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -15,6 +18,54 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  TextEditingController emailController = TextEditingController();
+  AuthController authController = Get.put(AuthController());
+  bool _isLoading = false;
+
+  Future<void> forgotPassword() async {
+    final email = emailController.text;
+    if (email.isEmpty) {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Vui lòng điền đầu đủ thông tin!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success = await authController.forgotPassword(email);
+
+    if (success) {
+      Get.to(() => const VerifyCodeScreen());
+    } else {
+      final snackdemo = SnackBar(
+        content: Text(
+          'Tài khoản không tồn tại!',
+          style: kLableW800White,
+        ),
+        backgroundColor: Colors.red,
+        elevation: 10,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(5),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,9 +114,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               TextFormField(
                   onChanged: (value) {},
+                  style: kLableTextBlackMinium,
+                  controller: emailController,
                   decoration: InputDecoration(
                       labelText: 'Email',
-                      hintText: 'trungtinh1620@gmail.com',
                       enabledBorder: const OutlineInputBorder(
                         // viền khi không có focus
                         borderSide: BorderSide(color: AppColors.stack),
@@ -86,12 +138,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 height: 40,
               ),
               ButtonBlue(
-                onPress: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const VerifyCodeScreen()));
-                },
+                isLoading: _isLoading,
+                onPress: forgotPassword,
                 des: 'Submit',
               ),
               const SizedBox(

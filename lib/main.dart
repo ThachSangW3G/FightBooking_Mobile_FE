@@ -1,4 +1,5 @@
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
 
 import 'package:flightbooking_mobile_fe/screens/splash/logo_screen.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
           // and then invoke "hot reload" (save your changes or press the "hot
           // reload" button in a Flutter-supported IDE, or press "r" if you used
           // the command line to start the app).
-          //
+          //`
           // Notice that the counter didn't reset back to zero; the application
           // state is not lost during the reload. To reset the state, use hot
           // restart instead.
@@ -37,6 +38,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: PaymentScreen());
+        home: InfoGuestScreen());
   }
 }

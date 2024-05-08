@@ -4,6 +4,7 @@ import 'package:flightbooking_mobile_fe/screens/login_signup/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 
 class SuccessfullScreen extends StatefulWidget {
   const SuccessfullScreen({super.key});
@@ -30,12 +31,6 @@ class _SuccessfullScreenState extends State<SuccessfullScreen> {
                   image: DecorationImage(
                       image: AssetImage('assets/images/successfull.png'))),
             ),
-            SvgPicture.asset(
-              'assets/svgs/successfull.svg"',
-              width: 200,
-              height: 300,
-              fit: BoxFit.scaleDown,
-            ),
             const SizedBox(
               height: 20,
             ),
@@ -54,10 +49,7 @@ class _SuccessfullScreenState extends State<SuccessfullScreen> {
             ButtonBlue(
                 des: 'Back to Login',
                 onPress: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()));
+                  Get.off(() => const LoginScreen());
                 })
           ],
         ),

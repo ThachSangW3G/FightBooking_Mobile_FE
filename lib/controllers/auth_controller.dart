@@ -225,10 +225,19 @@ class AuthController extends GetxController {
     final email = prefs.getString('email');
     final otp = prefs.getInt('otp');
 
-    final uri = Uri.parse(
-        '$_baseURL/auth/reset-password?email=$email&newPassword=$newPassword&confirmPassword=$confirmPassword&otp=$otp');
+    final uri = Uri.parse('$_baseURL/auth/reset-password');
 
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+      'accept': 'application/hal+json',
+    };
+
+    final requestBody = {
+      'email': email,
+      'newPassword': newPassword,
+      'confirmPassword': confirmPassword,
+      'otp': otp,
+    };
 
     print(email);
     print(newPassword);
@@ -236,11 +245,32 @@ class AuthController extends GetxController {
     print(otp);
 
     try {
-      final response = await http.put(uri, headers: headers);
+      final response =
+          await http.put(uri, body: jsonEncode(requestBody), headers: headers);
+
+      if (response.statusCode == 301 || response.statusCode == 302) {
+        // Lấy URL mới từ header "Location"
+        final newUrl = response.headers['location'];
+        // Tạo một yêu cầu mới đến URL mới
+        final newResponse = await http.put(
+          Uri.parse(newUrl!),
+          body: jsonEncode(requestBody),
+          headers: headers,
+        );
+        // Xử lý kết quả từ phản hồi mới
+        if (newResponse.statusCode == 200) {
+          return true;
+        } else {
+          print(newResponse.statusCode);
+          return false;
+        }
+      }
 
       if (response.statusCode == 200) {
         return true;
       }
+
+      print(response.statusCode);
 
       return false;
     } catch (e) {

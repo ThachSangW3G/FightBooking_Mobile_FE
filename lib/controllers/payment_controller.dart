@@ -13,7 +13,7 @@ class PaymentController {
     required String expiryDate,
   }) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/payment/register-card?username=$username'),
+      Uri.parse('$baseUrl/payment/register-card'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

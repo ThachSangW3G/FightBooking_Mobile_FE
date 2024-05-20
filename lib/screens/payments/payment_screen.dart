@@ -11,6 +11,7 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   String? selectedPaymentMethod;
+  String? selectedCard;
   bool isChecked = false;
 
   // Controllers for card information
@@ -20,6 +21,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final PaymentController paymentController = PaymentController(
       baseUrl:
           'http://localhost:7050/payment/register-card'); // Replace with your actual base URL
+
+  List<String> savedCards = [
+    '**** **** **** 1234',
+    '**** **** **** 5678'
+  ]; // Dummy saved cards
+
   @override
   void initState() {
     super.initState();
@@ -41,21 +48,49 @@ class _PaymentScreenState extends State<PaymentScreen> {
             paymentOption(
               'Visa',
               'assets/logo/visa.png', // Path to Visa logo image
-              'Thanh toán bằng Visa',
+              'Thẻ Visa, Master, JCB',
+              selectedPaymentMethod == 'Visa' ? savedCardOptions() : null,
             ),
             paymentOption(
               'VNPay',
               'assets/logo/vnpay.png', // Path to VNPay logo image
               'Thanh toán bằng VNPay',
             ),
-            if (selectedPaymentMethod == 'Visa') cardDetailsForm(),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 if (selectedPaymentMethod != null &&
                     selectedPaymentMethod!.isNotEmpty) {
-                  if (selectedPaymentMethod == 'Visa') {
-                    processVisaPayment();
+                  if (selectedPaymentMethod == 'Visa' &&
+                      (selectedCard != null || selectedCard == 'new_card')) {
+                    if (selectedCard == 'new_card') {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Thêm thẻ mới'),
+                            content: newCardForm(),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Hủy'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Process adding new card here
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Lưu'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      processVisaPayment();
+                    }
                   } else {
                     Get.to(() => const PaymentSuccessfulWidget());
                   }
@@ -88,42 +123,172 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget paymentOption(String value, String imagePath, String title) {
-    return ListTile(
-      title: Text(title),
-      leading: Radio(
-        value: value,
-        groupValue: selectedPaymentMethod,
-        onChanged: (value) {
-          setState(() {
-            selectedPaymentMethod = value as String?;
-          });
-        },
-      ),
-      trailing: Image.asset(imagePath, width: 100, height: 50),
+  Widget paymentOption(String value, String imagePath, String title,
+      [Widget? child]) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          title: Text(title),
+          leading: Radio(
+            value: value,
+            groupValue: selectedPaymentMethod,
+            onChanged: (value) {
+              setState(() {
+                selectedPaymentMethod = value as String?;
+                selectedCard = null;
+              });
+            },
+          ),
+          trailing: Image.asset(imagePath, width: 100, height: 50),
+        ),
+        if (child != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: child,
+          ),
+      ],
     );
   }
 
-  Widget cardDetailsForm() {
+  Widget savedCardOptions() {
     return Column(
-      children: <Widget>[
+      children: [
+        for (String card in savedCards) savedCardItem(card),
+        newCardOption(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Golobe không sử dụng thông tin thẻ của khách hàng cho mục đích nào khác',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget savedCardItem(String card) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        children: [
+          Radio<String>(
+            value: card,
+            groupValue: selectedCard,
+            onChanged: (value) {
+              setState(() {
+                selectedCard = value;
+              });
+            },
+          ),
+          Image.asset('assets/logo/visa.png',
+              width: 40, height: 24), // Replace with card brand image
+          SizedBox(width: 8),
+          Expanded(child: Text(card)),
+          TextButton(
+            onPressed: () {
+              // Handle card removal logic here
+            },
+            child: Text('Xóa thẻ', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget newCardOption() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        children: [
+          Radio<String>(
+            value: 'new_card',
+            groupValue: selectedCard,
+            onChanged: (value) {
+              setState(() {
+                selectedCard = value;
+              });
+              if (value == 'new_card') {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Thêm thẻ mới'),
+                      content: newCardForm(),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Hủy'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Process adding new card here
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Lưu'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            },
+          ),
+          Expanded(child: Text('Thanh toán bằng thẻ mới')),
+        ],
+      ),
+    );
+  }
+
+  Widget newCardForm() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
         TextField(
           controller: _cardNumberController,
+          keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText: 'Số thẻ',
+            labelText: 'Card Number',
+            border: OutlineInputBorder(),
           ),
         ),
-        TextField(
-          controller: _expiryDateController,
-          decoration: InputDecoration(
-            labelText: 'Ngày hết hạn (MM/YY)',
-          ),
-        ),
-        TextField(
-          controller: _cvvController,
-          decoration: InputDecoration(
-            labelText: 'CVV',
-          ),
+        SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _expiryDateController,
+                keyboardType: TextInputType.datetime,
+                decoration: InputDecoration(
+                  labelText: 'MM / YY',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: TextField(
+                controller: _cvvController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'CVC',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -15,10 +15,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String? selectedPaymentMethod;
   String? selectedCard;
   bool isChecked = false;
+  bool _isProcessing = false; // Biến trạng thái cho ProgressBar
 
   final PaymentController paymentController = PaymentController(
       baseUrl:
-          'http://192.168.1.100:7050'); // Replace with your actual base URL
+          'http://192.168.2.10:7050'); // Replace with your actual IP address
 
   List<String> savedCards = [
     '**** **** **** 1234',
@@ -32,57 +33,116 @@ class _PaymentScreenState extends State<PaymentScreen> {
         "pk_test_51OVwerA7WrEjctnX9STvulzywtvSiHbBfwpWtPz1qUisHRlxGoqeYEsezmX3wub802xxdEyo6N65w2zLu77HLP3200k4IHYlWU"; // Replace with your Stripe publishable key
   }
 
-  Future<void> createCustomerAndSetupIntent(String email) async {
+  Future<bool> createCustomerAndSetupIntent(String email) async {
     try {
-      final response = await http.post(
-        Uri.parse(
-            '${paymentController.baseUrl}/payment/create-customer?email=$email'),
+      // Kiểm tra xem người dùng đã có customerId chưa
+      final userResponse = await http.get(
+        Uri.parse('${paymentController.baseUrl}/payment/get-stripe-customer-id?' +
+            'token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aHVvbmdsZSIsImlhdCI6MTcxNjMwOTA1NSwiZXhwIjoxNzE2MzE2MjU1fQ.CUQdVrN8bktOeRm_b18QSuE-3LipcvKDqCaczW-YJ1k'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
 
-      if (response.statusCode == 200) {
-        final customerId = response.body;
-
-        final setupIntentResponse = await http.post(
-          Uri.parse(
-              '${paymentController.baseUrl}/payment/create-setup-intent?customerId=$customerId'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-        );
-
-        if (setupIntentResponse.statusCode == 200) {
-          final setupIntentData = jsonDecode(setupIntentResponse.body);
-          final clientSecret = setupIntentData['clientSecret'];
-
-          // Display the card form to the user and collect card details
-          await Stripe.instance.confirmSetupIntent(
-            paymentIntentClientSecret: clientSecret,
-            params: PaymentMethodParams.card(
-              paymentMethodData: PaymentMethodData(
-                billingDetails: BillingDetails(
-                  email:
-                      'ledangthuong2003@gmail.com', // Replace with the user's actual email
-                  phone:
-                      '+84987654321', // Replace with the user's actual phone number
-                ),
-              ),
-            ),
+      String? customerId;
+      if (userResponse.statusCode == 200) {
+        final userData = jsonDecode(userResponse.body);
+        customerId = userData['stripeCustomerId'];
+        if (customerId == null) {
+          // Nếu người dùng chưa có customerId, tạo customer mới
+          final response = await http.post(
+            Uri.parse(
+                '${paymentController.baseUrl}/payment/create-customer?email=$email'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
           );
 
-          // Handle successful card setup
-          print('Card setup successful');
-        } else {
-          throw Exception('Failed to create setup intent');
+          if (response.statusCode == 200) {
+            customerId = response.body;
+          } else {
+            throw Exception('Failed to create customer');
+          }
         }
       } else {
-        throw Exception('Failed to create customer');
+        throw Exception('Failed to fetch user data');
+      }
+
+      // Tạo setup intent cho customerId hiện tại
+      final setupIntentResponse = await http.post(
+        Uri.parse(
+            '${paymentController.baseUrl}/payment/create-setup-intent?customerId=$customerId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (setupIntentResponse.statusCode == 200) {
+        final setupIntentData = jsonDecode(setupIntentResponse.body);
+        final clientSecret = setupIntentData['clientSecret'];
+        final setupIntentId = setupIntentData['setupIntentId'];
+
+        await Stripe.instance.confirmSetupIntent(
+          paymentIntentClientSecret: clientSecret,
+          params: PaymentMethodParams.card(
+            paymentMethodData: PaymentMethodData(
+              billingDetails: BillingDetails(
+                email: 'ledangthuongsp@gmail.com',
+                phone: '+84987654321',
+              ),
+            ),
+          ),
+        );
+
+        await registerCard(customerId, setupIntentId);
+        return true; // Indicate success
+      } else {
+        throw Exception('Failed to create setup intent');
+      }
+    } catch (e) {
+      print('Error: $e');
+      return false; // Indicate failure
+    }
+  }
+
+  Future<void> registerCard(String customerId, String setupIntentId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${paymentController.baseUrl}/payment/register-card'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'customerId': customerId,
+          'setupIntentId': setupIntentId,
+          'username': 'thuongle', // Replace with actual username
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Card registered successfully');
+      } else {
+        print('Failed to register card: ${response.body}');
       }
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  void _showProgressDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void _hideProgressDialog() {
+    Navigator.of(context).pop();
   }
 
   @override
@@ -91,64 +151,84 @@ class _PaymentScreenState extends State<PaymentScreen> {
       appBar: AppBar(
         title: Text('Thanh toán'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            paymentOption(
-              'Visa',
-              'assets/logo/visa.png',
-              'Thẻ Visa, Master, JCB',
-              selectedPaymentMethod == 'Visa' ? savedCardOptions() : null,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                paymentOption(
+                  'Visa',
+                  'assets/logo/visa.png',
+                  'Thẻ Visa, Master, JCB',
+                  selectedPaymentMethod == 'Visa' ? savedCardOptions() : null,
+                ),
+                paymentOption(
+                  'VNPay',
+                  'assets/logo/vnpay.png',
+                  'Thanh toán bằng VNPay',
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _isProcessing
+                      ? null
+                      : () async {
+                          setState(() {
+                            _isProcessing = true;
+                          });
+                          _showProgressDialog();
+                          if (selectedPaymentMethod != null &&
+                              selectedPaymentMethod!.isNotEmpty) {
+                            if (selectedPaymentMethod == 'Visa' &&
+                                (selectedCard != null ||
+                                    selectedCard == 'new_card')) {
+                              if (selectedCard == 'new_card') {
+                                // Assume email is available, you can replace with the actual email
+                                await createCustomerAndSetupIntent(
+                                    'ledangthuongsp@gmail.com');
+                              } else {
+                                await processVisaPayment();
+                              }
+                            } else {
+                              Get.to(() => const PaymentSuccessfulWidget());
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title:
+                                      Text('Lựa chọn phương thức thanh toán'),
+                                  content: Text(
+                                      'Vui lòng chọn một phương thức thanh toán.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Đóng'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                          _hideProgressDialog();
+                          setState(() {
+                            _isProcessing = false;
+                          });
+                        },
+                  child: Text('Thanh toán'),
+                ),
+              ],
             ),
-            paymentOption(
-              'VNPay',
-              'assets/logo/vnpay.png',
-              'Thanh toán bằng VNPay',
+          ),
+          if (_isProcessing)
+            Center(
+              child: CircularProgressIndicator(),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                if (selectedPaymentMethod != null &&
-                    selectedPaymentMethod!.isNotEmpty) {
-                  if (selectedPaymentMethod == 'Visa' &&
-                      (selectedCard != null || selectedCard == 'new_card')) {
-                    if (selectedCard == 'new_card') {
-                      // Assume email is available, you can replace with the actual email
-                      await createCustomerAndSetupIntent(
-                          'ledangthuong2003@gmail.com');
-                    } else {
-                      await processVisaPayment();
-                    }
-                  } else {
-                    Get.to(() => const PaymentSuccessfulWidget());
-                  }
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Lựa chọn phương thức thanh toán'),
-                        content:
-                            Text('Vui lòng chọn một phương thức thanh toán.'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Đóng'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              child: Text('Thanh toán'),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -263,10 +343,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            final success = await registerNewCard();
+                            setState(() {
+                              _isProcessing = true;
+                            });
+                            _showProgressDialog();
+                            final success = await createCustomerAndSetupIntent(
+                                'ledangthuongsp@gmail.com');
                             if (success) {
                               Navigator.of(context).pop();
+                            } else {
+                              // Handle failure case, e.g., show an error message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Failed to set up the card. Please try again.')),
+                              );
                             }
+                            _hideProgressDialog();
+                            setState(() {
+                              _isProcessing = false;
+                            });
                           },
                           child: Text('Lưu'),
                         ),
@@ -290,49 +386,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         CardFormField(),
       ],
     );
-  }
-
-  Future<bool> registerNewCard() async {
-    try {
-      // Create payment method
-      final paymentMethod = await Stripe.instance.createPaymentMethod(
-        params: PaymentMethodParams.card(
-          paymentMethodData: PaymentMethodData(
-            billingDetails: BillingDetails(
-              email:
-                  'ledangthuongsp@gmail.com', // Replace with the user's actual email
-              phone:
-                  '+84987654321', // Replace with the user's actual phone number
-            ),
-          ),
-        ),
-      );
-
-      if (paymentMethod.card != null && paymentMethod.card!.last4 != null) {
-        // Prepare data for back-end
-        final response = await paymentController.registerCard(
-          username: 'thuongle', // Replace with actual username
-          stripePaymentMethodId: paymentMethod.id,
-          last4Digits: paymentMethod.card!.last4!,
-          expiryDate:
-              '${paymentMethod.card!.expMonth}/${paymentMethod.card!.expYear}',
-        );
-
-        if (response.statusCode == 200) {
-          print('Card registered successfully');
-          return true;
-        } else {
-          print('Failed to register card: ${response.body}');
-          return false;
-        }
-      } else {
-        print('Card information is incomplete');
-        return false;
-      }
-    } catch (e) {
-      print('Error: $e');
-      return false;
-    }
   }
 
   Future<void> processVisaPayment() async {

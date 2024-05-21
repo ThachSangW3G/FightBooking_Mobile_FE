@@ -107,16 +107,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> registerCard(String customerId, String setupIntentId) async {
     try {
+      final url =
+          Uri.parse('${paymentController.baseUrl}/payment/register-card')
+              .replace(queryParameters: {
+        'customerId': customerId,
+        'setupIntentId': setupIntentId,
+        'username': 'thuongle', // Replace with actual username
+      });
+
       final response = await http.post(
-        Uri.parse('${paymentController.baseUrl}/payment/register-card'),
+        url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({
-          'customerId': customerId,
-          'setupIntentId': setupIntentId,
-          'username': 'thuongle', // Replace with actual username
-        }),
       );
 
       if (response.statusCode == 200) {

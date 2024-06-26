@@ -112,7 +112,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               .replace(queryParameters: {
         'customerId': customerId,
         'setupIntentId': setupIntentId,
-        'username': 'thuongle', // Replace with actual username
+        'token': '', // Replace with actual username
       });
 
       final response = await http.post(

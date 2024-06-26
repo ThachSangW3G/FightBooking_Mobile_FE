@@ -1,16 +1,43 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/models/airports/airport.dart';
+import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class FlightItem extends StatefulWidget {
-  const FlightItem({super.key});
+  final Flight flight;
+  const FlightItem({super.key, required this.flight});
 
   @override
   State<FlightItem> createState() => _FlightItemState();
 }
 
 class _FlightItemState extends State<FlightItem> {
+  Airport? departureAirport;
+  Airport? arrivalAirport;
+
+  final AirportController airportController = Get.put(AirportController());
+
+  Future<void> _init() async {
+    departureAirport = await airportController
+        .getAirportById(widget.flight.departureAirportId);
+    arrivalAirport =
+        await airportController.getAirportById(widget.flight.arrivalAirportId);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      _init();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,11 +69,12 @@ class _FlightItemState extends State<FlightItem> {
                     Column(
                       children: [
                         Text(
-                          '07:45',
+                          DateFormat('HH:mm')
+                              .format(widget.flight.departureDate),
                           style: kLableSize18w700Black,
                         ),
                         Text(
-                          'SGN',
+                          departureAirport?.iataCode ?? '',
                           style: kLableSize15Black,
                         ),
                       ],
@@ -70,11 +98,11 @@ class _FlightItemState extends State<FlightItem> {
                     Column(
                       children: [
                         Text(
-                          '09:00',
+                          DateFormat('HH:mm').format(widget.flight.arrivalDate),
                           style: kLableSize18w700Black,
                         ),
                         Text(
-                          'HAN',
+                          arrivalAirport?.iataCode ?? '',
                           style: kLableSize15Black,
                         ),
                       ],

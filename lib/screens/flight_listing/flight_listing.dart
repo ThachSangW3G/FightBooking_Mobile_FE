@@ -3,7 +3,10 @@ import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_so
 import 'package:flightbooking_mobile_fe/components/flight_listing/flight_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
+import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +25,8 @@ class FlightListing extends StatefulWidget {
 }
 
 class _FlightListingState extends State<FlightListing> {
+  FlightController flightController = Get.put(FlightController());
+  AirportController airportController = Get.put(AirportController());
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
@@ -312,31 +317,62 @@ class _FlightListingState extends State<FlightListing> {
                           const SizedBox(
                             height: 10,
                           ),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
+
+                          FutureBuilder<List<Flight>>(
+                              future: flightController.filterFlights(
+                                  dateTimeController.rangeStart.value,
+                                  airportController.selectedDeparture.value!.id,
+                                  airportController
+                                      .selectedDestination.value!.id),
+                              builder: (_, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+
+                                if (snapshot.error != null) {
+                                  return const Center(
+                                    child: Text('Error'),
+                                  );
+                                }
+
+                                final flights = snapshot.data;
+                                return ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: flights!.length,
+                                    itemBuilder: (_, index) {
+                                      final flight = flights[index];
+                                      return FlightItem(
+                                        flight: flight,
+                                      );
+                                    });
+                              })
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
                         ],
                       ),
                     ),

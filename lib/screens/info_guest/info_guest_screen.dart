@@ -43,7 +43,9 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
         leading: IconButton(
           color: AppColors.white,
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+          },
         ),
         title: Text('Thông tin hành khách', style: kLableSize20w700White),
         centerTitle: true,
@@ -160,7 +162,11 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                       ),
                     ],
                   ),
-                  ButtonBlue(des: 'Tiếp tục', onPress: () {})
+                  ButtonBlue(
+                      des: 'Tiếp tục',
+                      onPress: () {
+                        Get.to(() => const CheckoutScreen());
+                      })
                 ],
               ),
             ),

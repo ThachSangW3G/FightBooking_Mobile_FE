@@ -1,4 +1,5 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/screens/bottom_nav/bottom_nav.dart';
 import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/tickets/ticket_details_screen.dart';
@@ -15,7 +16,7 @@ class PaymentSuccessfulWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: AppColors.dodger,
             radius: 48.0,
             child: Icon(
@@ -24,8 +25,8 @@ class PaymentSuccessfulWidget extends StatelessWidget {
               color: AppColors.white,
             ),
           ),
-          SizedBox(height: 24.0),
-          Text(
+          const SizedBox(height: 24.0),
+          const Text(
             'Thanh toán thành công',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -33,55 +34,55 @@ class PaymentSuccessfulWidget extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
-          Text(
+          const SizedBox(height: 8.0),
+          const Text(
             'Tham khảo hàng trăm chuyến bay khác trên Traveloka ngay bây giờ!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.0,
             ),
           ),
-          SizedBox(height: 24.0),
+          const SizedBox(height: 24.0),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Get.off(() => HomeScreen());
+                      Get.off(() => const BottomNavigation());
                     },
-                    child: Text(
+                    child: const Text(
                       'Trang chủ',
                       style: TextStyle(color: AppColors.dodger),
                     ),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(
+                      side: const BorderSide(
                         color: AppColors.dodger,
                         width: 2.0,
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
-                      textStyle: TextStyle(fontSize: 20.0),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      textStyle: const TextStyle(fontSize: 20.0),
                     ),
                   ),
                 ),
-                SizedBox(width: 16.0), // Khoảng cách giữa hai nút
+                const SizedBox(width: 16.0), // Khoảng cách giữa hai nút
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.to(() => TicketDetailsScreen(
+                      Get.to(() => const TicketDetailsScreen(
                             ticketId: '185457675675',
                             status: 'Xuất vé thành công',
                           ));
                     },
-                    child: Text(
+                    child: const Text(
                       'Chi tiết vé',
                       style: TextStyle(color: AppColors.white),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.dodger,
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
-                      textStyle: TextStyle(fontSize: 20.0),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      textStyle: const TextStyle(fontSize: 20.0),
                     ),
                   ),
                 ),

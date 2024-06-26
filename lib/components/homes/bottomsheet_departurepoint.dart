@@ -1,8 +1,10 @@
 import 'package:flightbooking_mobile_fe/components/homes/recent_search.dart';
 import 'package:flightbooking_mobile_fe/components/homes/title_search.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 import '../../constants/app_styles.dart';
 
@@ -15,13 +17,17 @@ class BottomSheetDeparturePoint extends StatefulWidget {
 }
 
 class _BottomSheetDeparturePointState extends State<BottomSheetDeparturePoint> {
+  AirportController airportController = Get.put(AirportController());
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 700,
       width: double.maxFinite,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(
+          vertical: 10.0,
+        ),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -32,68 +38,99 @@ class _BottomSheetDeparturePointState extends State<BottomSheetDeparturePoint> {
               const SizedBox(
                 height: 20.0,
               ),
-              Container(
-                height: 50,
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.gray),
-                    borderRadius: const BorderRadius.all(Radius.circular(15))),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Tìm tỉnh, thành phố",
-                        hintStyle: kLableSize15Grey,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: SvgPicture.asset('assets/icons/search.svg'),
-                        )),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Container(
+                  height: 50,
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.gray),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(15))),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Tìm tỉnh, thành phố",
+                          hintStyle: kLableSize15Grey,
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: SvgPicture.asset('assets/icons/search.svg'),
+                          )),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(
                 height: 20.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Tìm kiếm gần đây',
-                    style: kLableSize18w700Black,
-                  ),
-                  Text(
-                    'Xóa',
-                    style: kLableSize18w500Bule,
-                  )
-                ],
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       'Tìm kiếm gần đây',
+              //       style: kLableSize18w700Black,
+              //     ),
+              //     Text(
+              //       'Xóa',
+              //       style: kLableSize18w500Bule,
+              //     )
+              //   ],
+              // ),
+              // const SizedBox(
+              //   height: 15.0,
+              // ),
+              // const RecentSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const RecentSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const RecentSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const SizedBox(
+              //   height: 15.0,
+              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Thành phố hoặc sân bay phổ biến',
+                      style: kLableSize18w700Black,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
-                height: 15.0,
+                height: 5.0,
               ),
-              const RecentSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const RecentSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const RecentSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const SizedBox(
-                height: 15.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    'Thành phố hoặc sân bay phổ biến',
-                    style: kLableSize18w700Black,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
+
+              Obx(() => airportController.airports.value == null ||
+                      airportController.airports.value!.isEmpty
+                  ? const SizedBox()
+                  : ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: airportController.airports.value!.length,
+                      itemBuilder: (context, index) {
+                        final airport =
+                            airportController.airports.value![index];
+                        return Obx(() => TitleSearch(
+                            onClick: () {
+                              airportController.setSelectedDeparture(airport);
+                              Get.back();
+                            },
+                            selected:
+                                airportController.selectedDeparture.value ==
+                                    airport,
+                            title:
+                                '${airport.iataCode} - ${airport.airportName}, ${airport.city}'));
+                      },
+                    )),
+
+              // const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              // const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
             ],
           ),
         ),

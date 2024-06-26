@@ -1,3 +1,4 @@
+import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_successful.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thanh toán'),
+        title: const Text('Thanh toán'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -32,35 +33,68 @@ class _PaymentScreenState extends State<PaymentScreen> {
               'assets/logo/vnpay.png', // Path to VNPay logo image
               'Thanh toán bằng VNPay',
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (selectedPaymentMethod != null &&
-                    selectedPaymentMethod!.isNotEmpty) {
-                  Get.to(() => const PaymentSuccessfulWidget());
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Lựa chọn phương thức thanh toán'),
-                        content:
-                            Text('Vui lòng chọn một phương thức thanh toán.'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Đóng'),
-                          ),
-                        ],
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: ButtonBlue(
+                  des: 'Thanh toán',
+                  onPress: () {
+                    if (selectedPaymentMethod != null &&
+                        selectedPaymentMethod!.isNotEmpty) {
+                      Get.to(() => const PaymentSuccessfulWidget());
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title:
+                                const Text('Lựa chọn phương thức thanh toán'),
+                            content: const Text(
+                                'Vui lòng chọn một phương thức thanh toán.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Đóng'),
+                              ),
+                            ],
+                          );
+                        },
                       );
-                    },
-                  );
-                }
-              },
-              child: Text('Thanh toán'),
-            ),
+                    }
+                  }),
+            )
+
+            // ElevatedButton(
+            //   onPressed: () {
+            //     if (selectedPaymentMethod != null &&
+            //         selectedPaymentMethod!.isNotEmpty) {
+            //       Get.to(() => const PaymentSuccessfulWidget());
+            //     } else {
+            //       showDialog(
+            //         context: context,
+            //         builder: (BuildContext context) {
+            //           return AlertDialog(
+            //             title: Text('Lựa chọn phương thức thanh toán'),
+            //             content:
+            //                 Text('Vui lòng chọn một phương thức thanh toán.'),
+            //             actions: <Widget>[
+            //               TextButton(
+            //                 onPressed: () {
+            //                   Navigator.of(context).pop();
+            //                 },
+            //                 child: Text('Đóng'),
+            //               ),
+            //             ],
+            //           );
+            //         },
+            //       );
+            //     }
+            //   },
+            //   child: Text('Thanh toán'),
+            // ),
           ],
         ),
       ),

@@ -1,9 +1,13 @@
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airline_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
+import 'package:flightbooking_mobile_fe/models/airlines/airline.dart';
 import 'package:flightbooking_mobile_fe/models/airports/airport.dart';
 import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -17,25 +21,15 @@ class FlightItem extends StatefulWidget {
 }
 
 class _FlightItemState extends State<FlightItem> {
-  Airport? departureAirport;
-  Airport? arrivalAirport;
-
   final AirportController airportController = Get.put(AirportController());
-
-  Future<void> _init() async {
-    departureAirport = await airportController
-        .getAirportById(widget.flight.departureAirportId);
-    arrivalAirport =
-        await airportController.getAirportById(widget.flight.arrivalAirportId);
-  }
+  final SeatClassController seatClassController =
+      Get.put(SeatClassController());
+  final AirlineController airlineController = Get.put(AirlineController());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    setState(() {
-      _init();
-    });
   }
 
   @override
@@ -73,10 +67,19 @@ class _FlightItemState extends State<FlightItem> {
                               .format(widget.flight.departureDate),
                           style: kLableSize18w700Black,
                         ),
-                        Text(
-                          departureAirport?.iataCode ?? '',
-                          style: kLableSize15Black,
-                        ),
+                        FutureBuilder(
+                            future: airportController.getAirportById(
+                                widget.flight.departureAirportId),
+                            builder: (_, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox();
+                              }
+                              return Text(
+                                snapshot.data?.iataCode ?? '',
+                                style: kLableSize15Black,
+                              );
+                            }),
                       ],
                     ),
                     Column(
@@ -101,10 +104,19 @@ class _FlightItemState extends State<FlightItem> {
                           DateFormat('HH:mm').format(widget.flight.arrivalDate),
                           style: kLableSize18w700Black,
                         ),
-                        Text(
-                          arrivalAirport?.iataCode ?? '',
-                          style: kLableSize15Black,
-                        ),
+                        FutureBuilder(
+                            future: airportController
+                                .getAirportById(widget.flight.arrivalAirportId),
+                            builder: (_, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox();
+                              }
+                              return Text(
+                                snapshot.data?.iataCode ?? '',
+                                style: kLableSize15Black,
+                              );
+                            }),
                       ],
                     ),
                   ],
@@ -114,7 +126,7 @@ class _FlightItemState extends State<FlightItem> {
                 width: 20,
               ),
               Text(
-                '2.500.000 ₫',
+                '${seatClassController.selectedSeatClass.value == 0 ? widget.flight.economyPrice.toString() : seatClassController.selectedSeatClass.value == 1 ? widget.flight.businessPrice.toString() : widget.flight.firstClassPrice.toString()}\$',
                 style: kLableSize20w700Bule,
               )
             ],
@@ -134,25 +146,34 @@ class _FlightItemState extends State<FlightItem> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            image:
-                                AssetImage('assets/images/logo-vietjet.png'))),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Vietjet Air - Economy',
-                    style: kLableSize15Black,
-                  )
-                ],
-              ),
+              FutureBuilder<Airline>(
+                  future: airlineController.getAirline(
+                      planeId: widget.flight.planeId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox();
+                    }
+
+                    final airline = snapshot.data!;
+                    return Row(
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(airline.logoUrl))),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          airline.airlineName,
+                          style: kLableSize15Black,
+                        )
+                      ],
+                    );
+                  }),
               Container(
                   height: 30,
                   width: 30,

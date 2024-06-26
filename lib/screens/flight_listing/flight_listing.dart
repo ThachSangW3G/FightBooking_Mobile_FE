@@ -1,10 +1,13 @@
 import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_filter.dart';
+import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_selectflight.dart';
 import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_sort.dart';
 import 'package:flightbooking_mobile_fe/components/flight_listing/flight_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
 import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
@@ -27,16 +30,51 @@ class FlightListing extends StatefulWidget {
 class _FlightListingState extends State<FlightListing> {
   FlightController flightController = Get.put(FlightController());
   AirportController airportController = Get.put(AirportController());
+  final PassengerController passengerController =
+      Get.put(PassengerController());
+  final SeatClassController seatClassController =
+      Get.put(SeatClassController());
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
 
   bool isEmpty = false;
 
-  int selectDate = 0;
-
   final DateTimeController dateTimeController = Get.put(DateTimeController());
   final SortController sortController = Get.put(SortController());
+
+  final ScrollController _scrollController = ScrollController();
+  DateTime? selectDate;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onCardTap(DateTime date, int index) {
+    setState(() {
+      selectDate = date;
+    });
+    _scrollToIndex(index);
+  }
+
+  void _scrollToIndex(int index) {
+    // Tính toán vị trí scroll
+    double offset = index * 100; // 150.0 là chiều rộng của mỗi card
+    _scrollController.animateTo(
+      offset,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectDate = dateTimeController.rangeStart.value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +86,27 @@ class _FlightListingState extends State<FlightListing> {
         backgroundColor: AppColors.blue,
         title: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromARGB(193, 201, 195, 195)),
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SvgPicture.asset('assets/icons/arrowleft.svg'),
+            InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: const Color.fromARGB(193, 201, 195, 195)),
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SvgPicture.asset('assets/icons/arrowleft.svg'),
+                ),
               ),
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              'Chuyến đi SGN - HAN',
+              'Chuyến đi ${airportController.selectedDeparture.value?.iataCode ?? ""} - ${airportController.selectedDestination.value?.iataCode ?? ""}',
               style: kLableTitleWhite,
             )
           ],
@@ -87,6 +130,21 @@ class _FlightListingState extends State<FlightListing> {
           )
         ],
       ),
+      floatingActionButton: Badge(
+        label: const Text('1'),
+        child: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (_) => const BottomSheetSelectFlight());
+          },
+          backgroundColor: AppColors.blue,
+          child: const Icon(
+            Icons.flight_takeoff,
+            color: AppColors.white,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -104,7 +162,7 @@ class _FlightListingState extends State<FlightListing> {
                   width: 10,
                 ),
                 Text(
-                  '4 khách - Economy',
+                  '${passengerController.adult.value + passengerController.children.value + passengerController.babe.value} khách - ${seatClassController.seatClasses[seatClassController.selectedSeatClass.value].title}',
                   style: kLableSize18White,
                 ),
                 const SizedBox(
@@ -126,68 +184,78 @@ class _FlightListingState extends State<FlightListing> {
           Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: dateTimeController.listDate.length,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectDate = index;
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                            decoration: BoxDecoration(
-                                color: selectDate == index
-                                    ? AppColors.blue
-                                    : AppColors.white,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(15))),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Thứ 3',
-                                  style: selectDate == index
-                                      ? kLableSize18w700White
-                                      : kLableSize18w700Black,
+              child: FutureBuilder<List<DateTime>>(
+                  future: dateTimeController.getDateList(
+                      dateTimeController.rangeStart.value,
+                      dateTimeController.rangeEnd.value ??
+                          dateTimeController.rangeStart.value
+                              .add(const Duration(days: 10))),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox();
+                    }
+
+                    final listDate = snapshot.data ?? [];
+                    return ListView.builder(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: listDate.length,
+                        itemBuilder: (context, index) {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () => _onCardTap(listDate[index], index),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 5),
+                                  decoration: BoxDecoration(
+                                      color: selectDate == listDate[index]
+                                          ? AppColors.blue
+                                          : AppColors.white,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15))),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        dateTimeController
+                                            .getWeekday(listDate[index]),
+                                        style: selectDate == listDate[index]
+                                            ? kLableSize18w700White
+                                            : kLableSize18w700Black,
+                                      ),
+                                      Text(
+                                        formatDateTime(listDate[index]),
+                                        style: selectDate == listDate[index]
+                                            ? kLableSize15White
+                                            : kLableSize15Grey,
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                Text(
-                                  formatDateTime(
-                                      dateTimeController.listDate[index]),
-                                  style: selectDate == index
-                                      ? kLableSize15White
-                                      : kLableSize15Grey,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          height: 50,
-                          decoration: const ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                width: 1,
-                                strokeAlign: BorderSide.strokeAlignCenter,
-                                color: Color(0xFFEBEBF0),
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ],
-                    );
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                height: 50,
+                                decoration: const ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      width: 1,
+                                      strokeAlign: BorderSide.strokeAlignCenter,
+                                      color: Color(0xFFEBEBF0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          );
+                        });
                   })),
           Container(
             width: double.maxFinite,
@@ -318,36 +386,44 @@ class _FlightListingState extends State<FlightListing> {
                             height: 10,
                           ),
 
-                          FutureBuilder<List<Flight>>(
-                              future: flightController.filterFlights(
-                                  dateTimeController.rangeStart.value,
-                                  airportController.selectedDeparture.value!.id,
-                                  airportController
-                                      .selectedDestination.value!.id),
-                              builder: (_, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
+                          selectDate != null
+                              ? FutureBuilder<List<Flight>>(
+                                  future: flightController.filterFlights(
+                                      selectDate!,
+                                      airportController
+                                          .selectedDeparture.value!.id,
+                                      airportController
+                                          .selectedDestination.value!.id),
+                                  builder: (_, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
 
-                                if (snapshot.error != null) {
-                                  return const Center(
-                                    child: Text('Error'),
-                                  );
-                                }
-
-                                final flights = snapshot.data;
-                                return ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: flights!.length,
-                                    itemBuilder: (_, index) {
-                                      final flight = flights[index];
-                                      return FlightItem(
-                                        flight: flight,
+                                    if (snapshot.error != null) {
+                                      return const Center(
+                                        child: Text('Error'),
                                       );
-                                    });
-                              })
+                                    }
+
+                                    final flights = snapshot.data;
+                                    return ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: flights!.length,
+                                        itemBuilder: (_, index) {
+                                          final flight = flights[index];
+                                          return InkWell(
+                                            onTap: () {
+                                              // Get.to(() => const TripSummary());
+                                            },
+                                            child: FlightItem(
+                                              flight: flight,
+                                            ),
+                                          );
+                                        });
+                                  })
+                              : const SizedBox()
                           // InkWell(
                           //     onTap: () {
                           //       Get.to(() => const TripSummary());

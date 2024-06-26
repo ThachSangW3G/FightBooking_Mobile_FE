@@ -17,6 +17,18 @@ class DateTimeController extends GetxController {
     DateTime(2024, 04, 22),
   ];
 
+  Future<List<DateTime>> getDateList(DateTime start, DateTime end) async {
+    List<DateTime> dates = [];
+    DateTime current = start;
+
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+      dates.add(current);
+      current = current.add(Duration(days: 1));
+    }
+
+    return dates;
+  }
+
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     rangeStart.value = selectedDay;
   }
@@ -34,6 +46,27 @@ class DateTimeController extends GetxController {
     isRoundTrip.value = value;
     if (isRoundTrip.isFalse) {
       rangeEnd.value = null;
+    }
+  }
+
+  String getWeekday(DateTime date) {
+    switch (date.weekday) {
+      case DateTime.monday:
+        return 'Thứ Hai';
+      case DateTime.tuesday:
+        return 'Thứ Ba';
+      case DateTime.wednesday:
+        return 'Thứ Tư';
+      case DateTime.thursday:
+        return 'Thứ Năm';
+      case DateTime.friday:
+        return 'Thứ Sáu';
+      case DateTime.saturday:
+        return 'Thứ Bảy';
+      case DateTime.sunday:
+        return 'Chủ Nhật';
+      default:
+        return '';
     }
   }
 }

@@ -9,19 +9,15 @@ class SeatClassController extends GetxController {
         desc: 'Bay đẳng cấp, với quầy làm thủ tục và khu ghế ngồi riêng'),
     SeatClass(
         id: 2,
-        title: 'Premium',
-        desc: 'Chi phí hợp lý với bữa ăn ngon và chỗ để chân rộng rãi'),
-    SeatClass(
-        id: 3,
         title: 'Business',
         desc: 'Bay tiết kiệm, đáp ứng mọi nhu cầu cơ bản của bạn'),
     SeatClass(
-        id: 4,
+        id: 3,
         title: 'First class',
         desc: 'Hạng cao cấp nhất, với dịch vụ 5 sao được cá nhân hóa')
   ];
 
-  var selectedSeatClass = 1.obs;
+  var selectedSeatClass = 0.obs;
 
   void setSelectedSeatClass(int index) {
     selectedSeatClass.value = index;

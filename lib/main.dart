@@ -1,3 +1,5 @@
+import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
@@ -38,6 +40,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: PaymentScreen());
+        home: DefaultScreen());
   }
 }

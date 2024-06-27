@@ -45,6 +45,8 @@ dependencies:
   country_list_pick: ^1.0.1+6
   stripe_sdk: ^5.0.0
   flutter_stripe: ^10.1.1
+  chat_bubbles: ^1.6.0
+  web_socket_channel: ^3.0.0
 
 dev_dependencies:
   flutter_test:

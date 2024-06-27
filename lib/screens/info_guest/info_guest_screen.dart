@@ -160,7 +160,11 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                       ),
                     ],
                   ),
-                  ButtonBlue(des: 'Tiếp tục', onPress: () {})
+                  ButtonBlue(
+                      des: 'Tiếp tục',
+                      onPress: () {
+                        Get.to(() => CheckoutScreen());
+                      })
                 ],
               ),
             ),

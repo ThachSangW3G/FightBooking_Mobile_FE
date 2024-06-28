@@ -6,6 +6,7 @@ import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
 
 import 'package:flightbooking_mobile_fe/screens/splash/logo_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/splash/splash_one_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,6 +41,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: DefaultScreen());
+        home: PaymentScreen());
   }
 }

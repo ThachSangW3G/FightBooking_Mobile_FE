@@ -1,28 +1,49 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
+import 'package:http/http.dart' as http;
 
 class ChatService {
-  final WebSocketChannel channel;
+  final WebSocketChannel _channel;
+  final StreamController<Map<String, dynamic>> _messagesController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
-  ChatService(String url) : channel = WebSocketChannel.connect(Uri.parse(url));
+  ChatService(String url)
+      : _channel = WebSocketChannel.connect(Uri.parse(url)) {
+    _channel.stream.listen((data) {
+      final decodedData = jsonDecode(data as String);
+      _messagesController.add(decodedData);
+    });
+  }
 
-  Stream<Map<String, dynamic>> get messages => channel.stream.map((event) {
-        final decoded = jsonDecode(event);
-        return decoded;
-      });
+  Stream<Map<String, dynamic>> get messages => _messagesController.stream;
 
-  void sendMessage(String senderId, String receiverId, String message) {
-    final msg = jsonEncode({
-      'senderId': senderId,
+  void sendMessage(String userId, String receiverId, String message) {
+    final createdAt = DateTime.now().toIso8601String();
+    final data = jsonEncode({
+      'senderId': userId,
       'receiverId': receiverId,
       'message': message,
-      'createdAt': DateTime.now().toIso8601String()
+      'createdAt': createdAt,
     });
-    channel.sink.add(msg);
+    _channel.sink.add(data);
+  }
+
+  Future<List<Map<String, dynamic>>> getChatHistory(
+      String userId, String adminId) async {
+    final response = await http.get(Uri.parse(
+        'http://192.168.1.8:7050/api/messages/history/$userId/$adminId'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      print('Chat history response: $data'); // Log the response for debugging
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Failed to load chat history');
+    }
   }
 
   void dispose() {
-    channel.sink.close(status.goingAway);
+    _channel.sink.close();
+    _messagesController.close();
   }
 }

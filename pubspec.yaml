@@ -47,6 +47,8 @@ dependencies:
   flutter_stripe: ^10.1.1
   chat_bubbles: ^1.6.0
   web_socket_channel: ^3.0.0
+  google_generative_ai: ^0.4.3
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:

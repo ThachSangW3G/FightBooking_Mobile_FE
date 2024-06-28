@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'package:flightbooking_mobile_fe/components/chat/chat_bubble.dart';
 import 'package:flightbooking_mobile_fe/screens/chat/chat_window.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class _DefaultScreenState extends State<DefaultScreen> {
   bool _isChatOpen = false;
   Offset _offset = Offset(20, 20);
   late String _userId;
+
   @override
   void initState() {
     super.initState();
@@ -24,7 +26,7 @@ class _DefaultScreenState extends State<DefaultScreen> {
   Future<void> _fetchUsername() async {
     final response = await http.get(
       Uri.parse(
-          'http://192.168.1.6:7050/users/token?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nMTIzNCIsImlhdCI6MTcxOTQ5NjI4OSwiZXhwIjoxNzE5NTEwNjg5fQ.CWlq-Ekiv4AkJBNJWMtSgq2iLFe3rJYpOsVK58w98BA'),
+          'http://192.168.1.8:7050/users/token?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nMTIzNCIsImlhdCI6MTcxOTU2MDM3MSwiZXhwIjoxNzE5NTc0NzcxfQ.v9XdJm6Umg2zys2cnKnt2wA7QVKy7a0R1l26gUECPfQ'),
     );
 
     if (response.statusCode == 200) {

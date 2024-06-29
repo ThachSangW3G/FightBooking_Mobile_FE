@@ -8,6 +8,9 @@ import 'package:intl/intl.dart';
 class FlightController extends GetxController {
   final String _baseURL = 'https://flightbookingbe-production.up.railway.app';
 
+  var departureFlight = Rx<Flight?>(null);
+  var returnFlight = Rx<Flight?>(null);
+
   Future<List<Flight>> filterFlights(DateTime departureDate,
       int departureAirportId, int arrivalAirportId) async {
     final formatDepartureDate =
@@ -63,6 +66,24 @@ class FlightController extends GetxController {
     } catch (e) {
       print(e);
       throw Exception('Failed to load flights');
+    }
+  }
+
+  void setDepartureFlight(Flight flight) {
+    departureFlight.value = flight;
+  }
+
+  void setReturnFlight(Flight flight) {
+    returnFlight.value = flight;
+  }
+
+  int getNumberFlightSelected() {
+    if (departureFlight.value != null && returnFlight.value != null) {
+      return 2;
+    } else if (departureFlight.value != null) {
+      return 1;
+    } else {
+      return 0;
     }
   }
 }

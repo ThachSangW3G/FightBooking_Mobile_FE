@@ -61,7 +61,7 @@ class _FlightListingState extends State<FlightListing> {
 
   void _scrollToIndex(int index) {
     // Tính toán vị trí scroll
-    double offset = index * 100; // 150.0 là chiều rộng của mỗi card
+    double offset = index * 130; // 150.0 là chiều rộng của mỗi card
     _scrollController.animateTo(
       offset,
       duration: const Duration(seconds: 1),
@@ -130,18 +130,24 @@ class _FlightListingState extends State<FlightListing> {
           )
         ],
       ),
-      floatingActionButton: Badge(
-        label: const Text('1'),
-        child: FloatingActionButton(
-          onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                builder: (_) => const BottomSheetSelectFlight());
-          },
-          backgroundColor: AppColors.blue,
-          child: const Icon(
-            Icons.flight_takeoff,
-            color: AppColors.white,
+      floatingActionButton: Obx(
+        () => Badge(
+          label: Text(
+            flightController.getNumberFlightSelected().toString(),
+          ),
+          isLabelVisible: flightController.departureFlight.value != null ||
+              flightController.returnFlight.value != null,
+          child: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (_) => const BottomSheetSelectFlight());
+            },
+            backgroundColor: AppColors.blue,
+            child: const Icon(
+              Icons.flight_takeoff,
+              color: AppColors.white,
+            ),
           ),
         ),
       ),
@@ -184,78 +190,72 @@ class _FlightListingState extends State<FlightListing> {
           Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: FutureBuilder<List<DateTime>>(
-                  future: dateTimeController.getDateList(
-                      dateTimeController.rangeStart.value,
-                      dateTimeController.rangeEnd.value ??
-                          dateTimeController.rangeStart.value
-                              .add(const Duration(days: 10))),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox();
-                    }
-
-                    final listDate = snapshot.data ?? [];
-                    return ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: listDate.length,
-                        itemBuilder: (context, index) {
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: () => _onCardTap(listDate[index], index),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      color: selectDate == listDate[index]
-                                          ? AppColors.blue
-                                          : AppColors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15))),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        dateTimeController
-                                            .getWeekday(listDate[index]),
-                                        style: selectDate == listDate[index]
-                                            ? kLableSize18w700White
-                                            : kLableSize18w700Black,
-                                      ),
-                                      Text(
-                                        formatDateTime(listDate[index]),
-                                        style: selectDate == listDate[index]
-                                            ? kLableSize15White
-                                            : kLableSize15Grey,
-                                      )
-                                    ],
-                                  ),
+              child: ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: dateTimeController.listDate.value.length,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () => _onCardTap(
+                              dateTimeController.listDate.value[index], index),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: selectDate ==
+                                        dateTimeController.listDate.value[index]
+                                    ? AppColors.blue
+                                    : AppColors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(15))),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  dateTimeController.getWeekday(
+                                      dateTimeController.listDate.value[index]),
+                                  style: selectDate ==
+                                          dateTimeController
+                                              .listDate.value[index]
+                                      ? kLableSize18w700White
+                                      : kLableSize18w700Black,
                                 ),
+                                Text(
+                                  formatDateTime(
+                                      dateTimeController.listDate.value[index]),
+                                  style: selectDate ==
+                                          dateTimeController
+                                              .listDate.value[index]
+                                      ? kLableSize15White
+                                      : kLableSize15Grey,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 50,
+                          decoration: const ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1,
+                                strokeAlign: BorderSide.strokeAlignCenter,
+                                color: Color(0xFFEBEBF0),
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                height: 50,
-                                decoration: const ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      width: 1,
-                                      strokeAlign: BorderSide.strokeAlignCenter,
-                                      color: Color(0xFFEBEBF0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
-                          );
-                        });
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    );
                   })),
           Container(
             width: double.maxFinite,
@@ -339,119 +339,164 @@ class _FlightListingState extends State<FlightListing> {
             child: Container(
               width: double.maxFinite,
               decoration: const BoxDecoration(color: AppColors.whisper),
-              child: isEmpty
-                  ? Center(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 100,
-                          ),
-                          Container(
-                            height: 150,
-                            width: 200,
-                            decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image:
-                                        AssetImage('assets/images/empty.png'))),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Không tìm thấy chuyến bay',
-                            style: kLableSize20w700Black,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Xin vui lòng chọn tìm kiếm khác',
-                            style: kLableSize18Black,
-                          )
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Giá hiển thị đã bao gồm thuế và phí',
-                            style: kLableSize15w400Grey,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          selectDate != null
-                              ? FutureBuilder<List<Flight>>(
-                                  future: flightController.filterFlights(
-                                      selectDate!,
-                                      airportController
-                                          .selectedDeparture.value!.id,
-                                      airportController
-                                          .selectedDestination.value!.id),
-                                  builder: (_, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    }
-
-                                    if (snapshot.error != null) {
-                                      return const Center(
-                                        child: Text('Error'),
-                                      );
-                                    }
-
-                                    final flights = snapshot.data;
-                                    return ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: flights!.length,
-                                        itemBuilder: (_, index) {
-                                          final flight = flights[index];
-                                          return InkWell(
-                                            onTap: () {
-                                              // Get.to(() => const TripSummary());
-                                            },
-                                            child: FlightItem(
-                                              flight: flight,
-                                            ),
-                                          );
-                                        });
-                                  })
-                              : const SizedBox()
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                        ],
-                      ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
                     ),
+                    Text(
+                      'Giá hiển thị đã bao gồm thuế và phí',
+                      style: kLableSize15w400Grey,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+
+                    selectDate != null
+                        ? FutureBuilder<List<Flight>>(
+                            future: flightController.filterFlights(
+                                selectDate!,
+                                flightController.departureFlight.value != null
+                                    ? airportController
+                                        .selectedDestination.value!.id
+                                    : airportController
+                                        .selectedDeparture.value!.id,
+                                flightController.departureFlight.value != null
+                                    ? airportController
+                                        .selectedDeparture.value!.id
+                                    : airportController
+                                        .selectedDestination.value!.id),
+                            builder: (_, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox(
+                                  height: 600,
+                                  child: Center(
+                                      child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                    ],
+                                  )),
+                                );
+                              }
+
+                              if (snapshot.error != null) {
+                                return const Center(
+                                  child: Text('Error'),
+                                );
+                              }
+
+                              final flights = snapshot.data;
+
+                              if (flights!.isEmpty) {
+                                return Center(
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 100,
+                                      ),
+                                      Container(
+                                        height: 150,
+                                        width: 200,
+                                        decoration: const BoxDecoration(
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: AssetImage(
+                                                    'assets/images/empty.png'))),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Không tìm thấy chuyến bay',
+                                        style: kLableSize20w700Black,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Xin vui lòng chọn tìm kiếm khác',
+                                        style: kLableSize18Black,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: flights!.length,
+                                  itemBuilder: (_, index) {
+                                    final flight = flights[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        // Get.to(() => const TripSummary());
+                                      },
+                                      child: FlightItem(
+                                        flight: flight,
+                                        onTap: () {
+                                          if (flightController
+                                                  .departureFlight.value !=
+                                              null) {
+                                            flightController
+                                                .setReturnFlight(flight);
+
+                                            return;
+                                          }
+
+                                          flightController
+                                              .setDepartureFlight(flight);
+
+                                          print(flightController
+                                              .departureFlight.value);
+                                          if (dateTimeController
+                                              .isRoundTrip.value) {
+                                            setState(() {
+                                              _onCardTap(
+                                                  dateTimeController
+                                                      .rangeEnd.value!,
+                                                  dateTimeController
+                                                      .getIndexInListDate(
+                                                          dateTimeController
+                                                              .rangeEnd
+                                                              .value!));
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  });
+                            })
+                        : const SizedBox()
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                  ],
+                ),
+              ),
             ),
           )
         ],

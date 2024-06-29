@@ -506,7 +506,47 @@ class _FindFlightState extends State<FindFlight> {
                             height: 25,
                           ),
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              if (airportController.selectedDeparture.value ==
+                                      null ||
+                                  airportController.selectedDestination.value ==
+                                      null ||
+                                  (passengerController.adult.value +
+                                          passengerController.children.value +
+                                          passengerController.babe.value) ==
+                                      0) {
+                                final snackDemo = SnackBar(
+                                  content: Text(
+                                    'Vui lòng chọn đầy đủ!',
+                                    style: kLableW800White,
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  elevation: 10,
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.all(5),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackDemo);
+                                return;
+                              }
+
+                              if (dateTimeController.isRoundTrip.value &&
+                                  (dateTimeController.rangeEnd.value == null)) {
+                                final snackDemo = SnackBar(
+                                  content: Text(
+                                    'Vui lòng chọn ngày về!',
+                                    style: kLableW800White,
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  elevation: 10,
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.all(5),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackDemo);
+                                return;
+                              }
+                              await dateTimeController.getDateList();
                               Get.to(const FlightListing());
                             },
                             child: Container(

@@ -6,27 +6,23 @@ class DateTimeController extends GetxController {
   var rangeStart = DateTime.now().obs;
   var rangeEnd = Rx<DateTime?>(null);
 
-  var listDate = [
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-    DateTime(2024, 04, 22),
-  ];
+  var listDate = Rx<List<DateTime>>([]);
 
-  Future<List<DateTime>> getDateList(DateTime start, DateTime end) async {
+  Future<void> getDateList() async {
     List<DateTime> dates = [];
-    DateTime current = start;
+    DateTime current = rangeStart.value;
 
-    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+    while (current.isBefore(isRoundTrip.value
+            ? rangeEnd.value!
+            : rangeStart.value.add(const Duration(days: 10))) ||
+        current.isAtSameMomentAs(isRoundTrip.value
+            ? rangeEnd.value!
+            : rangeStart.value.add(const Duration(days: 10)))) {
       dates.add(current);
       current = current.add(Duration(days: 1));
     }
 
-    return dates;
+    listDate.value = dates;
   }
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -68,5 +64,9 @@ class DateTimeController extends GetxController {
       default:
         return '';
     }
+  }
+
+  int getIndexInListDate(DateTime dateTime) {
+    return listDate.value.indexOf(dateTime);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/seat/seat_selection_screen.dart';
 
 import 'package:flightbooking_mobile_fe/screens/splash/logo_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/splash/splash_one_screen.dart';
@@ -41,6 +42,12 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: PaymentScreen());
+        // home: const CheckoutScreen());
+        home: TripSummaryScreen(
+            departureFlightId: 1,
+            returnFlightId: 2,
+            numAdults: 1,
+            numChildren: 2,
+            numInfants: 1));
   }
 }

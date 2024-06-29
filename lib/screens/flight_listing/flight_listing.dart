@@ -312,31 +312,31 @@ class _FlightListingState extends State<FlightListing> {
                           const SizedBox(
                             height: 10,
                           ),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
-                          InkWell(
-                              onTap: () {
-                                Get.to(() => const TripSummary());
-                              },
-                              child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummaryScreen());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummaryScreen());
+                          //     },
+                          //     child: const FlightItem()),
+                          // InkWell(
+                          //     onTap: () {
+                          //       Get.to(() => const TripSummary());
+                          //     },
+                          //     child: const FlightItem()),
                         ],
                       ),
                     ),

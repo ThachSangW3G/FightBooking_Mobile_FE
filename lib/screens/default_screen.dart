@@ -1,9 +1,45 @@
-import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/tickets/view_ticket_screen.dart';
+import 'dart:ffi';
+import 'package:flightbooking_mobile_fe/components/chat/chat_bubble.dart';
+import 'package:flightbooking_mobile_fe/screens/chat/chat_window.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class DefaultScreen extends StatelessWidget {
-  const DefaultScreen({super.key});
+class DefaultScreen extends StatefulWidget {
+  const DefaultScreen({Key? key}) : super(key: key);
+
+  @override
+  _DefaultScreenState createState() => _DefaultScreenState();
+}
+
+class _DefaultScreenState extends State<DefaultScreen> {
+  bool _isChatOpen = false;
+  Offset _offset = Offset(20, 20);
+  late String _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsername();
+  }
+
+  Future<void> _fetchUsername() async {
+    final response = await http.get(
+      Uri.parse(
+          'http://192.168.1.8:7050/users/token?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nMTIzNCIsImlhdCI6MTcxOTU2MDM3MSwiZXhwIjoxNzE5NTc0NzcxfQ.v9XdJm6Umg2zys2cnKnt2wA7QVKy7a0R1l26gUECPfQ'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _userId = data['id'].toString();
+        print(_userId);
+      });
+    } else {
+      // Handle error
+      print('Failed to load username');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,38 +47,43 @@ class DefaultScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Default Screen'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CheckoutScreen()),
-                );
-              },
-              child: Text('Checkout'),
+      body: Stack(
+        children: [
+          if (_isChatOpen)
+            Center(
+              child: ChatWindow(
+                onClose: () {
+                  setState(() {
+                    _isChatOpen = false;
+                  });
+                },
+                userId: _userId,
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Xử lý sự kiện khi nhấn nút View Checkout
-              },
-              child: Text('View Checkout'),
+          if (!_isChatOpen)
+            Positioned(
+              left: _offset.dx,
+              top: _offset.dy,
+              child: Draggable(
+                feedback: ChatBubble(
+                  onPressed: () {},
+                ),
+                childWhenDragging: Container(),
+                onDraggableCanceled: (velocity, offset) {
+                  setState(() {
+                    _offset = offset;
+                  });
+                },
+                child: ChatBubble(
+                  onPressed: () {
+                    setState(() {
+                      _isChatOpen = true;
+                    });
+                  },
+                ),
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TicketScreenWidget()),
-                );
-              },
-              child: Text('View Ticket'),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

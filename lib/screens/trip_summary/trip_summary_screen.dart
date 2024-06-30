@@ -4,6 +4,8 @@ import 'package:flightbooking_mobile_fe/components/trip_summary/one_flight.dart'
 import 'package:flightbooking_mobile_fe/components/trip_summary/price_details.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_price_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
@@ -47,6 +49,10 @@ class _TripSummaryState extends State<TripSummary> {
     {'type': 'SkyBoss', 'price': 1300000},
     {'type': 'Flex', 'price': 100000},
   ];
+
+  final FlightController flightController = Get.put(FlightController());
+  final AirportController airportController = Get.put(AirportController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,10 +73,12 @@ class _TripSummaryState extends State<TripSummary> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-              child: Text('Chuyến đi: Hồ Chí Minh - Hà Nội',
+              child: Text(
+                  'Chuyến đi: ${airportController.selectedDeparture.value!.city} - ${airportController.selectedDestination.value!.city}',
                   style: kLableSize18w700Black),
             ),
             OnFlight(
+              flight: flightController.departureFlight.value!,
               onTapDetails: () {},
               onPressButton: () {
                 showChooseTickets();

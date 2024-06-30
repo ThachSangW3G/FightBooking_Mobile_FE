@@ -44,7 +44,6 @@ class _FlightListingState extends State<FlightListing> {
   final SortController sortController = Get.put(SortController());
 
   final ScrollController _scrollController = ScrollController();
-  DateTime? selectDate;
 
   @override
   void dispose() {
@@ -54,8 +53,14 @@ class _FlightListingState extends State<FlightListing> {
 
   void _onCardTap(DateTime date, int index) {
     setState(() {
-      selectDate = date;
+      dateTimeController.selectDate.value = date;
     });
+    flightController.filterFlights(
+        dateTimeController.selectDate.value!,
+        airportController.selectedDeparture.value!.id,
+        airportController.selectedDestination.value!.id,
+        seatClassController.selectedSeatClass.value,
+        sortController.selectedSort.value);
     _scrollToIndex(index);
   }
 
@@ -73,7 +78,13 @@ class _FlightListingState extends State<FlightListing> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectDate = dateTimeController.rangeStart.value;
+    dateTimeController.selectDate.value = dateTimeController.rangeStart.value;
+    flightController.filterFlights(
+        dateTimeController.selectDate.value!,
+        airportController.selectedDeparture.value!.id,
+        airportController.selectedDestination.value!.id,
+        seatClassController.selectedSeatClass.value,
+        sortController.selectedSort.value);
   }
 
   @override
@@ -205,7 +216,7 @@ class _FlightListingState extends State<FlightListing> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 5),
                             decoration: BoxDecoration(
-                                color: selectDate ==
+                                color: dateTimeController.selectDate.value ==
                                         dateTimeController.listDate.value[index]
                                     ? AppColors.blue
                                     : AppColors.white,
@@ -217,7 +228,7 @@ class _FlightListingState extends State<FlightListing> {
                                 Text(
                                   dateTimeController.getWeekday(
                                       dateTimeController.listDate.value[index]),
-                                  style: selectDate ==
+                                  style: dateTimeController.selectDate.value ==
                                           dateTimeController
                                               .listDate.value[index]
                                       ? kLableSize18w700White
@@ -226,7 +237,7 @@ class _FlightListingState extends State<FlightListing> {
                                 Text(
                                   formatDateTime(
                                       dateTimeController.listDate.value[index]),
-                                  style: selectDate ==
+                                  style: dateTimeController.selectDate.value ==
                                           dateTimeController
                                               .listDate.value[index]
                                       ? kLableSize15White
@@ -353,121 +364,100 @@ class _FlightListingState extends State<FlightListing> {
                       height: 10,
                     ),
 
-                    selectDate != null
-                        ? FutureBuilder<List<Flight>>(
-                            future: flightController.filterFlights(
-                                selectDate!,
-                                flightController.departureFlight.value != null
-                                    ? airportController
-                                        .selectedDestination.value!.id
-                                    : airportController
-                                        .selectedDeparture.value!.id,
-                                flightController.departureFlight.value != null
-                                    ? airportController
-                                        .selectedDeparture.value!.id
-                                    : airportController
-                                        .selectedDestination.value!.id),
-                            builder: (_, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const SizedBox(
-                                  height: 600,
-                                  child: Center(
-                                      child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircularProgressIndicator(),
-                                    ],
-                                  )),
-                                );
-                              }
+                    dateTimeController.selectDate.value != null
+                        ? Obx(() {
+                            if (flightController.isLoading.value) {
+                              return const SizedBox(
+                                height: 600,
+                                child: Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(),
+                                  ],
+                                )),
+                              );
+                            }
+                            if (flightController.flights.value.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 100,
+                                    ),
+                                    Container(
+                                      height: 150,
+                                      width: 200,
+                                      decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: AssetImage(
+                                                  'assets/images/empty.png'))),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Không tìm thấy chuyến bay',
+                                      style: kLableSize20w700Black,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Xin vui lòng chọn tìm kiếm khác',
+                                      style: kLableSize18Black,
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
 
-                              if (snapshot.error != null) {
-                                return const Center(
-                                  child: Text('Error'),
-                                );
-                              }
-
-                              final flights = snapshot.data;
-
-                              if (flights!.isEmpty) {
-                                return Center(
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 100,
-                                      ),
-                                      Container(
-                                        height: 150,
-                                        width: 200,
-                                        decoration: const BoxDecoration(
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: AssetImage(
-                                                    'assets/images/empty.png'))),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        'Không tìm thấy chuyến bay',
-                                        style: kLableSize20w700Black,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        'Xin vui lòng chọn tìm kiếm khác',
-                                        style: kLableSize18Black,
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }
-                              return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: flights!.length,
-                                  itemBuilder: (_, index) {
-                                    final flight = flights[index];
-                                    return InkWell(
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:
+                                    flightController.flights.value.length,
+                                itemBuilder: (_, index) {
+                                  final flight =
+                                      flightController.flights.value[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      // Get.to(() => const TripSummary());
+                                    },
+                                    child: FlightItem(
+                                      flight: flight,
                                       onTap: () {
-                                        // Get.to(() => const TripSummary());
-                                      },
-                                      child: FlightItem(
-                                        flight: flight,
-                                        onTap: () {
-                                          if (flightController
-                                                  .departureFlight.value !=
-                                              null) {
-                                            flightController
-                                                .setReturnFlight(flight);
-
-                                            return;
-                                          }
-
+                                        if (flightController
+                                                .departureFlight.value !=
+                                            null) {
                                           flightController
-                                              .setDepartureFlight(flight);
+                                              .setReturnFlight(flight);
 
-                                          print(flightController
-                                              .departureFlight.value);
-                                          if (dateTimeController
-                                              .isRoundTrip.value) {
-                                            setState(() {
-                                              _onCardTap(
-                                                  dateTimeController
-                                                      .rangeEnd.value!,
-                                                  dateTimeController
-                                                      .getIndexInListDate(
-                                                          dateTimeController
-                                                              .rangeEnd
-                                                              .value!));
-                                            });
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  });
-                            })
+                                          return;
+                                        }
+
+                                        flightController
+                                            .setDepartureFlight(flight);
+
+                                        print(flightController
+                                            .departureFlight.value);
+                                        if (dateTimeController
+                                            .isRoundTrip.value) {
+                                          setState(() {
+                                            _onCardTap(
+                                                dateTimeController
+                                                    .rangeEnd.value!,
+                                                dateTimeController
+                                                    .getIndexInListDate(
+                                                        dateTimeController
+                                                            .rangeEnd.value!));
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  );
+                                });
+                          })
                         : const SizedBox()
                     // InkWell(
                     //     onTap: () {

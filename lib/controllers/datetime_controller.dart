@@ -8,6 +8,8 @@ class DateTimeController extends GetxController {
 
   var listDate = Rx<List<DateTime>>([]);
 
+  var selectDate = Rx<DateTime?>(null);
+
   Future<void> getDateList() async {
     List<DateTime> dates = [];
     DateTime current = rangeStart.value;

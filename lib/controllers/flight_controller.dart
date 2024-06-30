@@ -11,8 +11,126 @@ class FlightController extends GetxController {
   var departureFlight = Rx<Flight?>(null);
   var returnFlight = Rx<Flight?>(null);
 
-  Future<List<Flight>> filterFlights(DateTime departureDate,
-      int departureAirportId, int arrivalAirportId) async {
+  var filterPriceMin = Rx<int>(0);
+  var filterPriceMax = Rx<int>(0);
+
+  var flights = Rx<List<Flight>>([]);
+
+  var isLoading = false.obs;
+
+  void sortByPrice(int classType) {
+    switch (classType) {
+      case 0:
+        return flights.value
+            .sort((a, b) => a.economyPrice.compareTo(b.economyPrice));
+      case 1:
+        return flights.value
+            .sort((a, b) => a.businessPrice.compareTo(b.businessPrice));
+      case 2:
+        return flights.value
+            .sort((a, b) => a.firstClassPrice.compareTo(b.firstClassPrice));
+      default:
+        return;
+    }
+  }
+
+  void sortAscDepartureTime() {
+    return flights.value
+        .sort((a, b) => a.departureDate.compareTo(b.departureDate));
+  }
+
+  void sortDescDepartureTime() {
+    return flights.value
+        .sort((a, b) => b.departureDate.compareTo(a.departureDate));
+  }
+
+  void sortAscArrivalTime() {
+    return flights.value.sort((a, b) => a.arrivalDate.compareTo(b.arrivalDate));
+  }
+
+  void sortDescArrivalTime() {
+    return flights.value.sort((a, b) => b.arrivalDate.compareTo(a.arrivalDate));
+  }
+
+  void setFilterPriceMin(int price) {
+    filterPriceMin.value = price;
+  }
+
+  void setFilterPriceMax(int price) {
+    filterPriceMax.value = price;
+  }
+
+  // List<Flight> filterFlightByAirline(List<Flight> flights) {
+
+  // }
+
+  List<Flight> filterFlightByPrice(List<Flight> flights, int classType) {
+    if (filterPriceMin.value == 0 && filterPriceMax.value == 0) {
+      return flights;
+    }
+
+    if (filterPriceMax.value == 0) {
+      switch (classType) {
+        case 0:
+          return flights
+              .where((flight) => flight.economyPrice >= filterPriceMin.value)
+              .toList();
+        case 1:
+          return flights
+              .where((flight) => flight.businessPrice >= filterPriceMin.value)
+              .toList();
+        case 2:
+          return flights
+              .where((flight) => flight.firstClassPrice >= filterPriceMin.value)
+              .toList();
+        default:
+          return flights;
+      }
+    }
+
+    if (filterPriceMin.value == 0) {
+      switch (classType) {
+        case 0:
+          return flights
+              .where((flight) => flight.economyPrice <= filterPriceMax.value)
+              .toList();
+        case 1:
+          return flights
+              .where((flight) => flight.businessPrice <= filterPriceMax.value)
+              .toList();
+        case 2:
+          return flights
+              .where((flight) => flight.firstClassPrice <= filterPriceMax.value)
+              .toList();
+        default:
+          return flights;
+      }
+    }
+
+    if (classType == 0) {
+      return flights
+          .where((flight) =>
+              flight.economyPrice >= filterPriceMin.value &&
+              flight.economyPrice <= filterPriceMax.value)
+          .toList();
+    } else if (classType == 1) {
+      return flights
+          .where((flight) =>
+              flight.businessPrice >= filterPriceMin.value &&
+              flight.businessPrice <= filterPriceMax.value)
+          .toList();
+    } else {
+      return flights
+          .where((flight) =>
+              flight.firstClassPrice >= filterPriceMin.value &&
+              flight.firstClassPrice <= filterPriceMax.value)
+          .toList();
+    }
+  }
+
+  Future<void> filterFlights(DateTime departureDate, int departureAirportId,
+      int arrivalAirportId, int classType, int selectSort) async {
+    isLoading.value = true;
     final formatDepartureDate =
         DateFormat('yyyy-MM-dd HH:mm:ss').format(departureDate);
 
@@ -26,7 +144,7 @@ class FlightController extends GetxController {
 
         print(jsonData);
 
-        final List<Flight> flights = [];
+        final List<Flight> flightsResponse = [];
         jsonData.forEach((element) {
           final id = element['id'];
 
@@ -56,16 +174,38 @@ class FlightController extends GetxController {
           );
           print(flight);
 
-          flights.add(flight);
+          flightsResponse.add(flight);
         });
 
-        return flights;
+        flights.value = filterFlightByPrice(flightsResponse, classType);
+
+        switch (selectSort) {
+          case 0:
+            sortByPrice(classType);
+            break;
+          case 1:
+            sortAscDepartureTime();
+            break;
+          case 2:
+            sortDescDepartureTime();
+            break;
+          case 3:
+            sortAscArrivalTime();
+            break;
+          case 4:
+            sortDescArrivalTime();
+            break;
+          default:
+            break;
+        }
       } else {
         throw Exception('Failed to load flights');
       }
     } catch (e) {
       print(e);
       throw Exception('Failed to load flights');
+    } finally {
+      isLoading.value = false;
     }
   }
 

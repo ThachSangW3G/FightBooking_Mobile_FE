@@ -3,8 +3,11 @@ import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/review_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/home/find_flight.dart';
+import 'package:flightbooking_mobile_fe/screens/home/webview_screen.dart';
+import 'package:flightbooking_mobile_fe/widgets/home/review_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -33,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final SeatClassController seatClassController =
       Get.put(SeatClassController());
+
+  final ReviewController reviewController = Get.put(ReviewController());
 
   @override
   Widget build(BuildContext context) {
@@ -117,155 +122,249 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Positioned(
                     top: 75,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 20),
-                      width: MediaQuery.of(context).size.width - 40,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3), // Thay đổi offset tùy ý
-                            ),
-                          ],
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(15))),
-                      child: Column(
-                        children: [
-                          Row(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          width: MediaQuery.of(context).size.width - 40,
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3), // Thay đổi offset tùy ý
+                                ),
+                              ],
+                              color: AppColors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: Column(
                             children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
                                       children: [
-                                        SvgPicture.asset(
-                                            'assets/icons/planeup.svg'),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
+                                        Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              'Điểm đi',
-                                              style: kLableSize18Black,
+                                            SvgPicture.asset(
+                                                'assets/icons/planeup.svg'),
+                                            const SizedBox(
+                                              width: 10,
                                             ),
-                                            Text(
-                                              'Chọn điểm đi',
-                                              style: kLableSize18Grey,
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Điểm đi',
+                                                  style: kLableSize18Black,
+                                                ),
+                                                Text(
+                                                  'Chọn điểm đi',
+                                                  style: kLableSize18Grey,
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SvgPicture.asset(
+                                                'assets/icons/planedown.svg'),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Điểm đến',
+                                                  style: kLableSize18Black,
+                                                ),
+                                                Text(
+                                                  'Chọn điểm đến',
+                                                  style: kLableSize18Grey,
+                                                )
+                                              ],
                                             )
                                           ],
                                         )
                                       ],
                                     ),
-                                    const SizedBox(
-                                      height: 10,
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/icons/switch.svg',
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                width: 312,
+                                decoration: const ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      width: 1,
+                                      strokeAlign: BorderSide.strokeAlignCenter,
+                                      color: Color(0xFFEBEBF0),
                                     ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
                                       children: [
-                                        SvgPicture.asset(
-                                            'assets/icons/planedown.svg'),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Điểm đến',
-                                              style: kLableSize18Black,
-                                            ),
-                                            Text(
-                                              'Chọn điểm đến',
-                                              style: kLableSize18Grey,
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                              SvgPicture.asset(
-                                'assets/icons/switch.svg',
-                                height: 30,
-                                width: 30,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            width: 312,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 1,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFFEBEBF0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    InkWell(
-                                      onTap: () => {showBottomSheetDate()},
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset(
-                                              'assets/icons/calendar-from.svg'),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Column(
+                                        InkWell(
+                                          onTap: () => {showBottomSheetDate()},
+                                          child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                'Ngày đi',
-                                                style: kLableSize18Black,
+                                              SvgPicture.asset(
+                                                  'assets/icons/calendar-from.svg'),
+                                              const SizedBox(
+                                                width: 10,
                                               ),
-                                              Obx(() => Text(
-                                                    formatDateTime(
-                                                        dateTimeController
-                                                            .rangeStart.value),
-                                                    style:
-                                                        kLableSize18w700Black,
-                                                  ))
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Ngày đi',
+                                                    style: kLableSize18Black,
+                                                  ),
+                                                  Obx(() => Text(
+                                                        formatDateTime(
+                                                            dateTimeController
+                                                                .rangeStart
+                                                                .value),
+                                                        style:
+                                                            kLableSize18w700Black,
+                                                      ))
+                                                ],
+                                              )
                                             ],
-                                          )
-                                        ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SvgPicture.asset(
+                                                'assets/icons/calendar-to.svg'),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Ngày về',
+                                                  style: kLableSize18Black,
+                                                ),
+                                                Obx(() => dateTimeController
+                                                            .rangeEnd.value ==
+                                                        null
+                                                    ? Text(
+                                                        'Chọn ngày về',
+                                                        style: kLableSize18Grey,
+                                                      )
+                                                    : Text(
+                                                        formatDateTime(
+                                                            dateTimeController
+                                                                .rangeEnd
+                                                                .value!),
+                                                        style:
+                                                            kLableSize18w700Black,
+                                                      ))
+                                              ],
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Khứ hồi',
+                                        style: kLableSize15Black,
                                       ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Obx(
+                                        () => CupertinoSwitch(
+                                            activeColor: AppColors.blue,
+                                            value: dateTimeController
+                                                .isRoundTrip.value,
+                                            onChanged: (value) {
+                                              dateTimeController
+                                                  .changeRoundTrip(value);
+                                            }),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                width: 312,
+                                decoration: const ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      width: 1,
+                                      strokeAlign: BorderSide.strokeAlignCenter,
+                                      color: Color(0xFFEBEBF0),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      showBottomSheePassenger();
+                                    },
+                                    child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         SvgPicture.asset(
-                                            'assets/icons/calendar-to.svg'),
+                                            'assets/icons/customer.svg'),
                                         const SizedBox(
                                           width: 10,
                                         ),
@@ -274,164 +373,121 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Ngày về',
+                                              'Hành khách',
                                               style: kLableSize18Black,
                                             ),
-                                            Obx(() => dateTimeController
-                                                        .rangeEnd.value ==
-                                                    null
-                                                ? Text(
-                                                    'Chọn ngày về',
-                                                    style: kLableSize18Grey,
-                                                  )
-                                                : Text(
-                                                    formatDateTime(
-                                                        dateTimeController
-                                                            .rangeEnd.value!),
-                                                    style:
-                                                        kLableSize18w700Black,
-                                                  ))
+                                            Obx(() => Text(
+                                                  '${(passengerController.adult.value + passengerController.children.value + passengerController.babe.value)} hành khách',
+                                                  style: kLableSize18w700Black,
+                                                ))
                                           ],
                                         )
                                       ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Khứ hồi',
-                                    style: kLableSize15Black,
+                                    ),
                                   ),
-                                  const SizedBox(
-                                    width: 5,
+                                  InkWell(
+                                    onTap: () {
+                                      showBottomSheetSeatClass();
+                                    },
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SvgPicture.asset(
+                                            'assets/icons/seat.svg'),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Hạng ghế',
+                                              style: kLableSize18Black,
+                                            ),
+                                            Obx(() => Text(
+                                                  seatClassController
+                                                      .seatClasses[
+                                                          seatClassController
+                                                              .selectedSeatClass
+                                                              .value]
+                                                      .title,
+                                                  style: kLableSize18w700Black,
+                                                ))
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  Obx(
-                                    () => CupertinoSwitch(
-                                        activeColor: AppColors.blue,
-                                        value: dateTimeController
-                                            .isRoundTrip.value,
-                                        onChanged: (value) {
-                                          dateTimeController
-                                              .changeRoundTrip(value);
-                                        }),
-                                  )
                                 ],
+                              ),
+                              const SizedBox(
+                                height: 25,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(const FindFlight());
+                                  //Get.to(() => NewsWebViewPage(url: "Hello"));
+                                },
+                                child: Container(
+                                  height: 50,
+                                  width: double.maxFinite,
+                                  decoration: const BoxDecoration(
+                                      color: AppColors.blue,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(15))),
+                                  child: Center(
+                                    child: Text(
+                                      'Tìm chuyến bay',
+                                      style: kLableSize18White,
+                                    ),
+                                  ),
+                                ),
                               )
                             ],
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            width: 312,
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 1,
-                                  strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: Color(0xFFEBEBF0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  showBottomSheePassenger();
-                                },
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset(
-                                        'assets/icons/customer.svg'),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Hành khách',
-                                          style: kLableSize18Black,
-                                        ),
-                                        Obx(() => Text(
-                                              '${(passengerController.adult.value + passengerController.children.value + passengerController.babe.value)} hành khách',
-                                              style: kLableSize18w700Black,
-                                            ))
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  showBottomSheetSeatClass();
-                                },
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset('assets/icons/seat.svg'),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Hạng ghế',
-                                          style: kLableSize18Black,
-                                        ),
-                                        Obx(() => Text(
-                                              seatClassController
-                                                  .seatClasses[
-                                                      seatClassController
-                                                          .selectedSeatClass
-                                                          .value]
-                                                  .title,
-                                              style: kLableSize18w700Black,
-                                            ))
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Get.to(const FindFlight());
-                            },
-                            child: Container(
-                              height: 50,
-                              width: double.maxFinite,
-                              decoration: const BoxDecoration(
-                                  color: AppColors.blue,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15))),
-                              child: Center(
-                                child: Text(
-                                  'Tìm chuyến bay',
-                                  style: kLableSize18White,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Text(
+                          'Khám phá',
+                          style: kLableSize20w700Black,
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                      ],
                     ),
-                  )
+                  ),
+                  Positioned(
+                    top:
+                        580, // Điều chỉnh top để phù hợp với vị trí muốn hiển thị
+                    child: SizedBox(
+                      height: 900, // Điều chỉnh chiều cao của ListView
+                      width: MediaQuery.of(context).size.width,
+                      child: Obx(() {
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: reviewController.listReview.length,
+                          itemBuilder: (context, index) {
+                            final review = reviewController.listReview[index];
+                            return ReviewWidgets(
+                              onPress: () {
+                                Get.to(() =>
+                                    NewsWebViewPage(url: review.famousPlace));
+                              },
+                              imageUrl: review.listImage.isNotEmpty
+                                  ? review.listImage[0]
+                                  : '', // Assuming listImage has at least one image
+                              title: review.title,
+                            );
+                          },
+                        );
+                      }),
+                    ),
+                  ),
                 ],
               ),
             ),

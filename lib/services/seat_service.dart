@@ -4,7 +4,7 @@ import 'package:flightbooking_mobile_fe/models/Thuongle/seat.dart';
 
 Future<Map<String, Seat>> fetchSeats(int flightId) async {
   final response = await http.get(Uri.parse(
-      'http://192.168.1.6:7050/flight/$flightId/get-seat-status?flightId=$flightId'));
+      'https://flightbookingbe-production.up.railway.app/flight/$flightId/get-seat-status?flightId=$flightId'));
 
   if (response.statusCode == 200) {
     Map<String, dynamic> json = jsonDecode(response.body);

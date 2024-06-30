@@ -3,8 +3,16 @@ import 'package:flightbooking_mobile_fe/models/Thuongle/seat.dart';
 
 class SeatGridView extends StatelessWidget {
   final Map<String, Seat> seats;
+  final List<String> selectedSeats;
+  final Function(String) onSeatTap;
+  final Color Function(Seat, String) getSeatColor;
 
-  SeatGridView({required this.seats});
+  SeatGridView({
+    required this.seats,
+    required this.selectedSeats,
+    required this.onSeatTap,
+    required this.getSeatColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,21 +29,26 @@ class SeatGridView extends StatelessWidget {
     return ListView(
       children: rows.keys.map((row) {
         return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: rows[row]!.map((seatId) {
             Seat seat = seats[seatId]!;
             return Expanded(
               child: GestureDetector(
-                onTap: seat.status == 'AVAILABLE'
-                    ? () {
-                        // Handle seat selection
-                        print('Selected seat $seatId');
-                      }
-                    : null,
+                onTap:
+                    seat.status == 'AVAILABLE' ? () => onSeatTap(seatId) : null,
                 child: Container(
                   margin: EdgeInsets.all(4.0),
-                  color: seat.status == 'AVAILABLE' ? Colors.green : Colors.red,
+                  decoration: BoxDecoration(
+                    color: getSeatColor(seat, seatId),
+                    borderRadius: BorderRadius.circular(15.0),
+                    border: Border.all(color: Colors.black),
+                  ),
+                  height: 50, // Set a fixed height for seats
                   child: Center(
-                    child: Text(seatId),
+                    child: Text(
+                      seatId,
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ),

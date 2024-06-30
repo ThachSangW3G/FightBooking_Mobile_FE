@@ -45,9 +45,9 @@ class MyApp extends StatelessWidget {
         // home: const CheckoutScreen());
         home: TripSummaryScreen(
             departureFlightId: 1,
-            returnFlightId: 2,
+            returnFlightId: 3,
             numAdults: 1,
-            numChildren: 2,
+            numChildren: 1,
             numInfants: 1));
   }
 }

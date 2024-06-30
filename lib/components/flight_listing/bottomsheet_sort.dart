@@ -1,9 +1,14 @@
+import 'package:flightbooking_mobile_fe/controllers/airline_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_styles.dart';
+import '../../controllers/airport_controller.dart';
+import '../../controllers/flight_controller.dart';
 
 class BottomSheetSort extends StatefulWidget {
   const BottomSheetSort({super.key});
@@ -14,6 +19,13 @@ class BottomSheetSort extends StatefulWidget {
 
 class _BottomSheetSortState extends State<BottomSheetSort> {
   final SortController sortController = Get.put(SortController());
+
+  final AirlineController airlineController = Get.put(AirlineController());
+  final FlightController flightController = Get.put(FlightController());
+  final DateTimeController dateTimeController = Get.put(DateTimeController());
+  final AirportController airportController = Get.put(AirportController());
+  final SeatClassController seatClassController =
+      Get.put(SeatClassController());
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +65,13 @@ class _BottomSheetSortState extends State<BottomSheetSort> {
                   return InkWell(
                     onTap: () {
                       sortController.selectedSort(index);
+                      flightController.filterFlights(
+                          dateTimeController.selectDate.value!,
+                          airportController.selectedDeparture.value!.id,
+                          airportController.selectedDestination.value!.id,
+                          seatClassController.selectedSeatClass.value,
+                          sortController.selectedSort.value);
+                      Get.back();
                     },
                     child: Column(
                       children: [

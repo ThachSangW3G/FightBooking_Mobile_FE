@@ -48,7 +48,7 @@ class FlightInfoWidget extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Chuyến bay: ',
+                  'Trạng thái chuyến bay: ',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -208,7 +208,7 @@ class FlightInfoWidget extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10.0),
             child: Center(
               child: Text(
-                'Total Flights: ' + totalFlight,
+                'Total Flights: ' + totalFlight + ' hours',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ),

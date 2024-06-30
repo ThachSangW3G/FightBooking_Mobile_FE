@@ -1,9 +1,13 @@
+import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/seat/seat_selection_screen.dart';
 
 import 'package:flightbooking_mobile_fe/screens/splash/logo_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/splash/splash_one_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,6 +42,13 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: PaymentScreen());
+        // home: const CheckoutScreen());
+        // home: TripSummaryScreen(
+        //     departureFlightId: 1,
+        //     returnFlightId: 3,
+        //     numAdults: 1,
+        //     numChildren: 1,
+        //     numInfants: 1));
+        home: DefaultScreen());
   }
 }

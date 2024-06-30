@@ -442,13 +442,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 ),
                 SizedBox(height: 10),
-                InkWell(
-                  onTap: () => Navigator.of(context).pop(), // Đóng dialog
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.blue, // Assuming AppColors.dodger is blue
-                  ),
-                ),
               ],
             ),
           ),

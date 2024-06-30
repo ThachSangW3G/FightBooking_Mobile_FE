@@ -35,7 +35,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         navKey: homeNavKey,
       ),
       NavModel(
-        page: const TripSummary(),
+        page: const TripSummaryScreen(),
         navKey: ticketKey,
       ),
       NavModel(

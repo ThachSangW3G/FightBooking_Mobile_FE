@@ -8,7 +8,6 @@ class SortController extends GetxController {
     Sort(id: 3, title: 'Cất cánh muộn nhất'),
     Sort(id: 4, title: 'Hạ cánh sớm nhất'),
     Sort(id: 5, title: 'Hạ cánh muộn nhất'),
-    Sort(id: 6, title: 'Thời gian bay ngắn nhất'),
   ];
 
   var selectedSort = 1.obs;

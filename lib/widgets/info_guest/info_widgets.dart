@@ -5,7 +5,6 @@ import 'package:flightbooking_mobile_fe/components/info_guest/input_time.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class InfoGuestWidget extends StatefulWidget {
   const InfoGuestWidget({super.key});

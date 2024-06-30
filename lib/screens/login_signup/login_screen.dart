@@ -3,6 +3,7 @@ import 'package:flightbooking_mobile_fe/components/login_signup/button_icon.dart
 import 'package:flightbooking_mobile_fe/components/splash/button_next.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/bottom_nav/bottom_nav.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
@@ -27,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
   AuthController authController = Get.put(AuthController());
+  AirportController airportController = Get.put(AirportController());
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -45,6 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
       //final accessToken = prefs.getString('tokenAccess');
 
       //await userController.getUserByToken(accessToken!);
+
+      await airportController.getAllAirport();
 
       Get.to(() => const BottomNavigation());
     } else {

@@ -1,8 +1,12 @@
+
+import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
+
 import 'package:flightbooking_mobile_fe/components/payments/new_card_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/payment_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/saved_card_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+
 import 'package:flightbooking_mobile_fe/screens/payments/payment_successful.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -80,6 +84,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: AppColors.dodger,
         leading: IconButton(
           color: AppColors.white,
@@ -128,19 +133,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       } else {
                         Get.off(() => const PaymentSuccessfulWidget());
                       }
+
                     } else {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
+
                             title: Text('Lựa chọn phương thức thanh toán'),
                             content: Text(
+
                                 'Vui lòng chọn một phương thức thanh toán.'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
+
                                 child: Text('Đóng'),
                               ),
                             ],
@@ -155,6 +164,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           ),
         ],
+
       ),
     );
   }

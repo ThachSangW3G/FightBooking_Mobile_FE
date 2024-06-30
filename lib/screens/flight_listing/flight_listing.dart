@@ -1,9 +1,15 @@
 import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_filter.dart';
+import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_selectflight.dart';
 import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_sort.dart';
 import 'package:flightbooking_mobile_fe/components/flight_listing/flight_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
+import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,16 +28,64 @@ class FlightListing extends StatefulWidget {
 }
 
 class _FlightListingState extends State<FlightListing> {
+  FlightController flightController = Get.put(FlightController());
+  AirportController airportController = Get.put(AirportController());
+  final PassengerController passengerController =
+      Get.put(PassengerController());
+  final SeatClassController seatClassController =
+      Get.put(SeatClassController());
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
 
   bool isEmpty = false;
 
-  int selectDate = 0;
-
   final DateTimeController dateTimeController = Get.put(DateTimeController());
   final SortController sortController = Get.put(SortController());
+
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onCardTap(DateTime date, int index) {
+    setState(() {
+      dateTimeController.selectDate.value = date;
+    });
+    flightController.filterFlights(
+        dateTimeController.selectDate.value!,
+        airportController.selectedDeparture.value!.id,
+        airportController.selectedDestination.value!.id,
+        seatClassController.selectedSeatClass.value,
+        sortController.selectedSort.value);
+    _scrollToIndex(index);
+  }
+
+  void _scrollToIndex(int index) {
+    // Tính toán vị trí scroll
+    double offset = index * 130; // 150.0 là chiều rộng của mỗi card
+    _scrollController.animateTo(
+      offset,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dateTimeController.selectDate.value = dateTimeController.rangeStart.value;
+    flightController.filterFlights(
+        dateTimeController.selectDate.value!,
+        airportController.selectedDeparture.value!.id,
+        airportController.selectedDestination.value!.id,
+        seatClassController.selectedSeatClass.value,
+        sortController.selectedSort.value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,22 +97,27 @@ class _FlightListingState extends State<FlightListing> {
         backgroundColor: AppColors.blue,
         title: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromARGB(193, 201, 195, 195)),
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SvgPicture.asset('assets/icons/arrowleft.svg'),
+            InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: const Color.fromARGB(193, 201, 195, 195)),
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SvgPicture.asset('assets/icons/arrowleft.svg'),
+                ),
               ),
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              'Chuyến đi SGN - HAN',
+              'Chuyến đi ${airportController.selectedDeparture.value?.iataCode ?? ""} - ${airportController.selectedDestination.value?.iataCode ?? ""}',
               style: kLableTitleWhite,
             )
           ],
@@ -82,6 +141,27 @@ class _FlightListingState extends State<FlightListing> {
           )
         ],
       ),
+      floatingActionButton: Obx(
+        () => Badge(
+          label: Text(
+            flightController.getNumberFlightSelected().toString(),
+          ),
+          isLabelVisible: flightController.departureFlight.value != null ||
+              flightController.returnFlight.value != null,
+          child: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (_) => const BottomSheetSelectFlight());
+            },
+            backgroundColor: AppColors.blue,
+            child: const Icon(
+              Icons.flight_takeoff,
+              color: AppColors.white,
+            ),
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -99,7 +179,7 @@ class _FlightListingState extends State<FlightListing> {
                   width: 10,
                 ),
                 Text(
-                  '4 khách - Economy',
+                  '${passengerController.adult.value + passengerController.children.value + passengerController.babe.value} khách - ${seatClassController.seatClasses[seatClassController.selectedSeatClass.value].title}',
                   style: kLableSize18White,
                 ),
                 const SizedBox(
@@ -122,23 +202,22 @@ class _FlightListingState extends State<FlightListing> {
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: ListView.builder(
+                  controller: _scrollController,
                   scrollDirection: Axis.horizontal,
-                  itemCount: dateTimeController.listDate.length,
+                  itemCount: dateTimeController.listDate.value.length,
                   itemBuilder: (context, index) {
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectDate = index;
-                            });
-                          },
+                          onTap: () => _onCardTap(
+                              dateTimeController.listDate.value[index], index),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 5),
                             decoration: BoxDecoration(
-                                color: selectDate == index
+                                color: dateTimeController.selectDate.value ==
+                                        dateTimeController.listDate.value[index]
                                     ? AppColors.blue
                                     : AppColors.white,
                                 borderRadius: const BorderRadius.all(
@@ -147,15 +226,20 @@ class _FlightListingState extends State<FlightListing> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Thứ 3',
-                                  style: selectDate == index
+                                  dateTimeController.getWeekday(
+                                      dateTimeController.listDate.value[index]),
+                                  style: dateTimeController.selectDate.value ==
+                                          dateTimeController
+                                              .listDate.value[index]
                                       ? kLableSize18w700White
                                       : kLableSize18w700Black,
                                 ),
                                 Text(
                                   formatDateTime(
-                                      dateTimeController.listDate[index]),
-                                  style: selectDate == index
+                                      dateTimeController.listDate.value[index]),
+                                  style: dateTimeController.selectDate.value ==
+                                          dateTimeController
+                                              .listDate.value[index]
                                       ? kLableSize15White
                                       : kLableSize15Grey,
                                 )
@@ -266,80 +350,145 @@ class _FlightListingState extends State<FlightListing> {
             child: Container(
               width: double.maxFinite,
               decoration: const BoxDecoration(color: AppColors.whisper),
-              child: isEmpty
-                  ? Center(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 100,
-                          ),
-                          Container(
-                            height: 150,
-                            width: 200,
-                            decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image:
-                                        AssetImage('assets/images/empty.png'))),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Không tìm thấy chuyến bay',
-                            style: kLableSize20w700Black,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Xin vui lòng chọn tìm kiếm khác',
-                            style: kLableSize18Black,
-                          )
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Giá hiển thị đã bao gồm thuế và phí',
-                            style: kLableSize15w400Grey,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummaryScreen());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummaryScreen());
-                          //     },
-                          //     child: const FlightItem()),
-                          // InkWell(
-                          //     onTap: () {
-                          //       Get.to(() => const TripSummary());
-                          //     },
-                          //     child: const FlightItem()),
-                        ],
-                      ),
+
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
                     ),
+                    Text(
+                      'Giá hiển thị đã bao gồm thuế và phí',
+                      style: kLableSize15w400Grey,
+
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+
+                    dateTimeController.selectDate.value != null
+                        ? Obx(() {
+                            if (flightController.isLoading.value) {
+                              return const SizedBox(
+                                height: 600,
+                                child: Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(),
+                                  ],
+                                )),
+                              );
+                            }
+                            if (flightController.flights.value.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 100,
+                                    ),
+                                    Container(
+                                      height: 150,
+                                      width: 200,
+                                      decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: AssetImage(
+                                                  'assets/images/empty.png'))),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Không tìm thấy chuyến bay',
+                                      style: kLableSize20w700Black,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Xin vui lòng chọn tìm kiếm khác',
+                                      style: kLableSize18Black,
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:
+                                    flightController.flights.value.length,
+                                itemBuilder: (_, index) {
+                                  final flight =
+                                      flightController.flights.value[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      // Get.to(() => const TripSummary());
+                                    },
+                                    child: FlightItem(
+                                      flight: flight,
+                                      onTap: () {
+                                        if (flightController
+                                                .departureFlight.value !=
+                                            null) {
+                                          flightController
+                                              .setReturnFlight(flight);
+
+                                          return;
+                                        }
+
+                                        flightController
+                                            .setDepartureFlight(flight);
+
+                                        print(flightController
+                                            .departureFlight.value);
+                                        if (dateTimeController
+                                            .isRoundTrip.value) {
+                                          setState(() {
+                                            _onCardTap(
+                                                dateTimeController
+                                                    .rangeEnd.value!,
+                                                dateTimeController
+                                                    .getIndexInListDate(
+                                                        dateTimeController
+                                                            .rangeEnd.value!));
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  );
+                                });
+                          })
+                        : const SizedBox()
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                    // InkWell(
+                    //     onTap: () {
+                    //       Get.to(() => const TripSummary());
+                    //     },
+                    //     child: const FlightItem()),
+                  ],
+                ),
+              ),
             ),
           )
         ],

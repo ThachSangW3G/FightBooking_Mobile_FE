@@ -1,15 +1,21 @@
 import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 
 class OnFlight extends StatelessWidget {
+  final Flight flight;
   final VoidCallback onTapDetails;
   final VoidCallback onPressButton;
   const OnFlight(
-      {super.key, required this.onTapDetails, required this.onPressButton});
+      {super.key,
+      required this.onTapDetails,
+      required this.onPressButton,
+      required this.flight});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,7 @@ class OnFlight extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          '07:45',
+                          DateFormat('HH:mm').format(flight.departureDate),
                           style: kLableSize18w700Black,
                         ),
                         Text(
@@ -50,7 +56,7 @@ class OnFlight extends StatelessWidget {
                           style: kLableSize13Black,
                         ),
                         Text(
-                          'T4, 22/02/2022',
+                          DateFormat('dd/MM/yyyy').format(flight.departureDate),
                           style: kLableSize13Black,
                         ),
                       ],
@@ -74,7 +80,7 @@ class OnFlight extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          '09:00',
+                          DateFormat('HH:mm').format(flight.arrivalDate),
                           style: kLableSize18w700Black,
                         ),
                         Text(
@@ -82,7 +88,7 @@ class OnFlight extends StatelessWidget {
                           style: kLableSize13Black,
                         ),
                         Text(
-                          'T4, 22/02/2022',
+                          DateFormat('dd/MM/yyyy').format(flight.arrivalDate),
                           style: kLableSize13Black,
                         ),
                       ],

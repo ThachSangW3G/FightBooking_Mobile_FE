@@ -22,7 +22,8 @@ class _ChatWindowState extends State<ChatWindow> {
   @override
   void initState() {
     super.initState();
-    _chatService = ChatService('ws://192.168.1.8:7050/ws');
+    _chatService =
+        ChatService('wss://flightbookingbe-production.up.railway.app/ws');
   }
 
   @override

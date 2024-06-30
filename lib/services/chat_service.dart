@@ -32,7 +32,7 @@ class ChatService {
   Future<List<Map<String, dynamic>>> getChatHistory(
       String userId, String adminId) async {
     final response = await http.get(Uri.parse(
-        'http://192.168.1.8:7050/api/messages/history/$userId/$adminId'));
+        'https://flightbookingbe-production.up.railway.app/api/messages/history/$userId/$adminId'));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       print('Chat history response: $data'); // Log the response for debugging

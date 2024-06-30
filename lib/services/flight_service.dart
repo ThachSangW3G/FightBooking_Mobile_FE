@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 Future<Flight> fetchFlightById(int flightId) async {
   final response = await http.get(Uri.parse(
-      'http://192.168.1.6:7050/flight/get-flight-by-id?id=$flightId'));
+      'https://flightbookingbe-production.up.railway.app/flight/get-flight-by-id?id=$flightId'));
 
   if (response.statusCode == 200) {
     final flight = Flight.fromJson(jsonDecode(response.body));
@@ -21,7 +21,7 @@ Future<Flight> fetchFlightById(int flightId) async {
 
 Future<Airline> fetchAirlineByPlaneId(int planeId) async {
   final response = await http.get(Uri.parse(
-      'http://192.168.1.6:7050/airlines/get-airline-by-planeId?planeId=$planeId'));
+      'https://flightbookingbe-production.up.railway.app/airlines/get-airline-by-planeId?planeId=$planeId'));
 
   if (response.statusCode == 200) {
     final airline = Airline.fromJson(jsonDecode(response.body));
@@ -33,8 +33,8 @@ Future<Airline> fetchAirlineByPlaneId(int planeId) async {
 }
 
 Future<Regulation> fetchRegulationByAirlineId(int airlineId) async {
-  final response = await http.get(
-      Uri.parse('http://192.168.1.6:7050/regulations/byAirline/$airlineId'));
+  final response = await http.get(Uri.parse(
+      'https://flightbookingbe-production.up.railway.app/regulations/byAirline/$airlineId'));
 
   if (response.statusCode == 200) {
     final regulation = Regulation.fromJson(jsonDecode(response.body));
@@ -47,7 +47,7 @@ Future<Regulation> fetchRegulationByAirlineId(int airlineId) async {
 
 Future<Plane> fetchPlaneNumberByPlaneId(int planeId) async {
   final response = await http.get(Uri.parse(
-      'http://192.168.1.6:7050/airlines/get-plane-detail-by-planeId?planeId=$planeId'));
+      'https://flightbookingbe-production.up.railway.app/airlines/get-plane-detail-by-planeId?planeId=$planeId'));
 
   if (response.statusCode == 200) {
     final plane = Plane.fromJson(jsonDecode(response.body));
@@ -59,8 +59,8 @@ Future<Plane> fetchPlaneNumberByPlaneId(int planeId) async {
 }
 
 Future<Airport> fetchAirportById(int airportId) async {
-  final response =
-      await http.get(Uri.parse('http://192.168.1.6:7050/airports/$airportId'));
+  final response = await http.get(Uri.parse(
+      'https://flightbookingbe-production.up.railway.app/airports/$airportId'));
 
   if (response.statusCode == 200) {
     final airport = Airport.fromJson(jsonDecode(response.body));

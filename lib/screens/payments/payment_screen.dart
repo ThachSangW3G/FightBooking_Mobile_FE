@@ -1,4 +1,3 @@
-
 import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 
 import 'package:flightbooking_mobile_fe/components/payments/new_card_option.dart';
@@ -28,7 +27,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   final StripeService stripeService = StripeService(
       baseUrl:
-          'http://192.168.1.10:7050'); // Replace with your actual IP address
+          'https://flightbookingbe-production.up.railway.app'); // Replace with your actual IP address
 
   List<Map<String, dynamic>> savedCards = [];
 
@@ -84,7 +83,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         backgroundColor: AppColors.dodger,
         leading: IconButton(
           color: AppColors.white,
@@ -133,23 +131,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       } else {
                         Get.off(() => const PaymentSuccessfulWidget());
                       }
-
                     } else {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-
                             title: Text('Lựa chọn phương thức thanh toán'),
                             content: Text(
-
                                 'Vui lòng chọn một phương thức thanh toán.'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-
                                 child: Text('Đóng'),
                               ),
                             ],
@@ -164,7 +158,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           ),
         ],
-
       ),
     );
   }

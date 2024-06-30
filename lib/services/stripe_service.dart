@@ -59,7 +59,7 @@ class StripeService {
     try {
       final userResponse = await http.get(
         Uri.parse('$baseUrl/payment/get-stripe-customer-id?' +
-            'token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aHVvbmdzcCIsImlhdCI6MTcxOTY0NjY3MywiZXhwIjoxNzE5NjYxMDczfQ.1ZPod2ieSg4M_gcDpc9tjM3X_3zRDZOz3QsF0qL-VKs'),
+            'token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aHVvbmdzcCIsImlhdCI6MTcxOTc2MDA1OSwiZXhwIjoxNzE5Nzc0NDU5fQ.A14ebfomm0BBRsLM1gednZhs3lR-Jl_yl_sbGGKKndk'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },

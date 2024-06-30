@@ -43,11 +43,12 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // home: const CheckoutScreen());
-        home: TripSummaryScreen(
-            departureFlightId: 1,
-            returnFlightId: 3,
-            numAdults: 1,
-            numChildren: 1,
-            numInfants: 1));
+        // home: TripSummaryScreen(
+        //     departureFlightId: 1,
+        //     returnFlightId: 3,
+        //     numAdults: 1,
+        //     numChildren: 1,
+        //     numInfants: 1));
+        home: DefaultScreen());
   }
 }

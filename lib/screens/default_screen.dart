@@ -26,7 +26,7 @@ class _DefaultScreenState extends State<DefaultScreen> {
   Future<void> _fetchUsername() async {
     final response = await http.get(
       Uri.parse(
-          'https://flightbookingbe-production.up.railway.app/users/token?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nMTIzNCIsImlhdCI6MTcxOTU2MDM3MSwiZXhwIjoxNzE5NTc0NzcxfQ.v9XdJm6Umg2zys2cnKnt2wA7QVKy7a0R1l26gUECPfQ'),
+          'https://flightbookingbe-production.up.railway.app/users/token?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aHVvbmdzcCIsImlhdCI6MTcxOTc2MDA1OSwiZXhwIjoxNzE5Nzc0NDU5fQ.A14ebfomm0BBRsLM1gednZhs3lR-Jl_yl_sbGGKKndk'),
     );
 
     if (response.statusCode == 200) {

@@ -1,8 +1,10 @@
 import 'package:flightbooking_mobile_fe/components/homes/recent_search.dart';
 import 'package:flightbooking_mobile_fe/components/homes/title_search.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 import '../../constants/app_styles.dart';
 
@@ -15,6 +17,7 @@ class BottomSheetDeparturePoint extends StatefulWidget {
 }
 
 class _BottomSheetDeparturePointState extends State<BottomSheetDeparturePoint> {
+  final AirportController airportController = Get.put(AirportController());
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -89,11 +92,20 @@ class _BottomSheetDeparturePointState extends State<BottomSheetDeparturePoint> {
               const SizedBox(
                 height: 15.0,
               ),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
-              const TitleSearch(title: 'HAN - Hà Nội, Việt Nam'),
+              Obx(() {
+                return Column(
+                  children: airportController.airports.map((airport) {
+                    return ListTile(
+                      title: Text(
+                          '${airport.iataCode} - ${airport.airportName} , ${airport.city}'),
+                      onTap: () {
+                        airportController.selectDepartureAirport(airport);
+                        Get.back();
+                      },
+                    );
+                  }).toList(),
+                );
+              }),
             ],
           ),
         ),

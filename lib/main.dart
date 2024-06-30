@@ -1,3 +1,4 @@
+import 'package:flightbooking_mobile_fe/screens/bottom_nav/bottom_nav.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -38,6 +39,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: PaymentScreen());
+        home: LogoScreen());
   }
 }

@@ -5,8 +5,12 @@ import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_passenger.d
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_seatclass.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
+import 'package:flightbooking_mobile_fe/models/airport.dart';
 import 'package:flightbooking_mobile_fe/screens/flight_listing/flight_listing.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -34,6 +38,36 @@ class _FindFlightState extends State<FindFlight> {
 
   final SeatClassController seatClassController =
       Get.put(SeatClassController());
+  final AirportController airportController = Get.put(AirportController());
+  final FlightSearchController flightSearchController =
+      Get.put(FlightSearchController());
+  void handleSearchFlight() async {
+    if (dateTimeController.isRoundTrip.value) {
+      if (dateTimeController.rangeEnd.value == null) {
+        return;
+      }
+      print("Vo roi ne");
+      Airport? arrivalAirport =
+          airportController.selectedDestinationAirport.value;
+      Airport? departureAirport =
+          airportController.selectedDepartureAirport.value;
+      DateTime departureDate = dateTimeController.rangeStart.value;
+      DateTime? arrivalDate = dateTimeController.rangeEnd.value;
+
+      await flightSearchController.searchFlightRoundTrip(
+          departureAirport!, arrivalAirport!, departureDate, arrivalDate!);
+    } else {
+      Airport? arrivalAirport =
+          airportController.selectedDestinationAirport.value;
+      Airport? departureAirport =
+          airportController.selectedDepartureAirport.value;
+      DateTime departureDate = dateTimeController.rangeStart.value;
+
+      await flightSearchController.searchFlightOneWay(
+          departureAirport!, arrivalAirport!, departureDate);
+    }
+    Get.to(const FlightListing());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,20 +219,26 @@ class _FindFlightState extends State<FindFlight> {
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Điểm đi',
-                                                style: kLableSize18Black,
-                                              ),
-                                              Text(
-                                                'Chọn điểm đi',
-                                                style: kLableSize18Grey,
-                                              )
-                                            ],
-                                          )
+                                          Obx(() {
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Điểm đi',
+                                                  style: kLableSize18Black,
+                                                ),
+                                                Text(
+                                                  airportController
+                                                          .selectedDepartureAirport
+                                                          .value
+                                                          ?.airportName ??
+                                                      'Chọn điểm đi',
+                                                  style: kLableSize18Grey,
+                                                ),
+                                              ],
+                                            );
+                                          }),
                                         ],
                                       ),
                                     ),
@@ -221,20 +261,26 @@ class _FindFlightState extends State<FindFlight> {
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Điểm đến',
-                                                style: kLableSize18Black,
-                                              ),
-                                              Text(
-                                                'Chọn điểm đến',
-                                                style: kLableSize18Grey,
-                                              )
-                                            ],
-                                          )
+                                          Obx(() {
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Điểm đến',
+                                                  style: kLableSize18Black,
+                                                ),
+                                                Text(
+                                                  airportController
+                                                          .selectedDestinationAirport
+                                                          .value
+                                                          ?.airportName ??
+                                                      'Chọn điểm đến',
+                                                  style: kLableSize18Grey,
+                                                ),
+                                              ],
+                                            );
+                                          }),
                                         ],
                                       ),
                                     )
@@ -467,7 +513,7 @@ class _FindFlightState extends State<FindFlight> {
                           ),
                           InkWell(
                             onTap: () {
-                              Get.to(const FlightListing());
+                              handleSearchFlight();
                             },
                             child: Container(
                               height: 50,

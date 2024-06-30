@@ -22,7 +22,7 @@ class _BottomSheetDateState extends State<BottomSheetDate> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: 500,
+        height: 650,
         width: double.maxFinite,
         child: Column(
           children: [

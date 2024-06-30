@@ -4,6 +4,7 @@ import 'package:flightbooking_mobile_fe/components/splash/button_next.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/auth_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/bottom_nav/bottom_nav.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/forgot_password_screen.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,6 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
   AuthController authController = Get.put(AuthController());
+  UserController userController = Get.put(UserController());
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -40,15 +44,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final success = await authController.login(username, password);
     if (success) {
-      //final prefs = await _prefs;
+      final prefs = await _prefs;
 
-      //final accessToken = prefs.getString('tokenAccess');
-
-      //await userController.getUserByToken(accessToken!);
+      final accessToken = prefs.getString('tokenAccess');
+      await userController.getUserByToken(accessToken!);
 
       Get.to(() => const BottomNavigation());
     } else {
-      // Đăng nhập thất bại, hiển thị thông báo cho người dùn
+      // Đăng nhập thất bại, hiển thị thông báo cho người dùng
       final snackdemo = SnackBar(
         content: Text(
           'Đăng nhập không thành công!',

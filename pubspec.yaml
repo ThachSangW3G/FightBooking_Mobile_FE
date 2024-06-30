@@ -45,6 +45,14 @@ dependencies:
   country_list_pick: ^1.0.1+6
   stripe_sdk: ^5.0.0
   flutter_stripe: ^10.1.1
+  url_launcher: ^6.3.0
+  share_plus: ^9.0.0
+  flutter_iconly: ^1.0.2
+  webview_flutter: ^4.8.0
+  http_parser: ^4.0.2
+  image_picker: ^1.1.1
+  cached_network_image: ^3.2.3
+
 
 dev_dependencies:
   flutter_test:

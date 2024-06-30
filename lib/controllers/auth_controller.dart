@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthController extends GetxController {
-  final String _baseURL = 'http://flightbookingbe-production.up.railway.app';
+  final String _baseURL = 'https://flightbookingbe-production.up.railway.app';
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 

@@ -350,6 +350,7 @@ class _FlightListingState extends State<FlightListing> {
             child: Container(
               width: double.maxFinite,
               decoration: const BoxDecoration(color: AppColors.whisper),
+
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -359,6 +360,7 @@ class _FlightListingState extends State<FlightListing> {
                     Text(
                       'Giá hiển thị đã bao gồm thuế và phí',
                       style: kLableSize15w400Grey,
+
                     ),
                     const SizedBox(
                       height: 10,

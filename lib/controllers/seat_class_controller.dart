@@ -1,4 +1,4 @@
-import 'package:flightbooking_mobile_fe/models/seat_class.dart';
+import 'package:flightbooking_mobile_fe/models/Thuongle/seat_class.dart';
 import 'package:get/get.dart';
 
 class SeatClassController extends GetxController {

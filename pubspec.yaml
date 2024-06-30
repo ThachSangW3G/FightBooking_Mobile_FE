@@ -35,7 +35,6 @@ dependencies:
   cupertino_icons: ^1.0.6
   google_fonts: ^6.2.1
   barcode_widget: ^2.0.4
-  image_gallery_saver: ^2.0.3
   flutter_svg: ^2.0.10+1
   get: ^4.6.6
   table_calendar: ^3.1.1
@@ -44,8 +43,16 @@ dependencies:
   http: ^1.2.1
   convert: ^3.1.1
   country_list_pick: ^1.0.1+6
+
   freezed: ^2.5.2
   freezed_annotation: ^2.4.1
+
+  stripe_sdk: ^5.0.0
+  flutter_stripe: ^10.1.1
+  chat_bubbles: ^1.6.0
+  web_socket_channel: ^3.0.0
+  google_generative_ai: ^0.4.3
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:

@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class FlightTicket {
   final String departureAirport;
@@ -206,17 +205,17 @@ class ExportTicketWidget extends StatelessWidget {
       // Đảm bảo rằng bạn đã xin quyền ghi vào bộ nhớ. (Ví dụ sử dụng plugin permission_handler)
 
       // Lưu hình ảnh xuống thiết bị
-      final result =
-          await ImageGallerySaver.saveImage(pngBytes, name: "ticket");
-      if (result['isSuccess']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ticket downloaded successfully')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to download ticket')),
-        );
-      }
+      // final result =
+      //     await ImageGallerySaver.saveImage(pngBytes, name: "ticket");
+      // if (result['isSuccess']) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text('Ticket downloaded successfully')),
+      //   );
+      // } else {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text('Failed to download ticket')),
+      //   );
+      // }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),

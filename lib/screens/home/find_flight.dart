@@ -5,6 +5,7 @@ import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_passenger.d
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_seatclass.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/flight_listing/flight_listing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class FindFlight extends StatefulWidget {
 }
 
 class _FindFlightState extends State<FindFlight> {
+  AirportController airportController = Get.put(AirportController());
+
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
@@ -193,10 +196,20 @@ class _FindFlightState extends State<FindFlight> {
                                                 'Điểm đi',
                                                 style: kLableSize18Black,
                                               ),
-                                              Text(
-                                                'Chọn điểm đi',
-                                                style: kLableSize18Grey,
-                                              )
+                                              Obx(() => airportController
+                                                          .selectedDeparture
+                                                          .value !=
+                                                      null
+                                                  ? Text(
+                                                      '${airportController.selectedDeparture.value!.iataCode} (${airportController.selectedDeparture.value!.city})',
+                                                      style: kLableSize18Grey)
+                                                  : Text('Chọn điểm đi',
+                                                      style: kLableSize18Grey)),
+
+                                              // Text(
+                                              //   'Chọn điểm đi',
+                                              //   style: kLableSize18Grey,
+                                              // )
                                             ],
                                           )
                                         ],
@@ -229,10 +242,17 @@ class _FindFlightState extends State<FindFlight> {
                                                 'Điểm đến',
                                                 style: kLableSize18Black,
                                               ),
-                                              Text(
-                                                'Chọn điểm đến',
-                                                style: kLableSize18Grey,
-                                              )
+                                              Obx(() => airportController
+                                                          .selectedDestination
+                                                          .value !=
+                                                      null
+                                                  ? Text(
+                                                      '${airportController.selectedDestination.value!.iataCode} (${airportController.selectedDestination.value!.city})',
+                                                      style: kLableSize18Grey)
+                                                  : Text(
+                                                      'Chọn điểm đến',
+                                                      style: kLableSize18Grey,
+                                                    ))
                                             ],
                                           )
                                         ],
@@ -241,10 +261,30 @@ class _FindFlightState extends State<FindFlight> {
                                   ],
                                 ),
                               ),
-                              SvgPicture.asset(
-                                'assets/icons/switch.svg',
-                                height: 30,
-                                width: 30,
+                              InkWell(
+                                onTap: () {
+                                  final success =
+                                      airportController.swapAirport();
+                                  if (!success) {
+                                    final snackdemo = SnackBar(
+                                      content: Text(
+                                        'Đổi địa điểm thất bại!',
+                                        style: kLableW800White,
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      elevation: 10,
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.all(5),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackdemo);
+                                  }
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/icons/switch.svg',
+                                  height: 30,
+                                  width: 30,
+                                ),
                               ),
                             ],
                           ),
@@ -466,7 +506,47 @@ class _FindFlightState extends State<FindFlight> {
                             height: 25,
                           ),
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              if (airportController.selectedDeparture.value ==
+                                      null ||
+                                  airportController.selectedDestination.value ==
+                                      null ||
+                                  (passengerController.adult.value +
+                                          passengerController.children.value +
+                                          passengerController.babe.value) ==
+                                      0) {
+                                final snackDemo = SnackBar(
+                                  content: Text(
+                                    'Vui lòng chọn đầy đủ!',
+                                    style: kLableW800White,
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  elevation: 10,
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.all(5),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackDemo);
+                                return;
+                              }
+
+                              if (dateTimeController.isRoundTrip.value &&
+                                  (dateTimeController.rangeEnd.value == null)) {
+                                final snackDemo = SnackBar(
+                                  content: Text(
+                                    'Vui lòng chọn ngày về!',
+                                    style: kLableW800White,
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  elevation: 10,
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.all(5),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackDemo);
+                                return;
+                              }
+                              await dateTimeController.getDateList();
                               Get.to(const FlightListing());
                             },
                             child: Container(

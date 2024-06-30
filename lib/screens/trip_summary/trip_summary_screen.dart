@@ -1,9 +1,11 @@
+
 import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/flight.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/plane.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/regulation.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_info_widget.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flightbooking_mobile_fe/services/flight_service.dart';
@@ -31,6 +33,7 @@ class TripSummaryScreen extends StatefulWidget {
   _TripSummaryScreenState createState() => _TripSummaryScreenState();
 }
 
+
 class _TripSummaryScreenState extends State<TripSummaryScreen> {
   Future<Flight>? departureFlightData;
   Future<Flight>? returnFlightData;
@@ -45,6 +48,7 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
       returnFlightData = fetchFlightById(widget.returnFlightId!);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +66,7 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+
             if (departureFlightData != null)
               FutureBuilder<Flight>(
                 future: departureFlightData,
@@ -77,6 +82,7 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
                     return Text('No data');
                   }
                 },
+
               ),
             if (returnFlightData != null)
               FutureBuilder<Flight>(

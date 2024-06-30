@@ -43,12 +43,17 @@ dependencies:
   http: ^1.2.1
   convert: ^3.1.1
   country_list_pick: ^1.0.1+6
+
+  freezed: ^2.5.2
+  freezed_annotation: ^2.4.1
+
   stripe_sdk: ^5.0.0
   flutter_stripe: ^10.1.1
   chat_bubbles: ^1.6.0
   web_socket_channel: ^3.0.0
   google_generative_ai: ^0.4.3
   flutter_dotenv: ^5.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -59,6 +64,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner: ^2.4.9
+  json_serializable: ^6.7.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

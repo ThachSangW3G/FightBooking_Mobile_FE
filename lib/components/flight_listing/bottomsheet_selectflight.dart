@@ -4,9 +4,7 @@ import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class BottomSheetSelectFlight extends StatefulWidget {
@@ -52,11 +50,11 @@ class _BottomSheetSelectFlightState extends State<BottomSheetSelectFlight> {
                   if (dateTimeController.isRoundTrip.value &&
                       flightController.departureFlight.value == null &&
                       flightController.returnFlight.value == null) {
-                    Get.to(() => TripSummary());
+                    Get.to(() => TripSummaryScreen());
                   } else if (!dateTimeController.isRoundTrip.value &&
                       flightController.departureFlight.value != null &&
                       flightController.returnFlight.value == null) {
-                    Get.to(() => TripSummary());
+                    Get.to(() => TripSummaryScreen());
                   } else {
                     final snackDemo = SnackBar(
                       content: Text(

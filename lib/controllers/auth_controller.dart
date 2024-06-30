@@ -66,20 +66,23 @@ class AuthController extends GetxController {
       'accept': 'application/hal+json',
     };
 
-    print(requestBody);
-
     try {
       final response =
           await http.post(uri, body: jsonEncode(requestBody), headers: headers);
+
+      print(response.statusCode);
+
       if (response.statusCode == 301 || response.statusCode == 302) {
         // Lấy URL mới từ header "Location"
         final newUrl = response.headers['location'];
+
         // Tạo một yêu cầu mới đến URL mới
         final newResponse = await http.post(
-          Uri.parse(newUrl!),
+          uri,
           body: jsonEncode(requestBody),
           headers: headers,
         );
+
         // Xử lý kết quả từ phản hồi mới
         if (newResponse.statusCode == 200) {
           final responseData = jsonDecode(newResponse.body);
@@ -110,19 +113,15 @@ class AuthController extends GetxController {
         final responseData = json.decode(response.body);
         final String tokenAccess = responseData['tokenAccess'];
         final String tokenRefresh = responseData['tokenRefresh'];
-        final int expiresIn = responseData['expiresIn'];
-        final int expiresRefreshIn = responseData['expiresRefreshIn'];
+
         final String username = responseData['username'];
-        final String role = responseData['role'];
 
         final SharedPreferences prefs = await _prefs;
 
         await prefs.setString('tokenAccess', tokenAccess);
         await prefs.setString('tokenRefresh', tokenRefresh);
-        await prefs.setInt('expiresIn', expiresIn);
-        await prefs.setInt('expiresRefreshIn', expiresRefreshIn);
+
         await prefs.setString('username', username);
-        await prefs.setString('role', role);
 
         return true;
       } else {

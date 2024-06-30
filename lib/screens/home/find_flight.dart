@@ -5,9 +5,6 @@ import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_passenger.d
 import 'package:flightbooking_mobile_fe/components/homes/bottomsheet_seatclass.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
-import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
-import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
-import 'package:flightbooking_mobile_fe/models/airport.dart';
 import 'package:flightbooking_mobile_fe/screens/flight_listing/flight_listing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -28,6 +25,8 @@ class FindFlight extends StatefulWidget {
 }
 
 class _FindFlightState extends State<FindFlight> {
+  AirportController airportController = Get.put(AirportController());
+
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
@@ -219,26 +218,20 @@ class _FindFlightState extends State<FindFlight> {
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          Obx(() {
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Điểm đi',
-                                                  style: kLableSize18Black,
-                                                ),
-                                                Text(
-                                                  airportController
-                                                          .selectedDepartureAirport
-                                                          .value
-                                                          ?.airportName ??
-                                                      'Chọn điểm đi',
-                                                  style: kLableSize18Grey,
-                                                ),
-                                              ],
-                                            );
-                                          }),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Điểm đi',
+                                                style: kLableSize18Black,
+                                              ),
+                                              Text(
+                                                'Chọn điểm đi',
+                                                style: kLableSize18Grey,
+                                              )
+                                            ],
+                                          )
                                         ],
                                       ),
                                     ),
@@ -261,36 +254,50 @@ class _FindFlightState extends State<FindFlight> {
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          Obx(() {
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Điểm đến',
-                                                  style: kLableSize18Black,
-                                                ),
-                                                Text(
-                                                  airportController
-                                                          .selectedDestinationAirport
-                                                          .value
-                                                          ?.airportName ??
-                                                      'Chọn điểm đến',
-                                                  style: kLableSize18Grey,
-                                                ),
-                                              ],
-                                            );
-                                          }),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Điểm đến',
+                                                style: kLableSize18Black,
+                                              ),
+                                              Text(
+                                                'Chọn điểm đến',
+                                                style: kLableSize18Grey,
+                                              )
+                                            ],
+                                          )
                                         ],
                                       ),
                                     )
                                   ],
                                 ),
                               ),
-                              SvgPicture.asset(
-                                'assets/icons/switch.svg',
-                                height: 30,
-                                width: 30,
+                              InkWell(
+                                onTap: () {
+                                  final success =
+                                      airportController.swapAirport();
+                                  if (!success) {
+                                    final snackdemo = SnackBar(
+                                      content: Text(
+                                        'Đổi địa điểm thất bại!',
+                                        style: kLableW800White,
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      elevation: 10,
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.all(5),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackdemo);
+                                  }
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/icons/switch.svg',
+                                  height: 30,
+                                  width: 30,
+                                ),
                               ),
                             ],
                           ),
@@ -513,7 +520,7 @@ class _FindFlightState extends State<FindFlight> {
                           ),
                           InkWell(
                             onTap: () {
-                              handleSearchFlight();
+                              Get.to(const FlightListing());
                             },
                             child: Container(
                               height: 50,

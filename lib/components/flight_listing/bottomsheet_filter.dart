@@ -1,8 +1,17 @@
+import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airline_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/sort_controller.dart';
+import 'package:flightbooking_mobile_fe/models/airlines/airline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class BottomSheetFilter extends StatefulWidget {
   const BottomSheetFilter({super.key});
@@ -12,6 +21,32 @@ class BottomSheetFilter extends StatefulWidget {
 }
 
 class _BottomSheetFilterState extends State<BottomSheetFilter> {
+  final AirlineController airlineController = Get.put(AirlineController());
+  final FlightController flightController = Get.put(FlightController());
+  final DateTimeController dateTimeController = Get.put(DateTimeController());
+  final AirportController airportController = Get.put(AirportController());
+  final SeatClassController seatClassController =
+      Get.put(SeatClassController());
+  final SortController sortController = Get.put(SortController());
+
+  TextEditingController priceMinController = TextEditingController();
+  TextEditingController priceMaxController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (flightController.filterPriceMax.value > 0) {
+      priceMaxController.text =
+          flightController.filterPriceMax.value.toString();
+    }
+
+    if (flightController.filterPriceMin.value > 0) {
+      priceMinController.text =
+          flightController.filterPriceMin.value.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -53,371 +88,272 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                         const SizedBox(
                           height: 10.0,
                         ),
-                        Text(
-                          'Số điểm dừng',
-                          style: kLableSize18w700Black,
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 13),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Text(
-                                'Bay thẳng',
-                                style: kLableSize15Black,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Text(
-                                '1 điểm dừng',
-                                style: kLableSize15Black,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Text(
-                                '2+ điểm dừng',
-                                style: kLableSize15Black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          'Giờ cất cánh',
-                          style: kLableSize18w700Black,
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi sáng sớm',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '00:00 - 06:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi sáng',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '06:00 - 12:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi chiều',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '12:00 - 18:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi tối',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '18:00 - 00:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          'Giờ hạ cánh',
-                          style: kLableSize18w700Black,
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi sáng sớm',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '00:00 - 06:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi sáng',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '06:00 - 12:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi chiều',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '12:00 - 18:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 170,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  border: Border.all(color: AppColors.gray)),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Buổi tối',
-                                    style: kLableSize16ww600Black,
-                                  ),
-                                  Text(
-                                    '18:00 - 00:00',
-                                    style: kLableSize15Black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          'Hãng hàng không',
-                          style: kLableSize18w700Black,
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Checkbox(value: true, onChanged: (value) {}),
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/logo-vietjet.png'))),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'VietJet Air',
-                                  style: kLableSize15Black,
-                                )
-                              ],
-                            ),
-                            Text(
-                              'Từ 495k',
-                              style: kLableSize20w700Black,
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Checkbox(value: true, onChanged: (value) {}),
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/logo-vietjet.png'))),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'VietJet Air',
-                                  style: kLableSize15Black,
-                                )
-                              ],
-                            ),
-                            Text(
-                              'Từ 495k',
-                              style: kLableSize20w700Black,
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Checkbox(value: true, onChanged: (value) {}),
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/logo-vietjet.png'))),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'VietJet Air',
-                                  style: kLableSize15Black,
-                                )
-                              ],
-                            ),
-                            Text(
-                              'Từ 495k',
-                              style: kLableSize20w700Black,
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
+                        // Text(
+                        //   'Số điểm dừng',
+                        //   style: kLableSize18w700Black,
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Container(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 13),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Text(
+                        //         'Bay thẳng',
+                        //         style: kLableSize15Black,
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Text(
+                        //         '1 điểm dừng',
+                        //         style: kLableSize15Black,
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Text(
+                        //         '2+ điểm dừng',
+                        //         style: kLableSize15Black,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Text(
+                        //   'Giờ cất cánh',
+                        //   style: kLableSize18w700Black,
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi sáng sớm',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '00:00 - 06:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi sáng',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '06:00 - 12:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi chiều',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '12:00 - 18:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi tối',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '18:00 - 00:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Text(
+                        //   'Giờ hạ cánh',
+                        //   style: kLableSize18w700Black,
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi sáng sớm',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '00:00 - 06:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi sáng',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '06:00 - 12:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi chiều',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '12:00 - 18:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       width: 170,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 7, horizontal: 10),
+                        //       decoration: BoxDecoration(
+                        //           borderRadius: const BorderRadius.all(
+                        //               Radius.circular(15)),
+                        //           border: Border.all(color: AppColors.gray)),
+                        //       child: Column(
+                        //         children: [
+                        //           Text(
+                        //             'Buổi tối',
+                        //             style: kLableSize16ww600Black,
+                        //           ),
+                        //           Text(
+                        //             '18:00 - 00:00',
+                        //             style: kLableSize15Black,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   height: 10.0,
+                        // ),
+
                         Text(
                           'Giá',
                           style: kLableSize18w700Black,
@@ -449,6 +385,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                                     children: [
                                       Expanded(
                                           child: TextFormField(
+                                        controller: priceMinController,
+                                        keyboardType: TextInputType.number,
                                         decoration: const InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'Nhập giá'),
@@ -503,6 +441,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                                     children: [
                                       Expanded(
                                           child: TextFormField(
+                                        controller: priceMaxController,
+                                        keyboardType: TextInputType.number,
                                         decoration: const InputDecoration(
                                             border: InputBorder.none,
                                             hintText: 'Nhập giá'),
@@ -542,30 +482,103 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                           height: 10.0,
                         ),
                         Text(
-                          'Hoàn tiền và đổi lịch bay',
+                          'Hãng hàng không',
                           style: kLableSize18w700Black,
                         ),
                         const SizedBox(
                           height: 10.0,
                         ),
-                        Row(
-                          children: [
-                            Checkbox(value: true, onChanged: (value) {}),
-                            Text(
-                              'Được hoàn tiền',
-                              style: kLableSize16ww600Black,
-                            ),
-                          ],
+
+                        FutureBuilder<List<Airline>>(
+                            future: airlineController.getAllAirline(),
+                            builder: (_, snapshot) {
+                              if (snapshot.hasData) {
+                                final listAirline = snapshot.data;
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: listAirline!.length,
+                                  itemBuilder: (_, index) {
+                                    return Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Obx(
+                                          () => Checkbox(
+                                              value: airlineController
+                                                  .selectFilterAirline.value
+                                                  .contains(
+                                                      listAirline[index].id),
+                                              onChanged: (value) {
+                                                print(airlineController
+                                                    .selectFilterAirline.value
+                                                    .contains(
+                                                        listAirline[index].id));
+                                                if (!airlineController
+                                                    .selectFilterAirline.value
+                                                    .contains(listAirline[index]
+                                                        .id)) {
+                                                  airlineController
+                                                      .addFilterAirline(
+                                                          listAirline[index]
+                                                              .id);
+                                                } else {
+                                                  airlineController
+                                                      .removeFilterAirline(
+                                                          listAirline[index]
+                                                              .id);
+                                                }
+
+                                                print(airlineController
+                                                    .selectFilterAirline.value);
+                                              }),
+                                        ),
+                                        Container(
+                                          height: 50,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      listAirline[index]
+                                                          .logoUrl))),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          listAirline[index].airlineName,
+                                          style: kLableSize15Black,
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                              return const SizedBox();
+                            }),
+
+                        const SizedBox(
+                          height: 10.0,
                         ),
-                        Row(
-                          children: [
-                            Checkbox(value: true, onChanged: (value) {}),
-                            Text(
-                              'Có áp dụng đổi lịch',
-                              style: kLableSize16ww600Black,
-                            ),
-                          ],
-                        )
+
+                        ButtonBlue(
+                            des: 'Áp dụng',
+                            onPress: () {
+                              flightController.setFilterPriceMax(
+                                  int.parse(priceMaxController.text));
+                              flightController.setFilterPriceMin(
+                                  int.parse(priceMinController.text));
+
+                              flightController.filterFlights(
+                                  dateTimeController.selectDate.value!,
+                                  airportController.selectedDeparture.value!.id,
+                                  airportController
+                                      .selectedDestination.value!.id,
+                                  seatClassController.selectedSeatClass.value,
+                                  sortController.selectedSort.value);
+
+                              Get.back();
+                            })
                       ],
                     ),
                   ),

@@ -7,7 +7,6 @@ class PaymentController {
   PaymentController({required this.baseUrl});
 
   Future<http.Response> registerCard({
-    required String username,
     required String stripePaymentMethodId,
     required String last4Digits,
     required String expiryDate,

@@ -1,12 +1,17 @@
+import 'dart:math';
+
 import 'package:flightbooking_mobile_fe/components/accounts/tile.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
+import 'package:flightbooking_mobile_fe/screens/accounts/about_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/accounts/change_password.dart';
+import 'package:flightbooking_mobile_fe/screens/accounts/notification_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/login_signup/login_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +25,49 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  //UserController userController = Get.put(UserController());
+  UserController userController = Get.put(UserController());
+
+  Future<void> _pickImageFromGalleary() async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (returnedImage != null) {
+      final success = await userController.uploadNewAvatar(returnedImage.path);
+
+      if (!success) {
+        final snackdemo = SnackBar(
+          content: Text(
+            'Cập nhật avatar không thành công!',
+            style: kLableW800White,
+          ),
+          backgroundColor: Colors.red,
+          elevation: 10,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(5),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+      } else {
+        await userController
+            .getUserByToken((await _prefs).getString('tokenAccess')!);
+        final snackdemo = SnackBar(
+          content: Text(
+            'Cập nhật avatar thành công!',
+            style: kLableW800White,
+          ),
+          backgroundColor: Colors.green,
+          elevation: 10,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(5),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+      }
+    }
+  }
+
+  double roundToDecimals(double value, int places) {
+    final double mod = pow(10, places).toDouble();
+    return ((value * mod).round().toDouble() / mod);
+  }
 
   @override
   void initState() {
@@ -47,21 +94,32 @@ class _AccountScreenState extends State<AccountScreen> {
                   Stack(
                     children: [
                       Container(
-                        height: 120,
-                        width: 120,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.slamon,
-                        ),
-                        child: ClipOval(
-                          child: Image.asset('assets/images/default_avatar.jpg',
-                              fit: BoxFit.cover),
-                        ),
-                      ),
+                          height: 120,
+                          width: 120,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.slamon,
+                          ),
+                          child: Obx(
+                            () => ClipOval(
+                              child:
+                                  userController.currentUser.value!.avatarUrl !=
+                                          null
+                                      ? Image.network(
+                                          userController
+                                              .currentUser.value!.avatarUrl!,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/default_avatar.jpg',
+                                          fit: BoxFit.cover),
+                            ),
+                          )),
                       Positioned(
                         bottom: 0,
                         right: 10,
                         child: InkWell(
+                          onTap: _pickImageFromGalleary,
                           child: Container(
                             height: 30,
                             width: 30,
@@ -83,16 +141,16 @@ class _AccountScreenState extends State<AccountScreen> {
                     height: 10,
                   ),
                   Text(
-                    //userController.currentUser.value!.fullName!,
-                    'Nguyễn Thế Hùng',
+                    userController.currentUser.value!.fullName!,
+                    //'Nguyễn Thế Hùng',
                     style: kLableTextBlackW600,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   Text(
-                    //userController.currentUser.value!.email!,
-                    'DkQXG@example.com',
+                    userController.currentUser.value!.email!,
+                    //'DkQXG@example.com',
                     style: kLableTextStyleMiniumGrey,
                   ),
                   const SizedBox(
@@ -102,18 +160,27 @@ class _AccountScreenState extends State<AccountScreen> {
                     height: 20,
                   ),
                   InkWell(
+                    onTap: () {
+                      Get.to(() => const AboutMe());
+                    },
                     child: const Tile(
                         icon: 'assets/icons/aboutme.svg',
                         haveArrowRight: true,
                         title: 'About me'),
                   ),
                   InkWell(
+                    onTap: () {
+                      Get.to(() => const NotificationSetting());
+                    },
                     child: const Tile(
                         icon: 'assets/icons/notification.svg',
                         haveArrowRight: true,
                         title: 'Notifications'),
                   ),
                   InkWell(
+                    onTap: () {
+                      Get.to(() => const ChangePassword());
+                    },
                     child: const Tile(
                         icon: 'assets/icons/notification.svg',
                         haveArrowRight: true,

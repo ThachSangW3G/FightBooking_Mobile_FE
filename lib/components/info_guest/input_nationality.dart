@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 class InputNationality extends StatefulWidget {
   final String des;
-  const InputNationality({super.key, required this.des});
+  final ValueChanged<String> onChange;
+  const InputNationality(
+      {super.key, required this.des, required this.onChange});
 
   @override
   State<InputNationality> createState() => _InputNationalityState();
@@ -80,7 +82,9 @@ class _InputNationalityState extends State<InputNationality> {
                 initialSelection: '+84',
                 // or
                 // initialSelection: 'US'
-                onChanged: (CountryCode? code) {},
+                onChanged: (CountryCode? code) {
+                  widget.onChange(code!.dialCode.toString());
+                },
                 // Whether to allow the widget to set a custom UI overlay
               )),
             )

@@ -54,53 +54,69 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
             color: AppColors.white,
             borderRadius: BorderRadius.circular(10),
           ),
-          padding: EdgeInsets.all(8),
-          margin: EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.all(8),
+          margin: const EdgeInsets.symmetric(vertical: 5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Thông tin hành khách ${i + 1}',
                   style: kLableSize20w700Black),
               const SizedBox(height: 10),
-              InputTextComponent(
-                  label: 'Tên',
-                  name: '',
-                  hinttext: 'VD: Trung Tinh',
-                  onChanged: (value) {
-                    setState(() {
-                      passengerDetails[i]['fullName'] = value;
-                    });
-                  }),
+              Row(
+                children: [
+                  InputTextComponent(
+                      label: 'Tên',
+                      name: '',
+                      hinttext: 'VD: Trung Tinh',
+                      onChanged: (value) {
+                        setState(() {
+                          passengerDetails[i]['fullName'] = value;
+                        });
+                      }),
+                ],
+              ),
               const SizedBox(height: 10),
-              InputTextComponent(
-                  label: 'CMND/Hộ chiếu',
-                  name: '',
-                  hinttext: 'VD: 123456789',
-                  onChanged: (value) {
-                    setState(() {
-                      passengerDetails[i]['personalId'] = value;
-                    });
-                  }),
+              Row(
+                children: [
+                  InputTextComponent(
+                      label: 'CMND/Hộ chiếu',
+                      name: '',
+                      hinttext: 'VD: 123456789',
+                      onChanged: (value) {
+                        setState(() {
+                          passengerDetails[i]['personalId'] = value;
+                        });
+                      }),
+                ],
+              ),
               const SizedBox(height: 10),
-              InputTextComponent(
-                  label: 'Email',
-                  name: '',
-                  hinttext: 'VD: example@gmail.com',
-                  onChanged: (value) {
-                    setState(() {
-                      passengerDetails[i]['email'] = value;
-                    });
-                  }),
+              Row(
+                children: [
+                  InputTextComponent(
+                      label: 'Email',
+                      name: '',
+                      hinttext: 'VD: example@gmail.com',
+                      onChanged: (value) {
+                        setState(() {
+                          passengerDetails[i]['email'] = value;
+                        });
+                      }),
+                ],
+              ),
               const SizedBox(height: 10),
-              InputTextComponent(
-                  label: 'Số ghế',
-                  name: '',
-                  hinttext: 'VD: A1',
-                  onChanged: (value) {
-                    setState(() {
-                      passengerDetails[i]['seatNumber'] = value;
-                    });
-                  }),
+              Row(
+                children: [
+                  InputTextComponent(
+                      label: 'Số ghế',
+                      name: '',
+                      hinttext: 'VD: A1',
+                      onChanged: (value) {
+                        setState(() {
+                          passengerDetails[i]['seatNumber'] = value;
+                        });
+                      }),
+                ],
+              ),
             ],
           ),
         ),
@@ -114,7 +130,7 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
     if (widget.returnFlightId != null) {
       await _createPayment(widget.returnFlightId!);
     }
-    Get.to(() => CheckoutScreen());
+    Get.to(() => const CheckoutScreen());
   }
 
   Future<void> _createPayment(int flightId) async {
@@ -161,70 +177,83 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
         centerTitle: true,
       ),
       backgroundColor: const Color(0xFFF5F5FA),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: SingleChildScrollView(
-          child: Column(
+      body: Stack(fit: StackFit.expand, children: [
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SingleChildScrollView(
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const InfoGuestWidget(),
-              const SizedBox(height: 10),
+              //const InfoGuestWidget(),
+              const SizedBox(
+                height: 10,
+              ),
               Container(
+                height: 400,
                 decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Thông tin liên hệ',
-                      style: kLableSize20w700Black,
-                    ),
-                    const SizedBox(height: 10),
-                    InputTextComponent(
-                        label: 'Tên',
-                        name: '',
-                        hinttext: 'VD: Trung Tinh',
-                        onChanged: (value) {
-                          setState(() {
-                            contactDetails['fullName'] = value;
-                          });
-                        }),
-                    const SizedBox(height: 10),
-                    InputTextComponent(
-                        label: 'Số điện thoại',
-                        name: '',
-                        hinttext: '0704408389',
-                        onChanged: (value) {
-                          setState(() {
-                            contactDetails['phone'] = value;
-                          });
-                        }),
-                    const SizedBox(height: 10),
-                    InputTextComponent(
-                        label: 'Email',
-                        name: '',
-                        hinttext: 'trungtinhh1620@gmail.com',
-                        onChanged: (value) {
-                          setState(() {
-                            contactDetails['email'] = value;
-                          });
-                        }),
-                  ],
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Thông tin liên hệ',
+                        style: kLableSize20w700Black,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          InputTextComponent(
+                              label: 'Tên',
+                              name: '',
+                              hinttext: 'VD: Trung Tinh',
+                              onChanged: (value) {}),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          InputTextComponent(
+                              label: 'Số điện thoại',
+                              name: '',
+                              hinttext: '0704408389',
+                              onChanged: (value) {}),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          InputTextComponent(
+                              label: 'Email',
+                              name: '',
+                              hinttext: 'trungtinhh1620@gmail.com',
+                              onChanged: (value) {}),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(
+                height: 10,
+              ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: _buildPassengerInfoFields(),
-              ),
-              const SizedBox(height: 120),
+              )
             ],
-          ),
-        ),
-      ),
+          )),
+        )
+      ]),
       bottomNavigationBar: Container(
         color: AppColors.white,
         height: 130.0, // Adjust the height as needed

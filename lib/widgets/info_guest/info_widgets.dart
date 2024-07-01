@@ -98,7 +98,7 @@ class _InfoGuestWidgetState extends State<InfoGuestWidget> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const InputNationality(des: 'Quốc tịch'),
+                  InputNationality(des: 'Quốc tịch', onChange: (value) {}),
                   const SizedBox(
                     height: 10,
                   ),
@@ -120,9 +120,7 @@ class _InfoGuestWidgetState extends State<InfoGuestWidget> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const InputNationality(
-                    des: 'Quốc gia cấp',
-                  ),
+                  InputNationality(des: 'Quốc tịch', onChange: (value) {}),
                 ],
               ),
             )

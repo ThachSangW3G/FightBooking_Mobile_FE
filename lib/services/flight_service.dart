@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/flight.dart';
+
 import 'package:flightbooking_mobile_fe/models/Thuongle/plane.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/regulation.dart';
+import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:http/http.dart' as http;
 
 Future<Flight> fetchFlightById(int flightId) async {

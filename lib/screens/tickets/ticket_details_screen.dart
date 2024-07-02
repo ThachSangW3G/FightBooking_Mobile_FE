@@ -293,9 +293,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                   adults: flightPrices['adults'],
                   children: flightPrices['children'],
                   infants: flightPrices['infants'],
-                  priceAdult: flightPrices['priceAdult'],
-                  priceChild: flightPrices['priceChild'],
-                  priceInfant: flightPrices['priceInfant'],
                   totalPrice: flightPrices['totalPrice'],
                 ),
               );

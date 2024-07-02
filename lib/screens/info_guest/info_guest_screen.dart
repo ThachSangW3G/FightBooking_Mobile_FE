@@ -6,22 +6,24 @@ import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
-import 'package:flightbooking_mobile_fe/widgets/info_guest/info_widgets.dart';
-import 'package:http/http.dart' as http;
+import 'package:flightbooking_mobile_fe/controllers/booking_controller.dart';
 
 class InfoGuestScreen extends StatefulWidget {
   final int numPassengers;
   final double totalPrice;
   final int departureFlightId;
   final int? returnFlightId;
-  // final List<String> departureSelectSeats = [];
-  // final List<String> arrivalSelectSeats = [];
+  final List<String> selectedDepartureSeats;
+  final List<String>? selectedReturnSeats;
+
   const InfoGuestScreen({
     super.key,
     required this.numPassengers,
     required this.totalPrice,
     required this.departureFlightId,
     this.returnFlightId,
+    required this.selectedDepartureSeats,
+    this.selectedReturnSeats,
   });
 
   @override
@@ -29,7 +31,10 @@ class InfoGuestScreen extends StatefulWidget {
 }
 
 class _InfoGuestScreenState extends State<InfoGuestScreen> {
-  final List<Map<String, String>> passengerDetails = [];
+  final List<Map<String, String>> departurePassengerDetails = [];
+  final List<Map<String, String>> returnPassengerDetails = [];
+  final BookingController bookingController = Get.put(BookingController());
+
   final Map<String, String> contactDetails = {
     'fullName': '',
     'phone': '',
@@ -40,14 +45,28 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
   void initState() {
     super.initState();
     for (int i = 0; i < widget.numPassengers; i++) {
-      passengerDetails.add(
-          {'fullName': '', 'personalId': '', 'email': '', 'seatNumber': ''});
+      departurePassengerDetails.add({
+        'fullName': '',
+        'personalId': '',
+        'email': '',
+        'seatNumber': widget.selectedDepartureSeats[i],
+      });
+
+      if (widget.returnFlightId != null && widget.selectedReturnSeats != null) {
+        returnPassengerDetails.add({
+          'fullName': '',
+          'personalId': '',
+          'email': '',
+          'seatNumber': widget.selectedReturnSeats![i],
+        });
+      }
     }
   }
 
-  List<Widget> _buildPassengerInfoFields() {
+  List<Widget> _buildPassengerInfoFields(
+      List<Map<String, String>> passengerDetails, String flightType) {
     List<Widget> fields = [];
-    for (int i = 0; i < widget.numPassengers; i++) {
+    for (int i = 0; i < passengerDetails.length; i++) {
       fields.add(
         Container(
           decoration: BoxDecoration(
@@ -59,7 +78,8 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Thông tin hành khách ${i + 1}',
+              Text(
+                  'Thông tin hành khách ${i + 1} (Ghế: ${passengerDetails[i]['seatNumber']}) - $flightType',
                   style: kLableSize20w700Black),
               const SizedBox(height: 10),
               Row(
@@ -106,15 +126,10 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  InputTextComponent(
-                      label: 'Số ghế',
-                      name: '',
-                      hinttext: 'VD: A1',
-                      onChanged: (value) {
-                        setState(() {
-                          passengerDetails[i]['seatNumber'] = value;
-                        });
-                      }),
+                  Text(
+                    'Số ghế: ${passengerDetails[i]['seatNumber']}',
+                    style: kLableSize18w700Black,
+                  ),
                 ],
               ),
             ],
@@ -125,42 +140,18 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
     return fields;
   }
 
-  Future<void> _submitDetails() async {
-    await _createPayment(widget.departureFlightId);
-    if (widget.returnFlightId != null) {
-      await _createPayment(widget.returnFlightId!);
-    }
-    Get.to(() => const CheckoutScreen());
-  }
-
-  Future<void> _createPayment(int flightId) async {
-    final response = await http.post(
-      Uri.parse(
-          'https://flightbookingbe-production.up.railway.app/payment/create-payment'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'token': 'your_token_here', // Add your token here
-        'idVoucher': 0, // Update if necessary
-        'amount': widget.totalPrice,
-        'flightId': flightId,
-        'bookingRequestDTO': {
-          'flightId': flightId,
-          'bookerFullName': contactDetails['fullName'],
-          'bookerEmail': contactDetails['email'],
-          'bookerPersonalId': contactDetails['personalId'],
-          'userId': 0, // Update if necessary
-          'bookingDate': DateTime.now().toIso8601String(),
-          'passengers': passengerDetails,
-          'seatNumber': passengerDetails.map((p) => p['seatNumber']).toList()
-        }
-      }),
+  void _submitDetails() {
+    bookingController.setBookingDetails(
+      departureId: widget.departureFlightId,
+      returnId: widget.returnFlightId,
+      price: widget.totalPrice,
+      contact: contactDetails,
+      passengers: departurePassengerDetails + returnPassengerDetails,
+      departureSeats: widget.selectedDepartureSeats,
+      returnSeats: widget.selectedReturnSeats,
     );
 
-    if (response.statusCode == 200) {
-      print('Payment created successfully');
-    } else {
-      throw Exception('Failed to create payment');
-    }
+    Get.to(() => CheckoutScreen());
   }
 
   @override
@@ -184,7 +175,6 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //const InfoGuestWidget(),
               const SizedBox(
                 height: 10,
               ),
@@ -210,7 +200,11 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                               label: 'Tên',
                               name: '',
                               hinttext: 'VD: Trung Tinh',
-                              onChanged: (value) {}),
+                              onChanged: (value) {
+                                setState(() {
+                                  contactDetails['fullName'] = value;
+                                });
+                              }),
                         ],
                       ),
                       const SizedBox(
@@ -222,7 +216,11 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                               label: 'Số điện thoại',
                               name: '',
                               hinttext: '0704408389',
-                              onChanged: (value) {}),
+                              onChanged: (value) {
+                                setState(() {
+                                  contactDetails['phone'] = value;
+                                });
+                              }),
                         ],
                       ),
                       const SizedBox(
@@ -234,7 +232,11 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                               label: 'Email',
                               name: '',
                               hinttext: 'trungtinhh1620@gmail.com',
-                              onChanged: (value) {}),
+                              onChanged: (value) {
+                                setState(() {
+                                  contactDetails['email'] = value;
+                                });
+                              }),
                         ],
                       ),
                       const SizedBox(
@@ -248,15 +250,25 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                 height: 10,
               ),
               Column(
-                children: _buildPassengerInfoFields(),
-              )
+                children: _buildPassengerInfoFields(
+                    departurePassengerDetails, 'Lượt đi'),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              widget.returnFlightId != null
+                  ? Column(
+                      children: _buildPassengerInfoFields(
+                          returnPassengerDetails, 'Lượt về'),
+                    )
+                  : Container(),
             ],
           )),
         )
       ]),
       bottomNavigationBar: Container(
         color: AppColors.white,
-        height: 130.0, // Adjust the height as needed
+        height: 130.0,
         width: double.infinity,
         padding: const EdgeInsets.all(15.0),
         child: Column(

@@ -1,12 +1,23 @@
+import 'dart:convert';
+
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
+import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
+import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/screens/payments/payment_screen.dart';
-import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_info_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_passenger_contact_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_passenger_info_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_price_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flightbooking_mobile_fe/controllers/booking_controller.dart';
+import 'package:http/http.dart' as http;
+import 'package:flightbooking_mobile_fe/models/Thuongle/flight.dart';
+import 'package:flightbooking_mobile_fe/models/Thuongle/plane.dart';
+import 'package:flightbooking_mobile_fe/models/Thuongle/regulation.dart';
+import 'package:flightbooking_mobile_fe/services/flight_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -16,128 +27,55 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  final List<Map<String, dynamic>> flights = [
-    {
-      'flightName': 'Hồ Chí Minh - Hà Nội',
-      'airlineLogo':
-          'https://careerfinder.vn/wp-content/uploads/2020/05/vietnam-airline-logo.jpg',
-      'airlineName': 'Vietnam Airlines',
-      'airlineNumber': 'VN123',
-      'seatClass': 'Economy',
-      'depart': 'HAN',
-      'arrive': 'SGN',
-      'departTime': '08:00, 04/08/2024',
-      'arriveTime': '10:00, 08/08/2024',
-      'totalFlight': '2h 04m',
-    },
-    {
-      'flightName': 'Hồ Chí Minh - Hà Nội',
-      'airlineLogo':
-          'https://careerfinder.vn/wp-content/uploads/2020/05/vietnam-airline-logo.jpg',
-      'airlineName': 'Vietnam Airlines',
-      'airlineNumber': 'VN123',
-      'seatClass': 'Economy',
-      'depart': 'HAN',
-      'arrive': 'SGN',
-      'departTime': '08:00, 04/08/2024',
-      'arriveTime': '10:00, 08/08/2024',
-      'totalFlight': '2h 04m',
-    },
-    {
-      'flightName': 'Hồ Chí Minh - Hà Nội',
-      'airlineLogo':
-          'https://careerfinder.vn/wp-content/uploads/2020/05/vietnam-airline-logo.jpg',
-      'airlineName': 'Vietnam Airlines',
-      'airlineNumber': 'VN123',
-      'seatClass': 'Economy',
-      'depart': 'HAN',
-      'arrive': 'SGN',
-      'departTime': '08:00, 04/08/2024',
-      'arriveTime': '10:00, 08/08/2024',
-      'totalFlight': '2h 04m',
-    },
-    {
-      'flightName': 'Hồ Chí Minh - Hà Nội',
-      'airlineLogo':
-          'https://careerfinder.vn/wp-content/uploads/2020/05/vietnam-airline-logo.jpg',
-      'airlineName': 'Vietnam Airlines',
-      'airlineNumber': 'VN123',
-      'seatClass': 'Economy',
-      'depart': 'HAN',
-      'arrive': 'SGN',
-      'departTime': '08:00, 04/08/2024',
-      'arriveTime': '10:00, 08/08/2024',
-      'totalFlight': '2h 04m',
-    }
-    // Add more flight data here if needed
-  ];
-  final List<Map<String, dynamic>> flightPrice = [
-    {
-      'adults': 2,
-      'children': 1,
-      'infants': 1,
-      'priceAdult': 100,
-      'priceChild': 80,
-      'priceInfant': 40,
-      'totalPrice': 220
-    }
-  ];
-
-  final List<Map<String, dynamic>> flightPassenger = [
-    {
-      'name': 'NGUYEN VAN ANH',
-      'type': 'Người lớn',
-      // ví dụ thêm thông tin số ghế
-      // Thêm các thông tin khác nếu cần
-    },
-    {
-      'name': 'NGUYEN VAN BINH',
-      'type': 'Người lớn',
-
-      // Thêm các thông tin khác nếu cần
-    },
-    {
-      'name': 'NGUYEN VAN HA',
-      'type': 'Trẻ em',
-      // Thêm các thông tin khác nếu cần
-    },
-    {
-      'name': 'NGUYEN VAN NAM',
-      'type': 'Em bé',
-      // Thêm các thông tin khác nếu cần
-    }
-  ];
-  final List<Map<String, dynamic>> passengerContact = [
-    {
-      'fullName': 'LE DANG THUONG',
-      'phoneNumber': '0333333333',
-      'email': 'ledangthuongsp@gmail.com'
-    }
-  ];
+  final BookingController bookingController = Get.find<BookingController>();
+  final PassengerController passengerController =
+      Get.find<PassengerController>();
   bool isExpandedDetails = true;
   bool isExpandedPriceDetails = true;
   bool isExpandedPassenger = true;
+
+  Future<Flight> fetchFlightById(int flightId) async {
+    final response = await http.get(Uri.parse(
+        'https://flightbookingbe-production.up.railway.app/flight/get-flight-by-id?id=$flightId'));
+    if (response.statusCode == 200) {
+      return Flight.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load flight data');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchAdditionalFlightData(int flightId) async {
+    final flight = await fetchFlightById(flightId);
+    final airline = await fetchAirlineByPlaneId(flight.planeId);
+    final plane = await fetchPlaneNumberByPlaneId(flight.planeId);
+    final regulation = await fetchRegulationByAirlineId(airline.id);
+    final departureAirport = await fetchAirportById(flight.departureAirportId);
+    final arrivalAirport = await fetchAirportById(flight.arrivalAirportId);
+
+    return {
+      'flight': flight,
+      'airline': airline,
+      'plane': plane,
+      'regulation': regulation,
+      'departureAirport': departureAirport,
+      'arrivalAirport': arrivalAirport,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.dodger,
-        // leading: IconButton(
-        //   color: AppColors.white,
-        //   icon: Image.asset('assets/icons/nav_back_icon.png'),
-        //   onPressed: () {
-        //     Get.back();
-        //   },
-        // ),
-        title: const Text(
-          'Thông tin thanh toán',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Inter',
-            fontSize: 20.0,
-          ),
+        leading: IconButton(
+          color: AppColors.white,
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Get.back();
+          },
         ),
+        title: Text('Thoong tin thanh toans', style: kLableSize20w700White),
+        centerTitle: true,
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -145,17 +83,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
-              _buildFlightList(), // Danh sách chuyến bay
+              const SizedBox(height: 0),
+              _buildFlightList(),
               Divider(),
               const SizedBox(height: 0),
               _buildPriceList(),
               Divider(),
-              // Thêm danh sách các mục chi tiết giá ở đây
               const SizedBox(height: 0),
               _buildPassengerList(),
               Divider(),
-              // Thêm danh sách thông tin khách hàng ở đây
               const SizedBox(height: 0),
               _buildPassengerContact(),
             ],
@@ -170,17 +106,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
+        const SizedBox(height: 0),
         Padding(
-          padding: const EdgeInsets.only(bottom: 2.0), // Add padding bottom
+          padding: const EdgeInsets.only(bottom: 2.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 'Chi tiết đơn hàng',
                 style: TextStyle(
-                  fontSize: 18, // Increase font size for "Chi tiết đơn hàng"
-                  fontWeight: FontWeight.bold, // Make it bold
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               IconButton(
@@ -197,29 +133,90 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
         if (isExpandedDetails)
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: flights.length,
-            itemBuilder: (context, index) {
-              final flight = flights[index];
-              return Padding(
-                padding:
-                    const EdgeInsets.only(bottom: 15.0), // Add padding bottom
-                child: FlightInfoWidget(
-                  // Truyền dữ liệu chuyến bay vào FlightInfoWidget
-                  flightName: flight['flightName'],
-                  airlineLogo: flight['airlineLogo'],
-                  airlineName: flight['airlineName'],
-                  airlineNumber: flight['airlineNumber'],
-                  seatClass: flight['seatClass'],
-                  depart: flight['depart'],
-                  arrive: flight['arrive'],
-                  departTime: flight['departTime'],
-                  arriveTime: flight['arriveTime'],
-                  totalFlight: flight['totalFlight'],
-                ),
-              );
+          FutureBuilder<Map<String, dynamic>>(
+            future: fetchAdditionalFlightData(
+                bookingController.departureFlightId.value),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.hasData) {
+                final additionalData = snapshot.data!;
+                final flight = additionalData['flight'] as Flight;
+                final airline = additionalData['airline'] as Airline;
+                final plane = additionalData['plane'] as Plane;
+                final regulation = additionalData['regulation'] as Regulation;
+                final departureAirport =
+                    additionalData['departureAirport'] as Airport;
+                final arrivalAirport =
+                    additionalData['arrivalAirport'] as Airport;
+                return Column(
+                  children: [
+                    FlightInfoWidget(
+                      flightName: flight.flightStatus,
+                      airlineLogo: airline.logoUrl,
+                      airlineName: airline.airlineName,
+                      airlineNumber: plane.planeNumber,
+                      seatClass: 'Economy',
+                      depart: departureAirport.iataCode,
+                      arrive: arrivalAirport.iataCode,
+                      departTime: DateTime.fromMillisecondsSinceEpoch(
+                              flight.departureDate)
+                          .toString(),
+                      arriveTime: DateTime.fromMillisecondsSinceEpoch(
+                              flight.arrivalDate)
+                          .toString(),
+                      totalFlight: flight.duration.toString(),
+                    ),
+                    if (bookingController.returnFlightId.value != 0)
+                      FutureBuilder<Map<String, dynamic>>(
+                        future: fetchAdditionalFlightData(
+                            bookingController.returnFlightId.value),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.hasData) {
+                            final additionalData = snapshot.data!;
+                            final flight = additionalData['flight'] as Flight;
+                            final airline =
+                                additionalData['airline'] as Airline;
+                            final plane = additionalData['plane'] as Plane;
+                            final regulation =
+                                additionalData['regulation'] as Regulation;
+                            final departureAirport =
+                                additionalData['departureAirport'] as Airport;
+                            final arrivalAirport =
+                                additionalData['arrivalAirport'] as Airport;
+                            return FlightInfoWidget(
+                              flightName: flight.flightStatus,
+                              airlineLogo: airline.logoUrl,
+                              airlineName: airline.airlineName,
+                              airlineNumber: plane.planeNumber,
+                              seatClass: 'Economy',
+                              depart: departureAirport.iataCode,
+                              arrive: arrivalAirport.iataCode,
+                              departTime: DateTime.fromMillisecondsSinceEpoch(
+                                      flight.departureDate)
+                                  .toString(),
+                              arriveTime: DateTime.fromMillisecondsSinceEpoch(
+                                      flight.arrivalDate)
+                                  .toString(),
+                              totalFlight: flight.duration.toString(),
+                            );
+                          } else {
+                            return Text('No data');
+                          }
+                        },
+                      ),
+                  ],
+                );
+              } else {
+                return Text('No data');
+              }
             },
           ),
       ],
@@ -230,17 +227,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
+        const SizedBox(height: 0),
         Padding(
-          padding: const EdgeInsets.only(bottom: 2.0), // Add padding bottom
+          padding: const EdgeInsets.only(bottom: 2.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 'Chi tiết giá',
                 style: TextStyle(
-                  fontSize: 18, // Increase font size for "Chi tiết đơn hàng"
-                  fontWeight: FontWeight.bold, // Make it bold
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               IconButton(
@@ -257,47 +254,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
         if (isExpandedPriceDetails)
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: flightPrice.length,
-            itemBuilder: (context, index) {
-              final flightPrices = flightPrice[index];
-              return Padding(
-                padding:
-                    const EdgeInsets.only(bottom: 15.0), // Add padding bottom
-                child: FlightPriceDetailsWidget(
-                  // Truyền dữ liệu chuyến bay vào FlightInfoWidget
-                  adults: flightPrices['adults'],
-                  children: flightPrices['children'],
-                  infants: flightPrices['infants'],
-                  priceAdult: flightPrices['priceAdult'],
-                  priceChild: flightPrices['priceChild'],
-                  priceInfant: flightPrices['priceInfant'],
-                  totalPrice: flightPrices['totalPrice'],
-                ),
-              );
-            },
+          FlightPriceDetailsWidget(
+            adults: passengerController.adult.value,
+            children: passengerController.children.value,
+            infants: passengerController.babe.value,
+            totalPrice: bookingController.totalPrice.value,
           ),
       ],
     );
+  }
+
+  double _calculateTotalPrice(List<Map<String, String>> passengers) {
+    double total = 0.0;
+    for (var passenger in passengers) {
+      total += double.parse(passenger['price'] ?? '0');
+    }
+    return total;
   }
 
   Widget _buildPassengerList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 0), // Add space above "Chi tiết đơn hàng"
+        const SizedBox(height: 0),
         Padding(
-          padding: const EdgeInsets.only(bottom: 2.0), // Add padding bottom
+          padding: const EdgeInsets.only(bottom: 2.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 'Thông tin hành khách',
                 style: TextStyle(
-                  fontSize: 18, // Increase font size for "Chi tiết đơn hàng"
-                  fontWeight: FontWeight.bold, // Make it bold
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               IconButton(
@@ -317,15 +306,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: flightPassenger.length,
+            itemCount: bookingController.passengerDetails.length,
             itemBuilder: (context, index) {
-              final flightPassengerInfo = flightPassenger[index];
+              final passenger = bookingController.passengerDetails[index];
               return Padding(
-                padding: const EdgeInsets.only(bottom: 2), // Add padding bottom
+                padding: const EdgeInsets.only(bottom: 2),
                 child: FlightPassengerInfoWidget(
-                  passengerName: flightPassengerInfo['name'],
-                  passengerType: flightPassengerInfo['type'],
-                  // Thêm các trường thông tin khác nếu có
+                  passengerName: passenger['fullName']!,
+                  passengerType: passenger['personalId']!,
+                  // Additional fields can be added here
                 ),
               );
             },
@@ -338,22 +327,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: passengerContact.length,
-          itemBuilder: (context, index) {
-            final flightPassengerContact = passengerContact[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 20), // Add padding bottom
-              child: FlightPassengerContactWidget(
-                contactName: flightPassengerContact['fullName'],
-                contactPhoneNumber: flightPassengerContact['phoneNumber'],
-                contactEmail: flightPassengerContact['email'],
-                // Thêm các trường thông tin khác nếu có
-              ),
-            );
-          },
+        FlightPassengerContactWidget(
+          contactName: bookingController.contactDetails['fullName']!,
+          contactPhoneNumber: bookingController.contactDetails['phone']!,
+          contactEmail: bookingController.contactDetails['email']!,
+          // Additional fields can be added here
         ),
       ],
     );
@@ -383,16 +361,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue, // Assuming AppColors.dodger is blue
+                    color: Colors.blue,
                   ),
                 ),
                 Divider(),
                 Text(
-                  '12.400.000 đ', // Số tiền cần thanh toán
+                  '${bookingController.totalPrice.value} đ',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue, // Assuming AppColors.dodger is blue
+                    color: Colors.blue,
                   ),
                 ),
                 SizedBox(height: 4),
@@ -420,10 +398,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isChecked
-                        ? Colors.blue
-                        : Colors
-                            .red, // Change button color based on checkbox state
+                    backgroundColor: isChecked ? Colors.blue : Colors.red,
                     minimumSize: Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -431,11 +406,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   onPressed: isChecked
                       ? () {
-                          // Navigate to payment screen
-
                           Get.to(() => PaymentScreen());
                         }
-                      : null, // Disable button if checkbox is unchecked
+                      : null,
                   child: Text(
                     'Thanh toán',
                     style: TextStyle(color: Colors.white),
@@ -452,7 +425,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildTotalSection() {
     return Container(
-      color: Colors.white, // Màu nền cho container
+      color: Colors.white,
       padding: EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 10),
       child: SafeArea(
         child: Column(
@@ -466,7 +439,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '12.400.000 đ', // Cập nhật giá tiền đúng
+                  '${bookingController.totalPrice.value} đ',
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -474,30 +447,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 15), // Khoảng cách giữa text và button
+            SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {
-                // Xử lý sự kiện khi nhấn nút thanh toán
                 showDialog(
                   context: context,
                   builder: (context) => _buildPaymentDialog(context),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dodger, // Màu nền của nút
+                backgroundColor: AppColors.dodger,
                 shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(20), // Bo tròn góc của nút
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                padding: EdgeInsets.symmetric(
-                    vertical: 10), // Đệm dọc lớn hơn để nút cao hơn
-                minimumSize: Size(double.infinity,
-                    40), // Chiều dài tối thiểu của nút (double.infinity sẽ làm nút dài ra cùng với chiều rộng của parent widget)
-                textStyle: TextStyle(fontSize: 18), // Kích thước chữ của nút
+                padding: EdgeInsets.symmetric(vertical: 10),
+                minimumSize: Size(double.infinity, 40),
+                textStyle: TextStyle(fontSize: 18),
               ),
               child: Text(
                 'Thanh toán',
-                style: TextStyle(color: Colors.white), // Màu chữ của nút
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/trip_summary/trip_summary_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,6 +19,8 @@ class BottomSheetSelectFlight extends StatefulWidget {
 class _BottomSheetSelectFlightState extends State<BottomSheetSelectFlight> {
   final FlightController flightController = Get.put(FlightController());
   final DateTimeController dateTimeController = Get.put(DateTimeController());
+  final PassengerController passengerController =
+      Get.put(PassengerController());
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +51,26 @@ class _BottomSheetSelectFlightState extends State<BottomSheetSelectFlight> {
                 des: 'Đặt vé',
                 onPress: () {
                   if (dateTimeController.isRoundTrip.value &&
-                      flightController.departureFlight.value == null &&
-                      flightController.returnFlight.value == null) {
-                    Get.to(() => TripSummaryScreen());
-                  } else if (!dateTimeController.isRoundTrip.value &&
                       flightController.departureFlight.value != null &&
-                      flightController.returnFlight.value == null) {
-                    Get.to(() => TripSummaryScreen());
+                      flightController.returnFlight.value != null) {
+                    Get.to(() => TripSummaryScreen(
+                          departureFlightId:
+                              flightController.departureFlight.value!.id,
+                          returnFlightId:
+                              flightController.returnFlight.value!.id,
+                          numAdults: passengerController.adult.value,
+                          numChildren: passengerController.children.value,
+                          numInfants: passengerController.babe.value,
+                        ));
+                  } else if (!dateTimeController.isRoundTrip.value &&
+                      flightController.departureFlight.value != null) {
+                    Get.to(() => TripSummaryScreen(
+                          departureFlightId:
+                              flightController.departureFlight.value!.id,
+                          numAdults: passengerController.adult.value,
+                          numChildren: passengerController.children.value,
+                          numInfants: passengerController.babe.value,
+                        ));
                   } else {
                     final snackDemo = SnackBar(
                       content: Text(

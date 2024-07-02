@@ -33,4 +33,16 @@ class Flight {
   String toString() {
     return 'Flight(flightStatus: $flightStatus, departureDate: $departureDate, arrivalDate: $arrivalDate, duration: $duration, departureAirportId: $departureAirportId, arrivalAirportId: $arrivalAirportId, planeId: $planeId)';
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'departureDate': departureDate,
+      'arrivalDate': arrivalDate,
+      'duration': duration,
+      'flightStatus': flightStatus,
+      'departureAirportId': departureAirportId,
+      'arrivalAirportId': arrivalAirportId,
+      'planeId': planeId,
+    };
+  }
 }

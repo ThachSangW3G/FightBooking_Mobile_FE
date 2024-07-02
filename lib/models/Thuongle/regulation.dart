@@ -24,4 +24,13 @@ class Regulation {
   String toString() {
     return 'Regulation(id: $id, firstClassPrice: $firstClassPrice, businessPrice: $businessPrice, economyPrice: $economyPrice)';
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstClassPrice': firstClassPrice,
+      'businessPrice': businessPrice,
+      'economyPrice': economyPrice,
+    };
+  }
 }

@@ -4,19 +4,13 @@ class FlightPriceDetailsWidget extends StatelessWidget {
   final int adults;
   final int children;
   final int infants;
-  final int priceAdult;
-  final int priceChild;
-  final int priceInfant;
-  final int totalPrice;
+  final double totalPrice;
 
   const FlightPriceDetailsWidget({
     Key? key,
     required this.adults,
     required this.children,
     required this.infants,
-    required this.priceAdult,
-    required this.priceChild,
-    required this.priceInfant,
     required this.totalPrice,
   }) : super(key: key);
 
@@ -25,18 +19,15 @@ class FlightPriceDetailsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (adults > 0)
-          _buildPriceRow("người lớn", adults, priceAdult * adults),
-        if (children > 0)
-          _buildPriceRow("trẻ em", children, priceChild * children),
-        if (infants > 0)
-          _buildPriceRow("em bé", infants, priceInfant * infants),
+        if (adults > 0) _buildPriceRow("người lớn", adults),
+        if (children > 0) _buildPriceRow("trẻ em", children),
+        if (infants > 0) _buildPriceRow("em bé", infants),
         _buildTotalRow("Tổng cộng", totalPrice),
       ],
     );
   }
 
-  Widget _buildPriceRow(String title, int count, int price) {
+  Widget _buildPriceRow(String title, int count) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -49,12 +40,6 @@ class FlightPriceDetailsWidget extends StatelessWidget {
                 fontSize: 14,
               ),
             ),
-            Text(
-              "\$$price",
-              style: TextStyle(
-                fontSize: 14,
-              ),
-            ),
           ],
         ),
         SizedBox(height: 5),
@@ -63,7 +48,7 @@ class FlightPriceDetailsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTotalRow(String title, int totalPrice) {
+  Widget _buildTotalRow(String title, double totalPrice) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

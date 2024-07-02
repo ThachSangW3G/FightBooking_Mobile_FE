@@ -213,7 +213,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ButtonBlue(
                         isLoading: _isLoading,
                         onPress: changePassword,
-                        des: 'Login',
+                        des: 'Done',
                       ),
                       const SizedBox(
                         height: 20,

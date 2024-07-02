@@ -284,7 +284,7 @@ class _AboutMeState extends State<AboutMe> {
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: SvgPicture.asset(
-                            'assets/icons/phone.svg',
+                            'assets/icons/gift.svg',
                           ),
                         )),
                   ),
@@ -295,31 +295,7 @@ class _AboutMeState extends State<AboutMe> {
                 Container(
                   height: 50,
                   width: MediaQuery.of(context).size.width - 40,
-                  decoration: const BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(15))),
-                  child: TextFormField(
-                    controller: personalIDController,
-                    style: kLableTextBlackMinium,
-                    decoration: InputDecoration(
-                        hintText: 'Personal ID',
-                        hintStyle: kLableTextBlackMinium,
-                        border: InputBorder.none,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/phone.svg',
-                          ),
-                        )),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width - 40,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: const BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -329,27 +305,27 @@ class _AboutMeState extends State<AboutMe> {
                         height: 30,
                         width: 30,
                         child: SvgPicture.asset(
-                          'assets/icons/phone.svg',
+                          'assets/icons/gift.svg',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
                         child: DropdownButton(
                           isExpanded: true,
-                          underline: SizedBox(),
+                          underline: const SizedBox(),
                           hint: Text(
                             'Choose your gender',
                             style: kLableTextBlackMinium,
                           ),
                           items: itemsGender.map((String e) {
                             return DropdownMenuItem(
+                              value: e,
                               child: Text(
                                 e,
                                 style: kLableTextBlackMinium,
                               ),
-                              value: e,
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
@@ -374,6 +350,7 @@ class _AboutMeState extends State<AboutMe> {
                     child: TextFormField(
                       controller: dayOfBirthController,
                       readOnly: true,
+                      style: kLableTextBlackMinium,
                       decoration: InputDecoration(
                           hintText: 'dd/MM/yyyy',
                           hintStyle: kLableTextBlackMinium,

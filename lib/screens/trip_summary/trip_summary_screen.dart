@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/flight.dart';
+
 import 'package:flightbooking_mobile_fe/models/Thuongle/plane.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/regulation.dart';
+import 'package:flightbooking_mobile_fe/models/flights/flight.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_info_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,21 +18,11 @@ import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/screens/seat/seat_selection_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class TripSummaryScreen extends StatefulWidget {
-  final int? departureFlightId;
-  final int? returnFlightId;
-  final int? numAdults;
-  final int? numChildren;
-  final int? numInfants;
-
   const TripSummaryScreen({
     super.key,
-    this.departureFlightId,
-    this.returnFlightId,
-    this.numAdults,
-    this.numChildren,
-    this.numInfants,
   });
 
   @override
@@ -36,22 +30,20 @@ class TripSummaryScreen extends StatefulWidget {
 }
 
 class _TripSummaryScreenState extends State<TripSummaryScreen> {
-  Future<Flight>? departureFlightData;
-  Future<Flight>? returnFlightData;
   List<String> selectedDepartureSeats = [];
   List<String> selectedReturnSeats = [];
   final StreamController<double> _totalAmountController =
       StreamController<double>();
 
+  final FlightController flightController = Get.put(FlightController());
+  final PassengerController passengerController =
+      Get.put(PassengerController());
+  final SeatClassController seatClassController =
+      Get.put(SeatClassController());
+
   @override
   void initState() {
     super.initState();
-    if (widget.departureFlightId != null) {
-      departureFlightData = fetchFlightById(widget.departureFlightId!);
-    }
-    if (widget.returnFlightId != null) {
-      returnFlightData = fetchFlightById(widget.returnFlightId!);
-    }
   }
 
   @override
@@ -78,7 +70,8 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
         selectedReturnSeats = seats;
       }
       if (selectedDepartureSeats.isNotEmpty &&
-          (widget.returnFlightId == null || selectedReturnSeats.isNotEmpty)) {
+          (flightController.returnFlight.value == null ||
+              selectedReturnSeats.isNotEmpty)) {
         calculateTotalAmount();
       }
     });
@@ -86,13 +79,13 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
 
   Future<void> calculateTotalAmount() async {
     double total = 0;
-    if (widget.departureFlightId != null) {
+    if (flightController.departureFlight.value != null) {
       total += await fetchFlightAmount(
-          widget.departureFlightId!, selectedDepartureSeats);
+          flightController.departureFlight.value!.id, selectedDepartureSeats);
     }
-    if (widget.returnFlightId != null) {
-      total +=
-          await fetchFlightAmount(widget.returnFlightId!, selectedReturnSeats);
+    if (flightController.returnFlight.value != null) {
+      total += await fetchFlightAmount(
+          flightController.returnFlight.value!.id, selectedReturnSeats);
     }
     _totalAmountController.add(total);
   }
@@ -137,7 +130,9 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
         leading: IconButton(
           color: AppColors.white,
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+          },
         ),
         title: Text('Tóm tắt đặt chỗ', style: kLableSize20w700White),
         centerTitle: true,
@@ -145,75 +140,54 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if (departureFlightData != null)
-              FutureBuilder<Flight>(
-                future: departureFlightData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData) {
-                    final flight = snapshot.data!;
-                    return FlightDetails(
-                      flight: flight,
-                      numAdults: widget.numAdults,
-                      numChildren: widget.numChildren,
-                      numInfants: widget.numInfants,
-                      selectedSeats: selectedDepartureSeats,
-                      onSelect: () async {
-                        int totalPassengers = (widget.numAdults ?? 0) +
-                            (widget.numChildren ?? 0) +
-                            (widget.numInfants ?? 0);
-                        final seats = await Get.to<List<String>>(() =>
-                            SeatSelectionScreen(
-                                flightId: widget.departureFlightId!,
-                                numPassengers: totalPassengers));
-                        if (seats != null) {
-                          updateSelectedSeats(seats, true);
-                        }
-                      },
-                    );
-                  } else {
-                    return Text('No data');
+            if (flightController.departureFlight.value != null)
+              FlightDetails(
+                flight: flightController.departureFlight.value!,
+                numAdults: passengerController.adult.value,
+                numChildren: passengerController.children.value,
+                numInfants: passengerController.babe.value,
+                selectedSeats: selectedDepartureSeats,
+                seatClass: seatClassController
+                    .seatClasses[seatClassController.selectedSeatClass.value]
+                    .title,
+                onSelect: () async {
+                  int totalPassengers = passengerController.adult.value +
+                      passengerController.children.value +
+                      passengerController.babe.value;
+                  final seats = await Get.to<List<String>>(() =>
+                      SeatSelectionScreen(
+                          flightId: flightController.departureFlight.value!.id,
+                          numPassengers: totalPassengers));
+                  if (seats != null) {
+                    updateSelectedSeats(seats, true);
                   }
                 },
               ),
-            if (returnFlightData != null)
-              FutureBuilder<Flight>(
-                future: returnFlightData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData) {
-                    final flight = snapshot.data!;
-                    return FlightDetails(
-                      flight: flight,
-                      numAdults: widget.numAdults,
-                      numChildren: widget.numChildren,
-                      numInfants: widget.numInfants,
-                      selectedSeats: selectedReturnSeats,
-                      onSelect: () async {
-                        int totalPassengers = (widget.numAdults ?? 0) +
-                            (widget.numChildren ?? 0) +
-                            (widget.numInfants ?? 0);
-                        final seats = await Get.to<List<String>>(() =>
-                            SeatSelectionScreen(
-                                flightId: widget.returnFlightId!,
-                                numPassengers: totalPassengers));
-                        if (seats != null) {
-                          updateSelectedSeats(seats, false);
-                        }
-                      },
-                    );
-                  } else {
-                    return Text('No data');
+            if (flightController.returnFlight.value != null)
+              FlightDetails(
+                flight: flightController.returnFlight.value!,
+                numAdults: passengerController.adult.value,
+                numChildren: passengerController.children.value,
+                numInfants: passengerController.babe.value,
+                selectedSeats: selectedReturnSeats,
+                seatClass: seatClassController
+                    .seatClasses[seatClassController.selectedSeatClass.value]
+                    .title,
+                onSelect: () async {
+                  int totalPassengers = passengerController.adult.value +
+                      passengerController.children.value +
+                      passengerController.babe.value;
+
+                  final seats = await Get.to<List<String>>(() =>
+                      SeatSelectionScreen(
+                          flightId: flightController.returnFlight.value!.id,
+                          numPassengers: totalPassengers));
+                  if (seats != null) {
+                    updateSelectedSeats(seats, false);
                   }
                 },
               ),
-            SizedBox(
+            const SizedBox(
                 height: 10), // Add some space before the total amount section
           ],
         ),
@@ -230,49 +204,55 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Tổng cộng',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${totalAmount.toStringAsFixed(0)} ₫',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      '${totalAmount.toStringAsFixed(0)} \$',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: (selectedDepartureSeats.isNotEmpty &&
-                          (widget.returnFlightId == null ||
+                          (flightController.returnFlight.value == null ||
                               selectedReturnSeats.isNotEmpty))
                       ? () async {
-                          if (widget.departureFlightId != null) {
-                            await holdSeats(widget.departureFlightId!,
+                          if (flightController.departureFlight.value != null) {
+                            await holdSeats(
+                                flightController.departureFlight.value!.id,
                                 selectedDepartureSeats);
                           }
-                          if (widget.returnFlightId != null) {
+                          if (flightController.returnFlight.value != null) {
                             await holdSeats(
-                                widget.returnFlightId!, selectedReturnSeats);
+                                flightController.returnFlight.value!.id,
+                                selectedReturnSeats);
                           }
-                          int totalPassengers = (widget.numAdults ?? 0) +
-                              (widget.numChildren ?? 0) +
-                              (widget.numInfants ?? 0);
+                          int totalPassengers =
+                              passengerController.adult.value +
+                                  passengerController.children.value +
+                                  passengerController.babe.value;
+
                           Get.to(() => InfoGuestScreen(
                                 numPassengers: totalPassengers,
                                 totalPrice: totalAmount,
-                                departureFlightId: widget.departureFlightId!,
-                                returnFlightId: widget.returnFlightId!,
+                                departureFlightId:
+                                    flightController.departureFlight.value!.id,
+                                returnFlightId:
+                                    flightController.returnFlight.value!.id,
                               ));
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    textStyle: TextStyle(fontSize: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(fontSize: 16),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Thanh toán',
                       style: TextStyle(color: AppColors.white),
@@ -293,6 +273,7 @@ class FlightDetails extends StatelessWidget {
   final int? numAdults;
   final int? numChildren;
   final int? numInfants;
+  final String seatClass;
   final List<String> selectedSeats;
   final VoidCallback onSelect;
 
@@ -304,6 +285,7 @@ class FlightDetails extends StatelessWidget {
     this.numInfants,
     required this.selectedSeats,
     required this.onSelect,
+    required this.seatClass,
   }) : super(key: key);
 
   @override
@@ -312,7 +294,9 @@ class FlightDetails extends StatelessWidget {
       future: fetchAdditionalFlightData(flight),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return SizedBox(
+              height: 400,
+              child: Center(child: const CircularProgressIndicator()));
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
@@ -324,9 +308,9 @@ class FlightDetails extends StatelessWidget {
               additionalData['departureAirport'] as Airport;
           final arrivalAirport = additionalData['arrivalAirport'] as Airport;
           return Card(
-            margin: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -335,19 +319,17 @@ class FlightDetails extends StatelessWidget {
                     airlineLogo: airline.logoUrl,
                     airlineName: airline.airlineName,
                     airlineNumber: plane.planeNumber,
-                    seatClass: 'Economy',
+                    seatClass: seatClass,
                     depart: departureAirport.iataCode,
                     arrive: arrivalAirport.iataCode,
-                    departTime: DateTime.fromMillisecondsSinceEpoch(
-                            flight.departureDate)
-                        .toString(),
-                    arriveTime:
-                        DateTime.fromMillisecondsSinceEpoch(flight.arrivalDate)
-                            .toString(),
+                    departTime: DateFormat('HH:mm dd/MM/yyyy')
+                        .format(flight.departureDate),
+                    arriveTime: DateFormat('HH:mm dd/MM/yyyy')
+                        .format(flight.arrivalDate),
                     totalFlight: flight.duration.toString(),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'Số lượng hành khách',
                     style: TextStyle(
                       fontSize: 16,
@@ -357,43 +339,43 @@ class FlightDetails extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Người lớn',
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),
                       Text(
                         '${numAdults ?? 0}',
-                        style: TextStyle(fontWeight: FontWeight.normal),
+                        style: const TextStyle(fontWeight: FontWeight.normal),
                       ),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Trẻ em',
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),
                       Text(
                         '${numChildren ?? 0}',
-                        style: TextStyle(fontWeight: FontWeight.normal),
+                        style: const TextStyle(fontWeight: FontWeight.normal),
                       ),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Em bé',
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),
                       Text(
                         '${numInfants ?? 0}',
-                        style: TextStyle(fontWeight: FontWeight.normal),
+                        style: const TextStyle(fontWeight: FontWeight.normal),
                       ),
                     ],
                   ),
-                  Text(
+                  const Text(
                     'Ghế đã chọn',
                     style: TextStyle(
                       fontSize: 16,
@@ -416,7 +398,7 @@ class FlightDetails extends StatelessWidget {
             ),
           );
         } else {
-          return Text('No data');
+          return const Text('No data');
         }
       },
     );

@@ -159,19 +159,24 @@ class FlightController extends GetxController {
           final businessPrice = element['businessPrice'];
           final firstClassPrice = element['firstClassPrice'];
           final flightStatus = element['flightStatus'];
+          final duration = element['duration'];
+          final airlineId = element['airlineId'];
+          final airlineName = element['airlineName'];
 
           final flight = Flight(
-            id: id,
-            flightStatus: flightStatus,
-            departureDate: departureDate,
-            arrivalDate: arrivalDate,
-            departureAirportId: departureAirportId,
-            arrivalAirportId: arrivalAirportId,
-            planeId: planeId,
-            economyPrice: economyPrice,
-            businessPrice: businessPrice,
-            firstClassPrice: firstClassPrice,
-          );
+              id: id,
+              flightStatus: flightStatus,
+              departureDate: departureDate,
+              arrivalDate: arrivalDate,
+              departureAirportId: departureAirportId,
+              arrivalAirportId: arrivalAirportId,
+              planeId: planeId,
+              economyPrice: economyPrice,
+              businessPrice: businessPrice,
+              firstClassPrice: firstClassPrice,
+              duration: duration,
+              airlineId: airlineId,
+              airlineName: airlineName);
           print(flight);
 
           flightsResponse.add(flight);

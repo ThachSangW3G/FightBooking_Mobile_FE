@@ -46,7 +46,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   Color getSeatColor(Seat seat, String seatId) {
     if (seat.status == null) {
-      return Colors.grey; // Xử lý trường hợp status là null
+      return AppColors.lightGray; // Xử lý trường hợp status là null
     } else if (seat.status == 'BOOKED') {
       return Colors.yellow;
     } else if (seat.status == "ON_HOLD") {
@@ -54,7 +54,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     } else if (selectedSeats.contains(seatId)) {
       return Colors.blue;
     } else {
-      return Colors.grey;
+      return AppColors.lightGray;
     }
   }
 

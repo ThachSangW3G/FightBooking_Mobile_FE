@@ -564,10 +564,19 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                         ButtonBlue(
                             des: 'Áp dụng',
                             onPress: () {
-                              flightController.setFilterPriceMax(
-                                  int.parse(priceMaxController.text));
-                              flightController.setFilterPriceMin(
-                                  int.parse(priceMinController.text));
+                              if (priceMaxController.text == '') {
+                                flightController.setFilterPriceMax(0);
+                              } else {
+                                flightController.setFilterPriceMax(
+                                    int.parse(priceMaxController.text));
+                              }
+
+                              if (priceMinController.text == '') {
+                                flightController.setFilterPriceMin(0);
+                              } else {
+                                flightController.setFilterPriceMin(
+                                    int.parse(priceMinController.text));
+                              }
 
                               flightController.filterFlights(
                                   dateTimeController.selectDate.value!,
@@ -575,7 +584,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                                   airportController
                                       .selectedDestination.value!.id,
                                   seatClassController.selectedSeatClass.value,
-                                  sortController.selectedSort.value);
+                                  sortController.selectedSort.value,
+                                  airlineController.selectFilterAirline.value);
 
                               Get.back();
                             })

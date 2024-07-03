@@ -128,8 +128,24 @@ class FlightController extends GetxController {
     }
   }
 
-  Future<void> filterFlights(DateTime departureDate, int departureAirportId,
-      int arrivalAirportId, int classType, int selectSort) async {
+  List<Flight> filterFlightByAirline(
+      List<Flight> flights, List<int> selectedAirline) {
+    if (selectedAirline.isEmpty) {
+      return flights;
+    }
+
+    return flights
+        .where((flight) => selectedAirline.contains(flight.airlineId))
+        .toList();
+  }
+
+  Future<void> filterFlights(
+      DateTime departureDate,
+      int departureAirportId,
+      int arrivalAirportId,
+      int classType,
+      int selectSort,
+      List<int> selectedAirline) async {
     isLoading.value = true;
     final formatDepartureDate =
         DateFormat('yyyy-MM-dd HH:mm:ss').format(departureDate);
@@ -159,25 +175,31 @@ class FlightController extends GetxController {
           final businessPrice = element['businessPrice'];
           final firstClassPrice = element['firstClassPrice'];
           final flightStatus = element['flightStatus'];
+          final duration = element['duration'];
+          final airlineId = element['airlineId'];
+          final airlineName = element['airlineName'];
 
           final flight = Flight(
-            id: id,
-            flightStatus: flightStatus,
-            departureDate: departureDate,
-            arrivalDate: arrivalDate,
-            departureAirportId: departureAirportId,
-            arrivalAirportId: arrivalAirportId,
-            planeId: planeId,
-            economyPrice: economyPrice,
-            businessPrice: businessPrice,
-            firstClassPrice: firstClassPrice,
-          );
+              id: id,
+              flightStatus: flightStatus,
+              departureDate: departureDate,
+              arrivalDate: arrivalDate,
+              departureAirportId: departureAirportId,
+              arrivalAirportId: arrivalAirportId,
+              planeId: planeId,
+              economyPrice: economyPrice,
+              businessPrice: businessPrice,
+              firstClassPrice: firstClassPrice,
+              duration: duration,
+              airlineId: airlineId,
+              airlineName: airlineName);
           print(flight);
 
           flightsResponse.add(flight);
         });
 
-        flights.value = filterFlightByPrice(flightsResponse, classType);
+        flights.value = filterFlightByAirline(
+            filterFlightByPrice(flightsResponse, classType), selectedAirline);
 
         switch (selectSort) {
           case 0:
@@ -209,11 +231,11 @@ class FlightController extends GetxController {
     }
   }
 
-  void setDepartureFlight(Flight flight) {
+  void setDepartureFlight(Flight? flight) {
     departureFlight.value = flight;
   }
 
-  void setReturnFlight(Flight flight) {
+  void setReturnFlight(Flight? flight) {
     returnFlight.value = flight;
   }
 

@@ -1,17 +1,10 @@
 import 'dart:convert';
 import 'dart:async';
-import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/booking_model.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/flight.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/plane.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/regulation.dart';
-import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight_info_widget.dart';
 import 'package:flightbooking_mobile_fe/screens/info_guest/info_guest_screen.dart';
 import 'package:flightbooking_mobile_fe/widgets/flight/FlightDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flightbooking_mobile_fe/services/flight_service.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/screens/seat/seat_selection_screen.dart';

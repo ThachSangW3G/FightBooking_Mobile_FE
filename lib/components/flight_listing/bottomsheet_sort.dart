@@ -70,7 +70,8 @@ class _BottomSheetSortState extends State<BottomSheetSort> {
                           airportController.selectedDeparture.value!.id,
                           airportController.selectedDestination.value!.id,
                           seatClassController.selectedSeatClass.value,
-                          sortController.selectedSort.value);
+                          sortController.selectedSort.value,
+                          airlineController.selectFilterAirline.value);
                       Get.back();
                     },
                     child: Column(

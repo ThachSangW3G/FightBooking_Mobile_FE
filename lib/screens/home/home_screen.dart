@@ -4,6 +4,7 @@ import 'package:flightbooking_mobile_fe/components/chat/chat_bubble.dart';
 import 'package:flightbooking_mobile_fe/components/homes/button_icon_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/review_controller.dart';
@@ -21,6 +22,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
+import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -44,6 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.put(PassengerController());
   final SeatClassController seatClassController =
       Get.put(SeatClassController());
+
+  final AirportController airportController = Get.put(AirportController());
 
   @override
   void initState() {
@@ -72,6 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  final UserController userController = Get.put(UserController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,10 +93,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: const BoxDecoration(),
                   child: Center(
                     child: Container(
-                      height: 45,
-                      width: 45,
-                      decoration: const BoxDecoration(
-                          color: AppColors.slamon, shape: BoxShape.circle),
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          color: AppColors.slamon,
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: userController
+                                          .currentUser.value!.avatarUrl !=
+                                      null
+                                  ? NetworkImage(userController
+                                      .currentUser.value!.avatarUrl!)
+                                  : const AssetImage(
+                                          'assets/images/defailt_avatar.jpg')
+                                      as ImageProvider)),
                     ),
                   ),
                 ),
@@ -115,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: kLableMiniWhite,
                     ),
                     Text(
-                      'Thach Sang',
+                      userController.currentUser.value!.fullName!,
                       style: kLableTitleWhite,
                     ),
                   ],
@@ -186,66 +203,120 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Expanded(
                                         child: Column(
                                           children: [
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SvgPicture.asset(
-                                                    'assets/icons/planeup.svg'),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'Điểm đi',
-                                                      style: kLableSize18Black,
-                                                    ),
-                                                    Text(
-                                                      'Chọn điểm đi',
-                                                      style: kLableSize18Grey,
-                                                    )
-                                                  ],
-                                                )
-                                              ],
+                                            InkWell(
+                                              onTap: () {
+                                                Get.to(() => const FindFlight(
+                                                      from: 'departurePoint',
+                                                    ));
+                                              },
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                      'assets/icons/planeup.svg'),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Điểm đi',
+                                                        style:
+                                                            kLableSize18Black,
+                                                      ),
+                                                      Obx(() => airportController
+                                                                  .selectedDeparture
+                                                                  .value !=
+                                                              null
+                                                          ? Text(
+                                                              '${airportController.selectedDeparture.value!.iataCode} (${airportController.selectedDeparture.value!.city})',
+                                                              style:
+                                                                  kLableSize18Grey)
+                                                          : Text('Chọn điểm đi',
+                                                              style:
+                                                                  kLableSize18Grey)),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                             const SizedBox(
                                               height: 10,
                                             ),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SvgPicture.asset(
-                                                    'assets/icons/planedown.svg'),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'Điểm đến',
-                                                      style: kLableSize18Black,
-                                                    ),
-                                                    Text(
-                                                      'Chọn điểm đến',
-                                                      style: kLableSize18Grey,
-                                                    )
-                                                  ],
-                                                )
-                                              ],
+                                            InkWell(
+                                              onTap: () {
+                                                Get.to(() => const FindFlight(
+                                                      from: 'destinationPoint',
+                                                    ));
+                                              },
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                      'assets/icons/planedown.svg'),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Điểm đến',
+                                                        style:
+                                                            kLableSize18Black,
+                                                      ),
+                                                      Obx(() => airportController
+                                                                  .selectedDestination
+                                                                  .value !=
+                                                              null
+                                                          ? Text(
+                                                              '${airportController.selectedDestination.value!.iataCode} (${airportController.selectedDestination.value!.city})',
+                                                              style:
+                                                                  kLableSize18Grey)
+                                                          : Text(
+                                                              'Chọn điểm đến',
+                                                              style:
+                                                                  kLableSize18Grey)),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
                                             )
                                           ],
                                         ),
                                       ),
-                                      SvgPicture.asset(
-                                        'assets/icons/switch.svg',
-                                        height: 30,
-                                        width: 30,
+                                      InkWell(
+                                        onTap: () {
+                                          final success =
+                                              airportController.swapAirport();
+                                          if (!success) {
+                                            final snackdemo = SnackBar(
+                                              content: Text(
+                                                'Đổi địa điểm thất bại!',
+                                                style: kLableW800White,
+                                              ),
+                                              backgroundColor: Colors.red,
+                                              elevation: 10,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              margin: const EdgeInsets.all(5),
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackdemo);
+                                          }
+                                        },
+                                        child: SvgPicture.asset(
+                                          'assets/icons/switch.svg',
+                                          height: 30,
+                                          width: 30,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -276,8 +347,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Column(
                                           children: [
                                             InkWell(
-                                              onTap: () =>
-                                                  {showBottomSheetDate()},
+                                              onTap: () => {
+                                                Get.to(() => const FindFlight(
+                                                      from: 'departureDate',
+                                                    ))
+                                              },
                                               child: Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -313,43 +387,53 @@ class _HomeScreenState extends State<HomeScreen> {
                                             const SizedBox(
                                               height: 10,
                                             ),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SvgPicture.asset(
-                                                    'assets/icons/calendar-to.svg'),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'Ngày về',
-                                                      style: kLableSize18Black,
-                                                    ),
-                                                    Obx(() => dateTimeController
-                                                                .rangeEnd
-                                                                .value ==
-                                                            null
-                                                        ? Text(
-                                                            'Chọn ngày về',
-                                                            style:
-                                                                kLableSize18Grey,
-                                                          )
-                                                        : Text(
-                                                            formatDateTime(
-                                                                dateTimeController
-                                                                    .rangeEnd
-                                                                    .value!),
-                                                            style:
-                                                                kLableSize18w700Black,
-                                                          ))
-                                                  ],
-                                                )
-                                              ],
+                                            InkWell(
+                                              onTap: () {
+                                                Get.to(() => const FindFlight(
+                                                      from: 'departureDate',
+                                                    ));
+                                              },
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                      'assets/icons/calendar-to.svg'),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Ngày về',
+                                                        style:
+                                                            kLableSize18Black,
+                                                      ),
+                                                      Obx(() =>
+                                                          dateTimeController
+                                                                      .rangeEnd
+                                                                      .value ==
+                                                                  null
+                                                              ? Text(
+                                                                  'Chọn ngày về',
+                                                                  style:
+                                                                      kLableSize18Grey,
+                                                                )
+                                                              : Text(
+                                                                  formatDateTime(
+                                                                      dateTimeController
+                                                                          .rangeEnd
+                                                                          .value!),
+                                                                  style:
+                                                                      kLableSize18w700Black,
+                                                                ))
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
                                             )
                                           ],
                                         ),
@@ -402,7 +486,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       InkWell(
                                         onTap: () {
-                                          showBottomSheePassenger();
+                                          Get.to(() => const FindFlight(
+                                                from: 'passenger',
+                                              ));
                                         },
                                         child: Row(
                                           crossAxisAlignment:
@@ -433,7 +519,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          showBottomSheetSeatClass();
+                                          Get.to(() => const FindFlight(
+                                                from: 'seatClass',
+                                              ));
                                         },
                                         child: Row(
                                           crossAxisAlignment:
@@ -474,7 +562,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      Get.to(const FindFlight());
+                                      Get.to(const FindFlight(
+                                        from: 'findFlight',
+                                      ));
                                       //Get.to(() => NewsWebViewPage(url: "Hello"));
                                     },
                                     child: Container(

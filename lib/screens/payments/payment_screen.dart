@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flightbooking_mobile_fe/components/payments/new_card_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/payment_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/saved_card_item.dart';
@@ -16,12 +15,10 @@ import 'package:http/http.dart' as http;
 
 class PaymentScreen extends StatefulWidget {
   final List<Map<String, dynamic>> flightDetails;
-  final List<Map<String, dynamic>> passengerDetails;
   final double totalAmount;
 
   const PaymentScreen({
     required this.flightDetails,
-    required this.passengerDetails,
     required this.totalAmount,
     Key? key,
   }) : super(key: key);
@@ -109,7 +106,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> updateSeatStatus() async {
     for (var flightDetail in widget.flightDetails) {
-      final seatNumbers = widget.passengerDetails
+      final seatNumbers = [
+        ...widget.flightDetails[0]['passengers'],
+        if (widget.flightDetails.length > 1)
+          ...widget.flightDetails[1]['passengers'],
+      ]
           .where((p) => p['flightId'] == flightDetail['flightId'])
           .map((p) => p['seatNumber'])
           .toSet()
@@ -132,6 +133,41 @@ class _PaymentScreenState extends State<PaymentScreen> {
         return;
       }
       print(seatNumbers);
+    }
+  }
+
+  Future<void> handlePayment() async {
+    if (widget.flightDetails.length == 2) {
+      // Chia tổng số tiền thành hai phần bằng nhau
+      final amountPerFlight = widget.totalAmount / 2;
+
+      // Thực hiện thanh toán cho chuyến đi
+      await chargeSavedCard(
+        userController.currentUser.value!.email!,
+        selectedCard!,
+        amountPerFlight,
+        [
+          widget.flightDetails[0],
+        ],
+      );
+
+      // Thực hiện thanh toán cho chuyến về
+      await chargeSavedCard(
+        userController.currentUser.value!.email!,
+        selectedCard!,
+        amountPerFlight,
+        [
+          widget.flightDetails[1],
+        ],
+      );
+    } else {
+      // Thực hiện thanh toán cho chuyến bay một chiều
+      await chargeSavedCard(
+        userController.currentUser.value!.email!,
+        selectedCard!,
+        widget.totalAmount,
+        widget.flightDetails,
+      );
     }
   }
 
@@ -216,23 +252,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     if (selectedCard == 'new_card') {
                       await createCustomerAndSetupIntent();
                     } else {
-                      await chargeSavedCard(
-                        userController.currentUser.value!.email!,
-                        selectedCard!,
-                        widget.totalAmount,
-                        widget.flightDetails.map((flightDetail) {
-                          return {
-                            "flightId": flightDetail['flightId'],
-                            "bookerFullName": flightDetail['bookerFullName'],
-                            "bookerEmail": flightDetail['bookerEmail'],
-                            "bookerPhoneNumber":
-                                flightDetail['bookerPhoneNumber'],
-                            "userId": flightDetail['userId'],
-                            "bookingDate": flightDetail['bookingDate'],
-                            "passengers": widget.passengerDetails,
-                          };
-                        }).toList(),
-                      );
+                      await handlePayment();
                     }
                   } else {
                     // Handle other payment methods

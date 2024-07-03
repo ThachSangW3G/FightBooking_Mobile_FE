@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
@@ -15,8 +14,6 @@ import 'package:flightbooking_mobile_fe/screens/checkout/widgets/checkout/flight
 import 'package:flightbooking_mobile_fe/controllers/booking_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:flightbooking_mobile_fe/models/Thuongle/flight.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/plane.dart';
-import 'package:flightbooking_mobile_fe/models/Thuongle/regulation.dart';
 import 'package:flightbooking_mobile_fe/services/flight_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -31,6 +28,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final PassengerController passengerController =
       Get.find<PassengerController>();
   final UserController userController = Get.find<UserController>();
+  final FlightController flightController = Get.put(FlightController());
   bool isExpandedDetails = true;
   bool isExpandedPriceDetails = true;
   bool isExpandedPassenger = true;
@@ -298,13 +296,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ],
           ),
         ),
-        if (isExpandedPassenger)
+        if (isExpandedPassenger) ...[
+          const Text(
+            'Hành khách chuyến đi',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: bookingController.passengerDetails.length,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: bookingController.departurePassengerDetails.length,
             itemBuilder: (context, index) {
-              final passenger = bookingController.passengerDetails[index];
+              final passenger =
+                  bookingController.departurePassengerDetails[index];
               return Padding(
                 padding: const EdgeInsets.only(bottom: 2),
                 child: FlightPassengerInfoWidget(
@@ -315,6 +318,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               );
             },
           ),
+          const SizedBox(height: 10),
+          if (bookingController.returnFlightId.value != 0) ...[
+            const Text(
+              'Hành khách chuyến về',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: bookingController.returnPassengerDetails.length,
+              itemBuilder: (context, index) {
+                final passenger =
+                    bookingController.returnPassengerDetails[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: FlightPassengerInfoWidget(
+                    passengerName: passenger['fullName']!,
+                    passengerType: passenger['personalId']!,
+                    // Additional fields can be added here
+                  ),
+                );
+              },
+            ),
+          ],
+        ],
       ],
     );
   }
@@ -431,16 +459,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           .contactDetails['email'],
                                       "bookerPhoneNumber": bookingController
                                           .contactDetails['phone'],
-                                      "userId":
-                                          13, // Update this with actual user ID
+                                      "userId": userController
+                                          .currentUser
+                                          .value!
+                                          .id, // Update this with actual use/ Update this with actual user ID
                                       "bookingDate":
                                           DateTime.now().toIso8601String(),
                                       "passengers": bookingController
                                           .returnPassengerDetails,
                                     }
                                 ],
-                                passengerDetails:
-                                    bookingController.passengerDetails,
                                 totalAmount:
                                     bookingController.totalPrice.toDouble(),
                               ));

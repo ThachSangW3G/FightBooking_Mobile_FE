@@ -1,3 +1,4 @@
+import 'package:flightbooking_mobile_fe/controllers/checkout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flightbooking_mobile_fe/components/info_guest/input_text.dart';
@@ -6,6 +7,7 @@ import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/screens/checkout/checkout_screen.dart';
 import 'package:flightbooking_mobile_fe/controllers/booking_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 
 class InfoGuestScreen extends StatefulWidget {
   final int numPassengers;
@@ -33,6 +35,7 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
   final List<Map<String, String>> departurePassengerDetails = [];
   final List<Map<String, String>> returnPassengerDetails = [];
   final BookingController bookingController = Get.put(BookingController());
+  final CheckoutController checkoutController = Get.put(CheckoutController());
 
   final Map<String, String> contactDetails = {
     'fullName': '',
@@ -140,10 +143,22 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
       returnPassengerDetails: returnPassengerDetails,
       passengers: departurePassengerDetails + returnPassengerDetails,
       departureSeats: widget.selectedDepartureSeats,
-      returnSeats: widget.selectedReturnSeats,
+      returnSeats: widget.selectedReturnSeats ?? [],
     );
 
-    Get.to(() => CheckoutScreen());
+    checkoutController.setFlightList([
+      {
+        'flightId': widget.departureFlightId,
+        'passengers': departurePassengerDetails,
+      },
+      if (widget.returnFlightId != null)
+        {
+          'flightId': widget.returnFlightId,
+          'passengers': returnPassengerDetails,
+        }
+    ]);
+
+    Get.to(() => const CheckoutScreen());
   }
 
   @override
@@ -154,7 +169,9 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
         leading: IconButton(
           color: AppColors.white,
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+          },
         ),
         title: Text('Thông tin hành khách', style: kLableSize20w700White),
         centerTitle: true,
@@ -171,7 +188,6 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                 height: 10,
               ),
               Container(
-                height: 400,
                 decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(10)),

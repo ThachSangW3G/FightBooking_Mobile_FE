@@ -26,8 +26,8 @@ class BookingController extends GetxController {
     if (returnId != null) returnFlightId.value = returnId;
     totalPrice.value = price;
     contactDetails.value = contact;
-    departurePassengerDetails.assignAll(departurePassengerDetails);
-    returnPassengerDetails.assignAll(returnPassengerDetails);
+    this.departurePassengerDetails.assignAll(departurePassengerDetails);
+    this.returnPassengerDetails.assignAll(returnPassengerDetails);
     passengerDetails.assignAll(passengers);
     selectedDepartureSeats.assignAll(departureSeats);
     if (returnSeats != null) selectedReturnSeats.assignAll(returnSeats);

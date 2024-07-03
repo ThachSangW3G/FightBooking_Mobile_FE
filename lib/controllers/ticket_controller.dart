@@ -11,18 +11,18 @@ class TicketController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchTickets();
+    fetchTicketsStream();
   }
 
-  void fetchTickets() async {
-    try {
-      isLoading(true);
-      var fetchedTickets = await ticketService.getTicketsByUserId();
+  void fetchTicketsStream() {
+    Stream.periodic(Duration(seconds: 10))
+        .asyncMap((_) => ticketService.getTicketsByUserId())
+        .listen((fetchedTickets) {
       tickets.value = fetchedTickets;
-    } catch (e) {
-      Get.snackbar('Error', e.toString());
-    } finally {
       isLoading(false);
-    }
+    }, onError: (error) {
+      Get.snackbar('Error', error.toString());
+      isLoading(false);
+    });
   }
 }

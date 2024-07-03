@@ -194,4 +194,18 @@ class StripeService {
       throw Exception('Failed to register card: ${response.body}');
     }
   }
+
+  Future<void> deleteSavedCard(String email, String paymentMethodId) async {
+    final response = await http.delete(
+      Uri.parse(
+          '$baseUrl/api/delete-card?email=$email&paymentMethodId=$paymentMethodId'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete card');
+    }
+  }
 }

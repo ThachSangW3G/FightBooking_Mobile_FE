@@ -75,6 +75,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 
+  Future<void> deleteCard(String paymentMethodId) async {
+    try {
+      await stripeService.deleteSavedCard(
+        userController.currentUser.value!.email!,
+        paymentMethodId,
+      );
+      setState(() {
+        savedCards.removeWhere(
+            (card) => card['stripePaymentMethodId'] == paymentMethodId);
+      });
+    } catch (e) {
+      print('Error during deleteCard: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete card. Please try again.')),
+      );
+    }
+  }
+
   Future<void> createCustomerAndSetupIntent() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -303,12 +321,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 selectedCard = value;
               });
             },
-            onDelete: () {
-              setState(() {
-                savedCards.removeWhere((c) =>
-                    c['stripePaymentMethodId'] ==
-                    card['stripePaymentMethodId']);
-              });
+            onDelete: () async {
+              await deleteCard(card['stripePaymentMethodId']);
             },
           ),
         NewCardOption(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flightbooking_mobile_fe/components/payments/new_card_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/payment_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/saved_card_item.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -32,7 +33,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String? selectedCard;
   bool isChecked = false;
   bool _isProcessing = false;
-
+  final FlightController flightController = Get.put(FlightController());
   final UserController userController = Get.find<UserController>();
   final StripeService stripeService = StripeService(
       baseUrl: 'https://flightbookingbe-production.up.railway.app');
@@ -61,7 +62,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
       await stripeService.chargeSavedCard(
           email, paymentMethodId, amount, bookingRequests);
       updateSeatStatus();
-      Get.off(() => const PaymentSuccessfulWidget());
     } catch (e) {
       print('Error during chargeSavedCard: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -271,6 +271,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       await createCustomerAndSetupIntent();
                     } else {
                       await handlePayment();
+                      flightController.departureFlight.value = null;
+                      flightController.returnFlight.value = null;
+                      Get.off(() => const PaymentSuccessfulWidget());
                     }
                   } else {
                     // Handle other payment methods

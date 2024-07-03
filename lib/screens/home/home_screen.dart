@@ -34,7 +34,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isRoundTrip = false;
   bool _isChatOpen = false;
-  Offset _offset = Offset(800, 200);
+  Offset _offset = Offset(80, 20);
   late String _userId;
 
   String formatDateTime(DateTime dateTime) {

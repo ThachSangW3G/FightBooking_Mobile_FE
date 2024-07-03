@@ -38,6 +38,6 @@ class MyApp extends StatelessWidget {
         //     numInfants: 1));
         // home: DefaultScreen());
         // home: LoginScreen());
-        home: LoginScreen());
+        home: SplashOneScreen());
   }
 }

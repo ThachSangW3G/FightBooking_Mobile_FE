@@ -1,13 +1,35 @@
-import 'package:flightbooking_mobile_fe/screens/payments/payment_successful.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StripeService {
   final String baseUrl;
 
   StripeService({required this.baseUrl});
+
+  Future<String> getUsernameFromToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('tokenAccess');
+
+    if (token == null) {
+      throw Exception('Token is null');
+    }
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/token?token=$token'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final userData = jsonDecode(response.body);
+      return userData['username'];
+    } else {
+      throw Exception('Failed to fetch username from token');
+    }
+  }
 
   Future<List<Map<String, dynamic>>> fetchSavedCards(String email) async {
     final response = await http.get(
@@ -31,14 +53,15 @@ class StripeService {
     }
   }
 
-  Future<void> chargeSavedCard(
-      String email, String paymentMethodId, double amount) async {
+  Future<void> chargeSavedCard(String email, String paymentMethodId,
+      double amount, List<Map<String, dynamic>> bookingRequests) async {
     final response = await http.post(
       Uri.parse(
           '$baseUrl/payment/charge-saved-card?email=$email&paymentMethodId=$paymentMethodId&amount=$amount'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
+      body: jsonEncode({"bookingRequests": bookingRequests}),
     );
 
     print('Response status code: ${response.statusCode}');
@@ -57,37 +80,44 @@ class StripeService {
   Future<Map<String, dynamic>> createCustomerAndSetupIntent(
       String email, String username) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? customerId;
+
+      // Fetch customer ID from the database
       final userResponse = await http.get(
-        Uri.parse('$baseUrl/payment/get-stripe-customer-id?' +
-            'token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aHVvbmdzcCIsImlhdCI6MTcxOTc2MDA1OSwiZXhwIjoxNzE5Nzc0NDU5fQ.A14ebfomm0BBRsLM1gednZhs3lR-Jl_yl_sbGGKKndk'),
+        Uri.parse(
+            '$baseUrl/payment/get-stripe-customer-id?token=${prefs.getString('tokenAccess')}'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
       );
 
-      String? customerId;
       if (userResponse.statusCode == 200) {
         final userData = jsonDecode(userResponse.body);
         customerId = userData['stripeCustomerId'];
-        if (customerId == null) {
-          final response = await http.post(
-            Uri.parse('$baseUrl/payment/create-customer?email=$email'),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8'
-            },
-          );
-
-          if (response.statusCode == 200) {
-            final customerData = jsonDecode(response.body);
-            customerId = customerData['customerId'];
-          } else {
-            throw Exception('Failed to create customer: ${response.body}');
-          }
-        }
       } else {
         throw Exception('Failed to fetch user data: ${userResponse.body}');
       }
 
+      // If customerId is null, create a new customer
+      if (customerId == null) {
+        final createCustomerResponse = await http.post(
+          Uri.parse('$baseUrl/payment/create-customer?email=$email'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8'
+          },
+        );
+
+        if (createCustomerResponse.statusCode == 200) {
+          final customerData = jsonDecode(createCustomerResponse.body);
+          customerId = customerData['customerId'];
+        } else {
+          throw Exception(
+              'Failed to create customer: ${createCustomerResponse.body}');
+        }
+      }
+
+      // Create a setup intent for the new card
       final setupIntentResponse = await http.post(
         Uri.parse(
             '$baseUrl/payment/create-setup-intent?customerId=$customerId'),
@@ -162,6 +192,20 @@ class StripeService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to register card: ${response.body}');
+    }
+  }
+
+  Future<void> deleteSavedCard(String email, String paymentMethodId) async {
+    final response = await http.delete(
+      Uri.parse(
+          '$baseUrl/api/delete-card?email=$email&paymentMethodId=$paymentMethodId'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete card');
     }
   }
 }

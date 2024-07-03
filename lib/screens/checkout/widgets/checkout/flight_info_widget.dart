@@ -87,7 +87,7 @@ class FlightInfoWidget extends StatelessWidget {
                         style: TextStyle(fontSize: 16),
                       ),
                       Text(
-                        'Seat Class: $seatClass',
+                        'Hạng ghế: $seatClass',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -98,7 +98,7 @@ class FlightInfoWidget extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -112,7 +112,7 @@ class FlightInfoWidget extends StatelessWidget {
                           style: TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: 'Depart: ',
+                              text: 'Nơi cất cánh: ',
                               style: TextStyle(fontSize: 14),
                             ),
                             TextSpan(
@@ -130,7 +130,7 @@ class FlightInfoWidget extends StatelessWidget {
                           style: TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: 'Depart Time: ',
+                              text: 'Thời gian cất cánh: ',
                               style: TextStyle(fontSize: 14),
                             ),
                             TextSpan(
@@ -166,7 +166,7 @@ class FlightInfoWidget extends StatelessWidget {
                           style: TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: 'Arrive: ',
+                              text: 'Nơi hạ cánh: ',
                               style: TextStyle(fontSize: 14),
                             ),
                             TextSpan(
@@ -184,7 +184,7 @@ class FlightInfoWidget extends StatelessWidget {
                           style: TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: 'Arrive Time: ',
+                              text: 'Thời gian hạ cánh: ',
                               style: TextStyle(fontSize: 14),
                             ),
                             TextSpan(
@@ -208,7 +208,7 @@ class FlightInfoWidget extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10.0),
             child: Center(
               child: Text(
-                'Total Flights: ' + totalFlight + ' hours',
+                'Tổng thời gian bay: ' + totalFlight + ' giờ',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ),

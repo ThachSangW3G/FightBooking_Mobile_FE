@@ -14,8 +14,15 @@ import 'package:intl/intl.dart';
 
 class FlightItem extends StatefulWidget {
   final Flight flight;
+  final bool? isSelected;
   final Function()? onTap;
-  const FlightItem({super.key, required this.flight, this.onTap});
+  final Function()? onClose;
+  const FlightItem(
+      {super.key,
+      required this.flight,
+      this.onTap,
+      this.isSelected,
+      this.onClose});
 
   @override
   State<FlightItem> createState() => _FlightItemState();
@@ -88,7 +95,7 @@ class _FlightItemState extends State<FlightItem> {
                       Column(
                         children: [
                           Text(
-                            '1g 15p',
+                            '${widget.flight.duration}h',
                             style: kLableSize15Grey,
                           ),
                           Container(
@@ -178,17 +185,22 @@ class _FlightItemState extends State<FlightItem> {
                         ],
                       );
                     }),
-                Container(
-                    height: 30,
-                    width: 30,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.gray,
-                        )),
-                    child: SvgPicture.asset('assets/icons/arrowdown.svg',
-                        color: AppColors.gray))
+                widget.isSelected != null && widget.isSelected == true
+                    ? InkWell(
+                        onTap: widget.onClose,
+                        child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.gray,
+                                )),
+                            child: const Center(
+                                child:
+                                    Icon(Icons.close, color: AppColors.gray))),
+                      )
+                    : const SizedBox()
               ],
             )
           ],

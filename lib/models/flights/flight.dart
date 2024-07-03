@@ -16,7 +16,10 @@ class Flight with _$Flight {
       required int planeId,
       required double economyPrice,
       required double businessPrice,
-      required double firstClassPrice}) = _Flight;
+      required double firstClassPrice,
+      required int duration,
+      required int airlineId,
+      required String airlineName}) = _Flight;
 
   factory Flight.fromJson(Map<String, Object?> json) => _$FlightFromJson(json);
 }

@@ -23,4 +23,5 @@ class AppColors {
   static const Color greyIron = Color.fromRGBO(225, 226, 227, 1);
   static const Color greyShuttle = Color.fromRGBO(99, 103, 115, 1);
   static const Color whitePorcelain = Color.fromRGBO(242, 243, 244, 1);
+  static const Color lightGray = Color(0xffD9D9D9);
 }

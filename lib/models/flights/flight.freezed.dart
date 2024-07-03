@@ -30,6 +30,9 @@ mixin _$Flight {
   double get economyPrice => throw _privateConstructorUsedError;
   double get businessPrice => throw _privateConstructorUsedError;
   double get firstClassPrice => throw _privateConstructorUsedError;
+  int get duration => throw _privateConstructorUsedError;
+  int get airlineId => throw _privateConstructorUsedError;
+  String get airlineName => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -51,7 +54,10 @@ abstract class $FlightCopyWith<$Res> {
       int planeId,
       double economyPrice,
       double businessPrice,
-      double firstClassPrice});
+      double firstClassPrice,
+      int duration,
+      int airlineId,
+      String airlineName});
 }
 
 /// @nodoc
@@ -77,6 +83,9 @@ class _$FlightCopyWithImpl<$Res, $Val extends Flight>
     Object? economyPrice = null,
     Object? businessPrice = null,
     Object? firstClassPrice = null,
+    Object? duration = null,
+    Object? airlineId = null,
+    Object? airlineName = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -119,6 +128,18 @@ class _$FlightCopyWithImpl<$Res, $Val extends Flight>
           ? _value.firstClassPrice
           : firstClassPrice // ignore: cast_nullable_to_non_nullable
               as double,
+      duration: null == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as int,
+      airlineId: null == airlineId
+          ? _value.airlineId
+          : airlineId // ignore: cast_nullable_to_non_nullable
+              as int,
+      airlineName: null == airlineName
+          ? _value.airlineName
+          : airlineName // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -140,7 +161,10 @@ abstract class _$$FlightImplCopyWith<$Res> implements $FlightCopyWith<$Res> {
       int planeId,
       double economyPrice,
       double businessPrice,
-      double firstClassPrice});
+      double firstClassPrice,
+      int duration,
+      int airlineId,
+      String airlineName});
 }
 
 /// @nodoc
@@ -164,6 +188,9 @@ class __$$FlightImplCopyWithImpl<$Res>
     Object? economyPrice = null,
     Object? businessPrice = null,
     Object? firstClassPrice = null,
+    Object? duration = null,
+    Object? airlineId = null,
+    Object? airlineName = null,
   }) {
     return _then(_$FlightImpl(
       id: null == id
@@ -206,6 +233,18 @@ class __$$FlightImplCopyWithImpl<$Res>
           ? _value.firstClassPrice
           : firstClassPrice // ignore: cast_nullable_to_non_nullable
               as double,
+      duration: null == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as int,
+      airlineId: null == airlineId
+          ? _value.airlineId
+          : airlineId // ignore: cast_nullable_to_non_nullable
+              as int,
+      airlineName: null == airlineName
+          ? _value.airlineName
+          : airlineName // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -223,7 +262,10 @@ class _$FlightImpl with DiagnosticableTreeMixin implements _Flight {
       required this.planeId,
       required this.economyPrice,
       required this.businessPrice,
-      required this.firstClassPrice});
+      required this.firstClassPrice,
+      required this.duration,
+      required this.airlineId,
+      required this.airlineName});
 
   factory _$FlightImpl.fromJson(Map<String, dynamic> json) =>
       _$$FlightImplFromJson(json);
@@ -248,10 +290,16 @@ class _$FlightImpl with DiagnosticableTreeMixin implements _Flight {
   final double businessPrice;
   @override
   final double firstClassPrice;
+  @override
+  final int duration;
+  @override
+  final int airlineId;
+  @override
+  final String airlineName;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Flight(id: $id, flightStatus: $flightStatus, departureDate: $departureDate, arrivalDate: $arrivalDate, departureAirportId: $departureAirportId, arrivalAirportId: $arrivalAirportId, planeId: $planeId, economyPrice: $economyPrice, businessPrice: $businessPrice, firstClassPrice: $firstClassPrice)';
+    return 'Flight(id: $id, flightStatus: $flightStatus, departureDate: $departureDate, arrivalDate: $arrivalDate, departureAirportId: $departureAirportId, arrivalAirportId: $arrivalAirportId, planeId: $planeId, economyPrice: $economyPrice, businessPrice: $businessPrice, firstClassPrice: $firstClassPrice, duration: $duration, airlineId: $airlineId, airlineName: $airlineName)';
   }
 
   @override
@@ -268,7 +316,10 @@ class _$FlightImpl with DiagnosticableTreeMixin implements _Flight {
       ..add(DiagnosticsProperty('planeId', planeId))
       ..add(DiagnosticsProperty('economyPrice', economyPrice))
       ..add(DiagnosticsProperty('businessPrice', businessPrice))
-      ..add(DiagnosticsProperty('firstClassPrice', firstClassPrice));
+      ..add(DiagnosticsProperty('firstClassPrice', firstClassPrice))
+      ..add(DiagnosticsProperty('duration', duration))
+      ..add(DiagnosticsProperty('airlineId', airlineId))
+      ..add(DiagnosticsProperty('airlineName', airlineName));
   }
 
   @override
@@ -293,7 +344,13 @@ class _$FlightImpl with DiagnosticableTreeMixin implements _Flight {
             (identical(other.businessPrice, businessPrice) ||
                 other.businessPrice == businessPrice) &&
             (identical(other.firstClassPrice, firstClassPrice) ||
-                other.firstClassPrice == firstClassPrice));
+                other.firstClassPrice == firstClassPrice) &&
+            (identical(other.duration, duration) ||
+                other.duration == duration) &&
+            (identical(other.airlineId, airlineId) ||
+                other.airlineId == airlineId) &&
+            (identical(other.airlineName, airlineName) ||
+                other.airlineName == airlineName));
   }
 
   @JsonKey(ignore: true)
@@ -309,7 +366,10 @@ class _$FlightImpl with DiagnosticableTreeMixin implements _Flight {
       planeId,
       economyPrice,
       businessPrice,
-      firstClassPrice);
+      firstClassPrice,
+      duration,
+      airlineId,
+      airlineName);
 
   @JsonKey(ignore: true)
   @override
@@ -336,7 +396,10 @@ abstract class _Flight implements Flight {
       required final int planeId,
       required final double economyPrice,
       required final double businessPrice,
-      required final double firstClassPrice}) = _$FlightImpl;
+      required final double firstClassPrice,
+      required final int duration,
+      required final int airlineId,
+      required final String airlineName}) = _$FlightImpl;
 
   factory _Flight.fromJson(Map<String, dynamic> json) = _$FlightImpl.fromJson;
 
@@ -360,6 +423,12 @@ abstract class _Flight implements Flight {
   double get businessPrice;
   @override
   double get firstClassPrice;
+  @override
+  int get duration;
+  @override
+  int get airlineId;
+  @override
+  String get airlineName;
   @override
   @JsonKey(ignore: true)
   _$$FlightImplCopyWith<_$FlightImpl> get copyWith =>

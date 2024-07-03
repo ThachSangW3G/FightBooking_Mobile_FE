@@ -17,6 +17,9 @@ _$FlightImpl _$$FlightImplFromJson(Map<String, dynamic> json) => _$FlightImpl(
       economyPrice: (json['economyPrice'] as num).toDouble(),
       businessPrice: (json['businessPrice'] as num).toDouble(),
       firstClassPrice: (json['firstClassPrice'] as num).toDouble(),
+      duration: (json['duration'] as num).toInt(),
+      airlineId: (json['airlineId'] as num).toInt(),
+      airlineName: json['airlineName'] as String,
     );
 
 Map<String, dynamic> _$$FlightImplToJson(_$FlightImpl instance) =>
@@ -31,4 +34,7 @@ Map<String, dynamic> _$$FlightImplToJson(_$FlightImpl instance) =>
       'economyPrice': instance.economyPrice,
       'businessPrice': instance.businessPrice,
       'firstClassPrice': instance.firstClassPrice,
+      'duration': instance.duration,
+      'airlineId': instance.airlineId,
+      'airlineName': instance.airlineName,
     };

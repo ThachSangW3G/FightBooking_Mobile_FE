@@ -21,4 +21,12 @@ class Airline {
   String toString() {
     return 'Airline(id: $id, airlineName: $airlineName, logoUrl: $logoUrl)';
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'airlineName': airlineName,
+      'logoUrl': logoUrl,
+    };
+  }
 }

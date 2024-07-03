@@ -18,7 +18,8 @@ import '../../controllers/passenger_controller.dart';
 import '../../controllers/seat_class_controller.dart';
 
 class FindFlight extends StatefulWidget {
-  const FindFlight({super.key});
+  final String from;
+  const FindFlight({super.key, required this.from});
 
   @override
   State<FindFlight> createState() => _FindFlightState();
@@ -37,6 +38,41 @@ class _FindFlightState extends State<FindFlight> {
 
   final SeatClassController seatClassController =
       Get.put(SeatClassController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.from == 'departurePoint') {
+        showModalBottomSheet(
+            context: context,
+            builder: (_) => const BottomSheetDeparturePoint());
+      } else if (widget.from == 'destinationPoint') {
+        showModalBottomSheet(
+            context: context,
+            builder: (_) => const BottomSheetDestinationPoint());
+      } else if (widget.from == 'passenger') {
+        showModalBottomSheet(
+            context: context, builder: (_) => const BottomSheetPassenger());
+      } else if (widget.from == 'seatClass') {
+        showModalBottomSheet(
+            context: context, builder: (_) => const BottomSeatClass());
+      } else if (widget.from == 'departureDate') {
+        showModalBottomSheet(
+            context: context, builder: (_) => const BottomSheetDate());
+      }
+    });
+
+    if (widget.from == 'departurePoint') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showModalBottomSheet(
+            context: context,
+            builder: (_) => const BottomSheetDeparturePoint());
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -351,40 +387,48 @@ class _FindFlightState extends State<FindFlight> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            'assets/icons/calendar-to.svg'),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Ngày về',
-                                              style: kLableSize18Black,
-                                            ),
-                                            Obx(() => dateTimeController
-                                                        .rangeEnd.value ==
-                                                    null
-                                                ? Text(
-                                                    'Chọn ngày về',
-                                                    style: kLableSize18Grey,
-                                                  )
-                                                : Text(
-                                                    formatDateTime(
-                                                        dateTimeController
-                                                            .rangeEnd.value!),
-                                                    style:
-                                                        kLableSize18w700Black,
-                                                  ))
-                                          ],
-                                        )
-                                      ],
+                                    InkWell(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (_) =>
+                                                const BottomSheetDate());
+                                      },
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              'assets/icons/calendar-to.svg'),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Ngày về',
+                                                style: kLableSize18Black,
+                                              ),
+                                              Obx(() => dateTimeController
+                                                          .rangeEnd.value ==
+                                                      null
+                                                  ? Text(
+                                                      'Chọn ngày về',
+                                                      style: kLableSize18Grey,
+                                                    )
+                                                  : Text(
+                                                      formatDateTime(
+                                                          dateTimeController
+                                                              .rangeEnd.value!),
+                                                      style:
+                                                          kLableSize18w700Black,
+                                                    ))
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     )
                                   ],
                                 ),

@@ -136,13 +136,6 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.dodger,
-        leading: IconButton(
-          color: AppColors.white,
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Get.back();
-          },
-        ),
         title: Text('Tóm tắt đặt chỗ', style: kLableSize20w700White),
         centerTitle: true,
       ),

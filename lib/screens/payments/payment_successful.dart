@@ -3,6 +3,7 @@ import 'package:flightbooking_mobile_fe/screens/bottom_nav/bottom_nav.dart';
 import 'package:flightbooking_mobile_fe/screens/default_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/home/home_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/tickets/ticket_details_screen.dart';
+import 'package:flightbooking_mobile_fe/screens/tickets/view_ticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -70,10 +71,7 @@ class PaymentSuccessfulWidget extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.to(() => const TicketDetailsScreen(
-                            ticketId: '185457675675',
-                            status: 'Xuất vé thành công',
-                          ));
+                      Get.to(() => TicketScreenWidget());
                     },
                     child: const Text(
                       'Chi tiết vé',

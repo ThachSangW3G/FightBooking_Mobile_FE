@@ -24,52 +24,114 @@ class _BottomSheetSelectFlightState extends State<BottomSheetSelectFlight> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: SizedBox(
-        height: dateTimeController.isRoundTrip.value ? 460 : 260,
         width: double.maxFinite,
-        child: Column(
-          children: [
-            Text(
-              'Chuyến đi được chọn',
-              style: kLableTextBlackW600,
-            ),
-            flightController.departureFlight.value != null
-                ? FlightItem(flight: flightController.departureFlight.value!)
-                : Container(),
-            dateTimeController.isRoundTrip.value
-                ? Text(
-                    'Chuyến về được chọn',
+        child: Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    'Chuyến đi được chọn',
                     style: kLableTextBlackW600,
-                  )
-                : Container(),
-            flightController.returnFlight.value != null
-                ? FlightItem(flight: flightController.returnFlight.value!)
-                : Container(),
-            ButtonBlue(
-                des: 'Đặt vé',
-                onPress: () {
-                  if (dateTimeController.isRoundTrip.value &&
-                      flightController.departureFlight.value == null &&
-                      flightController.returnFlight.value == null) {
-                    Get.to(() => TripSummaryScreen());
-                  } else if (!dateTimeController.isRoundTrip.value &&
-                      flightController.departureFlight.value != null &&
-                      flightController.returnFlight.value == null) {
-                    Get.to(() => TripSummaryScreen());
-                  } else {
-                    final snackDemo = SnackBar(
-                      content: Text(
-                        'Vui lòng chọn chuyến bay!',
-                        style: kLableW800White,
-                      ),
-                      backgroundColor: Colors.red,
-                      elevation: 10,
-                      behavior: SnackBarBehavior.floating,
-                      margin: const EdgeInsets.all(5),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackDemo);
-                  }
-                })
-          ],
+                  ),
+                  Obx(
+                    () => flightController.departureFlight.value != null
+                        ? FlightItem(
+                            flight: flightController.departureFlight.value!,
+                            isSelected: true,
+                            onClose: () {
+                              flightController.setDepartureFlight(null);
+                            },
+                          )
+                        : Column(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 200,
+                                decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: AssetImage(
+                                            'assets/images/empty.png'))),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Bạn chưa chọn chuyến đi',
+                                style: kLableTextBlackW600Size16,
+                              ),
+                            ],
+                          ),
+                  ),
+                  dateTimeController.isRoundTrip.value
+                      ? Text(
+                          'Chuyến về được chọn',
+                          style: kLableTextBlackW600,
+                        )
+                      : Container(),
+                  dateTimeController.isRoundTrip.value
+                      ? Obx(
+                          () => flightController.returnFlight.value != null
+                              ? FlightItem(
+                                  flight: flightController.returnFlight.value!,
+                                  isSelected: true,
+                                  onClose: () {
+                                    flightController.setReturnFlight(null);
+                                  },
+                                )
+                              : Column(
+                                  children: [
+                                    Container(
+                                      height: 150,
+                                      width: 200,
+                                      decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: AssetImage(
+                                                  'assets/images/empty.png'))),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Bạn chưa chọn chuyến về',
+                                      style: kLableTextBlackW600Size16,
+                                    ),
+                                  ],
+                                ),
+                        )
+                      : const SizedBox(),
+                ],
+              ),
+              ButtonBlue(
+                  des: 'Đặt vé',
+                  onPress: () {
+                    if (dateTimeController.isRoundTrip.value &&
+                        flightController.departureFlight.value == null &&
+                        flightController.returnFlight.value == null) {
+                      Get.to(() => const TripSummaryScreen());
+                    } else if (!dateTimeController.isRoundTrip.value &&
+                        flightController.departureFlight.value != null &&
+                        flightController.returnFlight.value == null) {
+                      Get.to(() => const TripSummaryScreen());
+                    } else {
+                      final snackDemo = SnackBar(
+                        content: Text(
+                          'Vui lòng chọn chuyến bay!',
+                          style: kLableW800White,
+                        ),
+                        backgroundColor: Colors.red,
+                        elevation: 10,
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.all(5),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackDemo);
+                    }
+                  })
+            ],
+          ),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:flightbooking_mobile_fe/components/flight_listing/bottomsheet_so
 import 'package:flightbooking_mobile_fe/components/flight_listing/flight_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/airline_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/airport_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
@@ -30,6 +31,7 @@ class FlightListing extends StatefulWidget {
 class _FlightListingState extends State<FlightListing> {
   FlightController flightController = Get.put(FlightController());
   AirportController airportController = Get.put(AirportController());
+  final AirlineController airlineController = Get.put(AirlineController());
   final PassengerController passengerController =
       Get.put(PassengerController());
   final SeatClassController seatClassController =
@@ -60,7 +62,8 @@ class _FlightListingState extends State<FlightListing> {
         airportController.selectedDeparture.value!.id,
         airportController.selectedDestination.value!.id,
         seatClassController.selectedSeatClass.value,
-        sortController.selectedSort.value);
+        sortController.selectedSort.value,
+        airlineController.selectFilterAirline.value);
     _scrollToIndex(index);
   }
 
@@ -84,7 +87,8 @@ class _FlightListingState extends State<FlightListing> {
         airportController.selectedDeparture.value!.id,
         airportController.selectedDestination.value!.id,
         seatClassController.selectedSeatClass.value,
-        sortController.selectedSort.value);
+        sortController.selectedSort.value,
+        airlineController.selectFilterAirline.value);
   }
 
   @override
@@ -350,7 +354,6 @@ class _FlightListingState extends State<FlightListing> {
             child: Container(
               width: double.maxFinite,
               decoration: const BoxDecoration(color: AppColors.whisper),
-
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -360,12 +363,10 @@ class _FlightListingState extends State<FlightListing> {
                     Text(
                       'Giá hiển thị đã bao gồm thuế và phí',
                       style: kLableSize15w400Grey,
-
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-
                     dateTimeController.selectDate.value != null
                         ? Obx(() {
                             if (flightController.isLoading.value) {
@@ -430,8 +431,10 @@ class _FlightListingState extends State<FlightListing> {
                                       flight: flight,
                                       onTap: () {
                                         if (flightController
-                                                .departureFlight.value !=
-                                            null) {
+                                                    .departureFlight.value !=
+                                                null &&
+                                            dateTimeController
+                                                .isRoundTrip.value) {
                                           flightController
                                               .setReturnFlight(flight);
 
@@ -461,31 +464,6 @@ class _FlightListingState extends State<FlightListing> {
                                 });
                           })
                         : const SizedBox()
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(() => const TripSummary());
-                    //     },
-                    //     child: const FlightItem()),
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(() => const TripSummary());
-                    //     },
-                    //     child: const FlightItem()),
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(() => const TripSummary());
-                    //     },
-                    //     child: const FlightItem()),
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(() => const TripSummary());
-                    //     },
-                    //     child: const FlightItem()),
-                    // InkWell(
-                    //     onTap: () {
-                    //       Get.to(() => const TripSummary());
-                    //     },
-                    //     child: const FlightItem()),
                   ],
                 ),
               ),

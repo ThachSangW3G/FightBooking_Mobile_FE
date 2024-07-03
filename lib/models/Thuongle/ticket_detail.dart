@@ -57,12 +57,6 @@ class TicketDetailResponse {
     );
   }
 
-  String formatDateTime(int milliseconds) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-    final formatter = DateFormat('HH:mm - dd/MM/yyyy');
-    return formatter.format(dateTime);
-  }
-
   Map<String, dynamic> toJson() {
     return {
       'flightId': flightId,
@@ -76,8 +70,8 @@ class TicketDetailResponse {
       'arrivalAirportName': arrivalAirportName,
       'iataArrivalCode': iataArrivalCode,
       'iataDepartureCode': iataDepartureCode,
-      'departureDate': formatDateTime(departureDate),
-      'arrivalDate': formatDateTime(arrivalDate),
+      'departureDate': departureDate,
+      'arrivalDate': arrivalDate,
       'passengerDTOList': passengerDTOList.map((i) => i.toJson()).toList(),
     };
   }

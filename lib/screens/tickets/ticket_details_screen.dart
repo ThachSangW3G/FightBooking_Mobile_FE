@@ -104,8 +104,11 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
       seatClass: 'Economy',
       depart: ticketDetail.iataDepartureCode,
       arrive: ticketDetail.iataArrivalCode,
-      departTime: ticketDetail.departureDate.toString(),
-      arriveTime: ticketDetail.arrivalDate.toString(),
+      departTime:
+          DateTime.fromMillisecondsSinceEpoch(ticketDetail.departureDate)
+              .toString(),
+      arriveTime: DateTime.fromMillisecondsSinceEpoch(ticketDetail.arrivalDate)
+          .toString(),
       totalFlight: '2',
     );
   }

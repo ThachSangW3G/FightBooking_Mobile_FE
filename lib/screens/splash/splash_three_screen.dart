@@ -74,7 +74,7 @@ class _SplashThreeScreenState extends State<SplashThreeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Text(
-                    'Make your own trip',
+                    'Hello, How can I help you?',
                     style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
                             color: Colors.black87,
@@ -99,7 +99,7 @@ class _SplashThreeScreenState extends State<SplashThreeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Text(
-                    'Make your own trip',
+                    'I am looking for a flight',
                     style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
                             color: Colors.black87,
@@ -124,7 +124,7 @@ class _SplashThreeScreenState extends State<SplashThreeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Text(
-                    'Make your own trip',
+                    'I am looking for a hotel',
                     style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
                             color: Colors.black87,

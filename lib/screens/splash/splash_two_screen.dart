@@ -74,7 +74,7 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Text(
-                    'Make your own trip',
+                    'What are you looking for?',
                     style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
                             color: Colors.black87,
@@ -99,7 +99,7 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Text(
-                    'Make your own trip',
+                    'I love to travel',
                     style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
                             color: Colors.black87,

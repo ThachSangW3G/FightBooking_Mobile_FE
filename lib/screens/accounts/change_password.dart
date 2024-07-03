@@ -50,7 +50,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (newPassword != confirmNewPassword) {
       final snackdemo = SnackBar(
         content: Text(
-          'Thông tin chưa đúng!',
+          'Vui lòng xác nhận lại mật khẩu!',
           style: kLableW800White,
         ),
         backgroundColor: Colors.red,
@@ -85,7 +85,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     } else {
       final snackdemo = SnackBar(
         content: Text(
-          'Thay đổi mật khẩu không thành công!',
+          'Mật khẩu vừa nhập không chính xác!',
           style: kLableW800White,
         ),
         backgroundColor: Colors.red,

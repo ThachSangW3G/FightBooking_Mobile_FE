@@ -5,6 +5,7 @@ import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/review_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/home/find_flight.dart';
 import 'package:flightbooking_mobile_fe/screens/home/webview_screen.dart';
 import 'package:flightbooking_mobile_fe/widgets/home/review_widgets.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -29,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
+
+  final UserController userController = Get.put(UserController());
 
   final DateTimeController dateTimeController = Get.put(DateTimeController());
   final PassengerController passengerController =
@@ -54,8 +58,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   height: 45,
                   width: 45,
-                  decoration: const BoxDecoration(
-                      color: AppColors.slamon, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: userController.currentUser.value!.avatarUrl !=
+                                null
+                            ? NetworkImage(
+                                userController.currentUser.value!.avatarUrl!)
+                            : const AssetImage(
+                                    'assets/images/default_avatar.jpg')
+                                as ImageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(22.5),
+                      border: Border.all(width: 1, color: AppColors.gray)),
                 ),
               ),
             ),
@@ -79,16 +94,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   'Hello',
                   style: kLableMiniWhite,
                 ),
-                Text(
-                  'Thach Sang',
-                  style: kLableTitleWhite,
+                Obx(
+                  () => Text(
+                    userController.currentUser.value!.fullName!,
+                    style: kLableTitleWhite,
+                  ),
                 ),
               ],
             ),
           ),
           SliverToBoxAdapter(
             child: SizedBox(
-              height: MediaQuery.of(context).size.height + 100,
+              height: MediaQuery.of(context).size.height + 500,
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 alignment: AlignmentDirectional.topCenter,

@@ -49,10 +49,10 @@ class ReviewWidgets extends StatelessWidget {
                 height: 10.0,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
                   title,
-                  style: kLableSize15Grey,
+                  style: kLableSize15Black,
                 ),
               )
             ],

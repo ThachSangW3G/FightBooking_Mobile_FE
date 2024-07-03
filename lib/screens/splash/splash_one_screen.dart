@@ -79,7 +79,7 @@ class _SplashOneScreenState extends State<SplashOneScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Text(
-                    'Make your own trip',
+                    'Welcome to\nFlight Booking',
                     style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
                             color: Colors.black87,

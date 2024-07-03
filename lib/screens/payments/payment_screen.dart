@@ -5,6 +5,7 @@ import 'package:flightbooking_mobile_fe/components/payments/payment_option.dart'
 import 'package:flightbooking_mobile_fe/components/payments/saved_card_item.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
+import 'package:flightbooking_mobile_fe/controllers/flight_controller.dart';
 
 import 'package:flightbooking_mobile_fe/screens/payments/payment_successful.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool _isProcessing = false;
   String username = "thuongsp";
   String email = "ledangthuongsp@gmail.com";
+
+  final FlightController flightController = Get.put(FlightController());
 
   final StripeService stripeService = StripeService(
       baseUrl:
@@ -55,7 +58,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     } catch (e) {
       print('Error during chargeSavedCard: $e'); // In ra lỗi để kiểm tra
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text('Failed to charge saved card. Please try again.')),
       );
     }
@@ -74,7 +77,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       print(
           'Error during createCustomerAndSetupIntent: $e'); // In ra lỗi để kiểm tra
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to set up the card. Please try again.')),
+        const SnackBar(
+            content: Text('Failed to set up the card. Please try again.')),
       );
     }
   }
@@ -114,7 +118,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ? savedCardOptions()
                       : null,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
                     if (selectedPaymentMethod != null &&
@@ -129,6 +133,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               10.0); // Thanh toán 10 đô la Mỹ
                         }
                       } else {
+                        flightController.departureFlight.value = null;
+                        flightController.returnFlight.value = null;
                         Get.off(() => const PaymentSuccessfulWidget());
                       }
                     } else {
@@ -136,15 +142,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Lựa chọn phương thức thanh toán'),
-                            content: Text(
+                            title:
+                                const Text('Lựa chọn phương thức thanh toán'),
+                            content: const Text(
                                 'Vui lòng chọn một phương thức thanh toán.'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Đóng'),
+                                child: const Text('Đóng'),
                               ),
                             ],
                           );
@@ -152,7 +159,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       );
                     }
                   },
-                  child: Text('Thanh toán'),
+                  child: const Text('Thanh toán'),
                 ),
               ],
             ),
@@ -195,21 +202,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Thêm thẻ mới'),
+                    title: const Text('Thêm thẻ mới'),
                     content: newCardForm(),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Hủy'),
+                        child: const Text('Hủy'),
                       ),
                       TextButton(
                         onPressed: () async {
                           await createCustomerAndSetupIntent();
                           Navigator.of(context).pop();
                         },
-                        child: Text('Lưu'),
+                        child: const Text('Lưu'),
                       ),
                     ],
                   );
@@ -219,8 +226,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           },
           onSave: createCustomerAndSetupIntent,
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
           child: Text(
             'Golobe không sử dụng thông tin thẻ của khách hàng cho mục đích nào khác',
             style: TextStyle(color: Colors.grey),
@@ -231,7 +238,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget newCardForm() {
-    return Column(
+    return const Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         CardFormField(),

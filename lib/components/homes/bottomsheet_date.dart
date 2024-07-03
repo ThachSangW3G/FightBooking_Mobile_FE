@@ -95,6 +95,11 @@ class _BottomSheetDateState extends State<BottomSheetDate> {
               Obx(
                 () => dateTimeController.isRoundTrip.value == true
                     ? TableCalendar(
+                        enabledDayPredicate: (day) {
+                          // Không cho phép chọn các ngày trước ngày hiện tại
+                          return !day.isBefore(
+                              DateTime.now().subtract(const Duration(days: 1)));
+                        },
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 3, 14),
                         focusedDay: dateTimeController.rangeStart.value,
@@ -107,6 +112,11 @@ class _BottomSheetDateState extends State<BottomSheetDate> {
                         availableGestures: AvailableGestures.all,
                       )
                     : TableCalendar(
+                        enabledDayPredicate: (day) {
+                          // Không cho phép chọn các ngày trước ngày hiện tại
+                          return !day.isBefore(
+                              DateTime.now().subtract(const Duration(days: 1)));
+                        },
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 3, 14),
                         focusedDay: dateTimeController.rangeStart.value,

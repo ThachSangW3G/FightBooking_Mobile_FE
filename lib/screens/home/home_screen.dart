@@ -80,76 +80,75 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  final UserController userController = Get.put(UserController());
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            toolbarHeight: 80,
-            backgroundColor: AppColors.blue,
-            leadingWidth: 60,
-            leading: Container(
-              decoration: const BoxDecoration(),
-              child: Center(
-                child: Container(
-                  height: 45,
-                  width: 45,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: userController.currentUser.value!.avatarUrl !=
-                                null
-                            ? NetworkImage(
-                                userController.currentUser.value!.avatarUrl!)
-                            : const AssetImage(
-                                    'assets/images/default_avatar.jpg')
-                                as ImageProvider,
-                        fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                toolbarHeight: 80,
+                backgroundColor: AppColors.blue,
+                leadingWidth: 60,
+                leading: Container(
+                  decoration: const BoxDecoration(),
+                  child: Center(
+                    child: Container(
+                      height: 45,
+                      width: 45,
+                      decoration: BoxDecoration(
+                        color: AppColors.slamon,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image:
+                                userController.currentUser.value!.avatarUrl !=
+                                        null
+                                    ? NetworkImage(userController
+                                        .currentUser.value!.avatarUrl!)
+                                    : const AssetImage(
+                                            'assets/images/defailt_avatar.jpg')
+                                        as ImageProvider),
                       ),
-                      borderRadius: BorderRadius.circular(22.5),
-                      border: Border.all(width: 1, color: AppColors.gray)),
-                ),
-              ),
-            ),
-            actions: [
-              Container(
-                height: 50,
-                width: 50,
-                padding: EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Color(0x34707070)),
-                child: SvgPicture.asset('assets/icons/notification.svg'),
-              ),
-              const SizedBox(
-                width: 10.0,
-              )
-            ],
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hello',
-                  style: kLableMiniWhite,
-                ),
-                Obx(
-                  () => Text(
-                    userController.currentUser.value!.fullName!,
-                    style: kLableTitleWhite,
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height + 500,
-              width: MediaQuery.of(context).size.width,
-              child: Stack(
-                alignment: AlignmentDirectional.topCenter,
-                children: [
-                  Positioned(
+                actions: [
+                  Container(
+                    height: 50,
+                    width: 50,
+                    padding: EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, color: Color(0x34707070)),
+                    child: SvgPicture.asset('assets/icons/notification.svg'),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  )
+                ],
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hello',
+                      style: kLableMiniWhite,
+                    ),
+                    Text(
+                      userController.currentUser.value!.fullName!,
+                      style: kLableTitleWhite,
+                    ),
+                  ],
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height + 500,
+                  width: MediaQuery.of(context).size.width,
+                  child: Stack(
+                    alignment: AlignmentDirectional.topCenter,
+                    children: [
+                      Positioned(
                         child: Container(
                           height: 200,
                           width: double.maxFinite,

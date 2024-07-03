@@ -9,6 +9,7 @@ import 'package:flightbooking_mobile_fe/controllers/datetime_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/review_controller.dart';
 import 'package:flightbooking_mobile_fe/controllers/seat_class_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
 import 'package:flightbooking_mobile_fe/screens/chat/chat_window.dart';
 import 'package:flightbooking_mobile_fe/screens/home/find_flight.dart';
 import 'package:flightbooking_mobile_fe/screens/home/webview_screen.dart';
@@ -18,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -40,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String formatDateTime(DateTime dateTime) {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
+
+  final UserController userController = Get.put(UserController());
 
   final DateTimeController dateTimeController = Get.put(DateTimeController());
   final PassengerController passengerController =
@@ -81,71 +85,71 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                toolbarHeight: 80,
-                backgroundColor: AppColors.blue,
-                leadingWidth: 60,
-                leading: Container(
-                  decoration: const BoxDecoration(),
-                  child: Center(
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                          color: AppColors.slamon,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: userController
-                                          .currentUser.value!.avatarUrl !=
-                                      null
-                                  ? NetworkImage(userController
-                                      .currentUser.value!.avatarUrl!)
-                                  : const AssetImage(
-                                          'assets/images/defailt_avatar.jpg')
-                                      as ImageProvider)),
-                    ),
-                  ),
-                ),
-                actions: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    padding: EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: Color(0x34707070)),
-                    child: SvgPicture.asset('assets/icons/notification.svg'),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  )
-                ],
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hello',
-                      style: kLableMiniWhite,
-                    ),
-                    Text(
-                      userController.currentUser.value!.fullName!,
-                      style: kLableTitleWhite,
-                    ),
-                  ],
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            toolbarHeight: 80,
+            backgroundColor: AppColors.blue,
+            leadingWidth: 60,
+            leading: Container(
+              decoration: const BoxDecoration(),
+              child: Center(
+                child: Container(
+                  height: 45,
+                  width: 45,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: userController.currentUser.value!.avatarUrl !=
+                                null
+                            ? NetworkImage(
+                                userController.currentUser.value!.avatarUrl!)
+                            : const AssetImage(
+                                    'assets/images/default_avatar.jpg')
+                                as ImageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(22.5),
+                      border: Border.all(width: 1, color: AppColors.gray)),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    alignment: AlignmentDirectional.topCenter,
-                    children: [
-                      Positioned(
+            ),
+            actions: [
+              Container(
+                height: 50,
+                width: 50,
+                padding: EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Color(0x34707070)),
+                child: SvgPicture.asset('assets/icons/notification.svg'),
+              ),
+              const SizedBox(
+                width: 10.0,
+              )
+            ],
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hello',
+                  style: kLableMiniWhite,
+                ),
+                Obx(
+                  () => Text(
+                    userController.currentUser.value!.fullName!,
+                    style: kLableTitleWhite,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height + 500,
+              width: MediaQuery.of(context).size.width,
+              child: Stack(
+                alignment: AlignmentDirectional.topCenter,
+                children: [
+                  Positioned(
                         child: Container(
                           height: 200,
                           width: double.maxFinite,

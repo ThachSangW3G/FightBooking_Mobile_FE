@@ -182,12 +182,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       Get.to(() => const ChangePassword());
                     },
                     child: const Tile(
-                        icon: 'assets/icons/notification.svg',
+                        icon: 'assets/icons/change_password.svg',
                         haveArrowRight: true,
                         title: 'Change password'),
                   ),
                   const Tile(
-                      icon: 'assets/icons/notification.svg',
+                      icon: 'assets/icons/carbon_policy.svg',
                       haveArrowRight: true,
                       title: 'Policy'),
                   const SizedBox(

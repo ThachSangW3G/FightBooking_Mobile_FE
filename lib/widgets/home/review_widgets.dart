@@ -48,9 +48,12 @@ class ReviewWidgets extends StatelessWidget {
               const SizedBox(
                 height: 10.0,
               ),
-              Text(
-                title,
-                style: kLableSize15Grey,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Text(
+                  title,
+                  style: kLableSize15Black,
+                ),
               )
             ],
           ),

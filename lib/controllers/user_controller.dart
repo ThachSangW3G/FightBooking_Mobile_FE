@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 class UserController extends GetxController {
-  final String _baseURL = 'http://flightbookingbe-production.up.railway.app';
+  final String _baseURL = 'https://flightbookingbe-production.up.railway.app';
 
   var currentUser = Rx<User?>(null);
 
@@ -82,7 +82,19 @@ class UserController extends GetxController {
       final response =
           await http.put(uri, body: jsonEncode(requestBody), headers: headers);
 
+      print(response.statusCode);
+
       if (response.statusCode == 200) {
+        currentUser.value = User(
+            id: currentUser.value!.id,
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            address: address,
+            dayOfBirth: DateTime.parse(dayOfBirth),
+            personalId: personalId,
+            email: currentUser.value!.email,
+            gender: gender,
+            avatarUrl: currentUser.value!.avatarUrl);
         return true;
       }
       return false;
@@ -142,6 +154,10 @@ class UserController extends GetxController {
     try {
       final response =
           await http.post(uri, body: jsonEncode(requestBody), headers: headers);
+
+      print(token);
+      print(oldPassword);
+      print(newPassword);
 
       print(response.statusCode);
 

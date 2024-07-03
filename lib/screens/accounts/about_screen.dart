@@ -1,3 +1,4 @@
+import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_border.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
@@ -47,7 +48,6 @@ class _AboutMeState extends State<AboutMe> {
     if (fullName.isEmpty ||
         phoneNumber.isEmpty ||
         address.isEmpty ||
-        personalId.isEmpty ||
         dayOfBirth == null ||
         valueGender == null) {
       final snackdemo = SnackBar(
@@ -120,8 +120,6 @@ class _AboutMeState extends State<AboutMe> {
   void getUserByToken() async {
     currentUser = userController.currentUser.value;
 
-    print(currentUser!.dayOfBirth);
-
     setState(() {
       if (currentUser != null) {
         if (currentUser!.fullName != null) {
@@ -159,7 +157,6 @@ class _AboutMeState extends State<AboutMe> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getUserByToken();
   }
@@ -284,7 +281,7 @@ class _AboutMeState extends State<AboutMe> {
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: SvgPicture.asset(
-                            'assets/icons/phone.svg',
+                            'assets/icons/address.svg',
                           ),
                         )),
                   ),
@@ -295,31 +292,7 @@ class _AboutMeState extends State<AboutMe> {
                 Container(
                   height: 50,
                   width: MediaQuery.of(context).size.width - 40,
-                  decoration: const BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(15))),
-                  child: TextFormField(
-                    controller: personalIDController,
-                    style: kLableTextBlackMinium,
-                    decoration: InputDecoration(
-                        hintText: 'Personal ID',
-                        hintStyle: kLableTextBlackMinium,
-                        border: InputBorder.none,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/phone.svg',
-                          ),
-                        )),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width - 40,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: const BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -329,27 +302,27 @@ class _AboutMeState extends State<AboutMe> {
                         height: 30,
                         width: 30,
                         child: SvgPicture.asset(
-                          'assets/icons/phone.svg',
+                          'assets/icons/option.svg',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
                         child: DropdownButton(
                           isExpanded: true,
-                          underline: SizedBox(),
+                          underline: const SizedBox(),
                           hint: Text(
                             'Choose your gender',
                             style: kLableTextBlackMinium,
                           ),
                           items: itemsGender.map((String e) {
                             return DropdownMenuItem(
+                              value: e,
                               child: Text(
                                 e,
                                 style: kLableTextBlackMinium,
                               ),
-                              value: e,
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
@@ -374,9 +347,16 @@ class _AboutMeState extends State<AboutMe> {
                     child: TextFormField(
                       controller: dayOfBirthController,
                       readOnly: true,
+                      style: kLableTextBlackMinium,
                       decoration: InputDecoration(
                           hintText: 'dd/MM/yyyy',
                           hintStyle: kLableTextBlackMinium,
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: SvgPicture.asset(
+                              'assets/icons/date.svg',
+                            ),
+                          ),
                           suffixIcon: InkWell(
                               onTap: () {
                                 showDatePicker(
@@ -399,33 +379,10 @@ class _AboutMeState extends State<AboutMe> {
               ]),
               Positioned(
                   bottom: 140,
-                  child: InkWell(
-                    onTap: changeInfor,
-                    child: Container(
-                      height: 50,
-                      width: 350,
-                      decoration: const BoxDecoration(
-                          color: AppColors.blue,
-                          borderRadius: BorderRadius.all(Radius.circular(15))),
-                      child: Center(
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 30,
-                                width: 30,
-                                child: CircularProgressIndicator(
-                                  color: AppColors.white,
-                                ),
-                              )
-                            : Text(
-                                'Save settings',
-                                style: GoogleFonts.montserrat(
-                                    textStyle: const TextStyle(
-                                        color: AppColors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600)),
-                              ),
-                      ),
-                    ),
+                  child: ButtonBlue(
+                    des: "Save information",
+                    onPress: changeInfor,
+                    isLoading: _isLoading,
                   ))
             ],
           ),

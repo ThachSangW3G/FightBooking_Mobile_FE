@@ -1,7 +1,9 @@
 import 'package:flightbooking_mobile_fe/components/accounts/title_switch.dart';
+import 'package:flightbooking_mobile_fe/components/login_signup/button_blue.dart';
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -97,22 +99,11 @@ class _NotificationSettingState extends State<NotificationSetting> {
               ),
               Positioned(
                   bottom: 140,
-                  child: Container(
-                    height: 50,
-                    width: 350,
-                    decoration: const BoxDecoration(
-                        color: AppColors.blue,
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
-                    child: Center(
-                      child: Text(
-                        'Save settings',
-                        style: GoogleFonts.montserrat(
-                            textStyle: const TextStyle(
-                                color: AppColors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600)),
-                      ),
-                    ),
+                  child: ButtonBlue(
+                    des: "Save settings",
+                    onPress: () {
+                      Get.back();
+                    },
                   ))
             ],
           ),

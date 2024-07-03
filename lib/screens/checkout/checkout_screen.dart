@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/controllers/passenger_controller.dart';
+import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airline.dart';
 import 'package:flightbooking_mobile_fe/models/Thuongle/airport.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +30,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final BookingController bookingController = Get.find<BookingController>();
   final PassengerController passengerController =
       Get.find<PassengerController>();
+  final UserController userController = Get.find<UserController>();
   bool isExpandedDetails = true;
   bool isExpandedPriceDetails = true;
   bool isExpandedPassenger = true;
@@ -46,19 +47,29 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<Map<String, dynamic>> fetchAdditionalFlightData(int flightId) async {
     final flight = await fetchFlightById(flightId);
-    final airline = await fetchAirlineByPlaneId(flight.planeId);
-    final plane = await fetchPlaneNumberByPlaneId(flight.planeId);
-    final regulation = await fetchRegulationByAirlineId(airline.id);
-    final departureAirport = await fetchAirportById(flight.departureAirportId);
-    final arrivalAirport = await fetchAirportById(flight.arrivalAirportId);
+
+    final airlineFuture = fetchAirlineByPlaneId(flight.planeId);
+    final planeFuture = fetchPlaneNumberByPlaneId(flight.planeId);
+    final regulationFuture = fetchRegulationByAirlineId((await airlineFuture)
+        .id); // Đảm bảo rằng airlineFuture đã hoàn thành trước khi dùng kết quả của nó
+    final departureAirportFuture = fetchAirportById(flight.departureAirportId);
+    final arrivalAirportFuture = fetchAirportById(flight.arrivalAirportId);
+
+    final results = await Future.wait([
+      airlineFuture,
+      planeFuture,
+      regulationFuture,
+      departureAirportFuture,
+      arrivalAirportFuture,
+    ]);
 
     return {
       'flight': flight,
-      'airline': airline,
-      'plane': plane,
-      'regulation': regulation,
-      'departureAirport': departureAirport,
-      'arrivalAirport': arrivalAirport,
+      'airline': results[0],
+      'plane': results[1],
+      'regulation': results[2],
+      'departureAirport': results[3],
+      'arrivalAirport': results[4],
     };
   }
 
@@ -74,7 +85,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Get.back();
           },
         ),
-        title: Text('Thoong tin thanh toans', style: kLableSize20w700White),
+        title: Text('Thông tin thanh toán', style: kLableSize20w700White),
         centerTitle: true,
       ),
       body: Container(
@@ -133,91 +144,76 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
         if (isExpandedDetails)
-          FutureBuilder<Map<String, dynamic>>(
-            future: fetchAdditionalFlightData(
-                bookingController.departureFlightId.value),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (snapshot.hasData) {
-                final additionalData = snapshot.data!;
-                final flight = additionalData['flight'] as Flight;
-                final airline = additionalData['airline'] as Airline;
-                final plane = additionalData['plane'] as Plane;
-                final regulation = additionalData['regulation'] as Regulation;
-                final departureAirport =
-                    additionalData['departureAirport'] as Airport;
-                final arrivalAirport =
-                    additionalData['arrivalAirport'] as Airport;
-                return Column(
-                  children: [
-                    FlightInfoWidget(
-                      flightName: flight.flightStatus,
-                      airlineLogo: airline.logoUrl,
-                      airlineName: airline.airlineName,
-                      airlineNumber: plane.planeNumber,
+          Column(
+            children: [
+              FutureBuilder<Map<String, dynamic>>(
+                future: fetchAdditionalFlightData(
+                    bookingController.departureFlightId.value),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    final additionalData = snapshot.data!;
+                    return FlightInfoWidget(
+                      flightName: 'Chuyến đi',
+                      airlineLogo: additionalData['airline'].logoUrl,
+                      airlineName: additionalData['airline'].airlineName,
+                      airlineNumber: additionalData['plane'].planeNumber,
                       seatClass: 'Economy',
-                      depart: departureAirport.iataCode,
-                      arrive: arrivalAirport.iataCode,
+                      depart: additionalData['departureAirport'].iataCode,
+                      arrive: additionalData['arrivalAirport'].iataCode,
                       departTime: DateTime.fromMillisecondsSinceEpoch(
-                              flight.departureDate)
+                              additionalData['flight'].departureDate)
                           .toString(),
                       arriveTime: DateTime.fromMillisecondsSinceEpoch(
-                              flight.arrivalDate)
+                              additionalData['flight'].arrivalDate)
                           .toString(),
-                      totalFlight: flight.duration.toString(),
-                    ),
-                    if (bookingController.returnFlightId.value != 0)
-                      FutureBuilder<Map<String, dynamic>>(
-                        future: fetchAdditionalFlightData(
-                            bookingController.returnFlightId.value),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (snapshot.hasData) {
-                            final additionalData = snapshot.data!;
-                            final flight = additionalData['flight'] as Flight;
-                            final airline =
-                                additionalData['airline'] as Airline;
-                            final plane = additionalData['plane'] as Plane;
-                            final regulation =
-                                additionalData['regulation'] as Regulation;
-                            final departureAirport =
-                                additionalData['departureAirport'] as Airport;
-                            final arrivalAirport =
-                                additionalData['arrivalAirport'] as Airport;
-                            return FlightInfoWidget(
-                              flightName: flight.flightStatus,
-                              airlineLogo: airline.logoUrl,
-                              airlineName: airline.airlineName,
-                              airlineNumber: plane.planeNumber,
-                              seatClass: 'Economy',
-                              depart: departureAirport.iataCode,
-                              arrive: arrivalAirport.iataCode,
-                              departTime: DateTime.fromMillisecondsSinceEpoch(
-                                      flight.departureDate)
-                                  .toString(),
-                              arriveTime: DateTime.fromMillisecondsSinceEpoch(
-                                      flight.arrivalDate)
-                                  .toString(),
-                              totalFlight: flight.duration.toString(),
-                            );
-                          } else {
-                            return Text('No data');
-                          }
-                        },
-                      ),
-                  ],
-                );
-              } else {
-                return Text('No data');
-              }
-            },
+                      totalFlight: additionalData['flight'].duration.toString(),
+                    );
+                  } else {
+                    return Center(child: Text('No data'));
+                  }
+                },
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              if (bookingController.returnFlightId.value != 0)
+                FutureBuilder<Map<String, dynamic>>(
+                  future: fetchAdditionalFlightData(
+                      bookingController.returnFlightId.value),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      final additionalData = snapshot.data!;
+                      return FlightInfoWidget(
+                        flightName: 'Chuyến về',
+                        airlineLogo: additionalData['airline'].logoUrl,
+                        airlineName: additionalData['airline'].airlineName,
+                        airlineNumber: additionalData['plane'].planeNumber,
+                        seatClass: 'Economy',
+                        depart: additionalData['departureAirport'].iataCode,
+                        arrive: additionalData['arrivalAirport'].iataCode,
+                        departTime: DateTime.fromMillisecondsSinceEpoch(
+                                additionalData['flight'].departureDate)
+                            .toString(),
+                        arriveTime: DateTime.fromMillisecondsSinceEpoch(
+                                additionalData['flight'].arrivalDate)
+                            .toString(),
+                        totalFlight:
+                            additionalData['flight'].duration.toString(),
+                      );
+                    } else {
+                      return Center(child: Text('No data'));
+                    }
+                  },
+                ),
+            ],
           ),
       ],
     );
@@ -406,7 +402,48 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   onPressed: isChecked
                       ? () {
-                          Get.to(() => PaymentScreen());
+                          Get.to(() => PaymentScreen(
+                                flightDetails: [
+                                  {
+                                    "flightId": bookingController
+                                        .departureFlightId.value,
+                                    "bookerFullName": bookingController
+                                        .contactDetails['fullName'],
+                                    "bookerEmail": bookingController
+                                        .contactDetails['email'],
+                                    "bookerPhoneNumber": bookingController
+                                        .contactDetails['phone'],
+                                    "userId": userController.currentUser.value!
+                                        .id, // Update this with actual user ID
+                                    "bookingDate":
+                                        DateTime.now().toIso8601String(),
+                                    "passengers": bookingController
+                                        .departurePassengerDetails,
+                                  },
+                                  if (bookingController.returnFlightId.value !=
+                                      0)
+                                    {
+                                      "flightId": bookingController
+                                          .returnFlightId.value,
+                                      "bookerFullName": bookingController
+                                          .contactDetails['fullName'],
+                                      "bookerEmail": bookingController
+                                          .contactDetails['email'],
+                                      "bookerPhoneNumber": bookingController
+                                          .contactDetails['phone'],
+                                      "userId":
+                                          13, // Update this with actual user ID
+                                      "bookingDate":
+                                          DateTime.now().toIso8601String(),
+                                      "passengers": bookingController
+                                          .returnPassengerDetails,
+                                    }
+                                ],
+                                passengerDetails:
+                                    bookingController.passengerDetails,
+                                totalAmount:
+                                    bookingController.totalPrice.toDouble(),
+                              ));
                         }
                       : null,
                   child: Text(

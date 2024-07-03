@@ -452,7 +452,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                       ? () {
                           // Navigate to payment screen
 
-                          Get.to(() => PaymentScreen());
+                          // Get.to(() => PaymentScreen());
                         }
                       : null, // Disable button if checkbox is unchecked
                   child: const Text(

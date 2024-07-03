@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flightbooking_mobile_fe/components/info_guest/input_text.dart';
@@ -123,15 +122,6 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
                       }),
                 ],
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    'Số ghế: ${passengerDetails[i]['seatNumber']}',
-                    style: kLableSize18w700Black,
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -146,6 +136,8 @@ class _InfoGuestScreenState extends State<InfoGuestScreen> {
       returnId: widget.returnFlightId,
       price: widget.totalPrice,
       contact: contactDetails,
+      departurePassengerDetails: departurePassengerDetails,
+      returnPassengerDetails: returnPassengerDetails,
       passengers: departurePassengerDetails + returnPassengerDetails,
       departureSeats: widget.selectedDepartureSeats,
       returnSeats: widget.selectedReturnSeats,

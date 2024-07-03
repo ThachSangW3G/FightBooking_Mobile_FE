@@ -134,6 +134,7 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (departureFlightData != null)
               FutureBuilder<Flight>(
@@ -203,7 +204,36 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
                   }
                 },
               ),
-            SizedBox(
+
+
+            if (flightController.departureFlight.value == null &&
+                flightController.returnFlight.value == null)
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 700,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 150,
+                      width: 200,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage('assets/images/empty.png'))),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Không tìm thấy chuyến bay',
+                      style: kLableSize20w700Black,
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(
                 height: 10), // Add some space before the total amount section
           ],
         ),

@@ -164,10 +164,14 @@ class FlightController extends GetxController {
         jsonData.forEach((element) {
           final id = element['id'];
 
-          final departureDate = DateTime(element['departureDate']);
+          final departureDate =
+              DateTime.fromMillisecondsSinceEpoch(element['departureDate']);
 
-          final arrivalDate = DateTime(element['arrivalDate']);
+          final arrivalDate =
+              DateTime.fromMillisecondsSinceEpoch(element['arrivalDate']);
+          print(departureDate);
           print(arrivalDate);
+
           final departureAirportId = element['departureAirportId'];
           final arrivalAirportId = element['arrivalAirportId'];
           final planeId = element['planeId'];

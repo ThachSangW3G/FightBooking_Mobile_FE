@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flightbooking_mobile_fe/components/payments/new_card_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/payment_option.dart';
 import 'package:flightbooking_mobile_fe/components/payments/saved_card_item.dart';
+
 import 'package:flightbooking_mobile_fe/controllers/user_controller.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -33,7 +35,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool isChecked = false;
   bool _isProcessing = false;
 
+
+  final FlightController flightController = Get.put(FlightController());
+
   final UserController userController = Get.find<UserController>();
+
   final StripeService stripeService = StripeService(
       baseUrl: 'https://flightbookingbe-production.up.railway.app');
 
@@ -65,7 +71,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     } catch (e) {
       print('Error during chargeSavedCard: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text('Failed to charge saved card. Please try again.')),
       );
     } finally {
@@ -113,7 +119,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     } catch (e) {
       print('Error during createCustomerAndSetupIntent: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to set up the card. Please try again.')),
+        const SnackBar(
+            content: Text('Failed to set up the card. Please try again.')),
       );
     } finally {
       setState(() {
@@ -226,7 +233,53 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ? savedCardOptions()
                       : null,
                 ),
+
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedPaymentMethod != null &&
+                        selectedPaymentMethod!.isNotEmpty) {
+                      if (selectedPaymentMethod == 'Visa' &&
+                          (selectedCard != null ||
+                              selectedCard == 'new_card')) {
+                        if (selectedCard == 'new_card') {
+                          await createCustomerAndSetupIntent();
+                        } else {
+                          await chargeSavedCard(email, selectedCard!,
+                              10.0); // Thanh toán 10 đô la Mỹ
+                        }
+                      } else {
+                        flightController.departureFlight.value = null;
+                        flightController.returnFlight.value = null;
+                        Get.off(() => const PaymentSuccessfulWidget());
+                      }
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title:
+                                const Text('Lựa chọn phương thức thanh toán'),
+                            content: const Text(
+                                'Vui lòng chọn một phương thức thanh toán.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Đóng'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: const Text('Thanh toán'),
+                ),
+
                 SizedBox(height: 20),
+
               ],
             ),
           ),
@@ -336,21 +389,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Thêm thẻ mới'),
+                    title: const Text('Thêm thẻ mới'),
                     content: newCardForm(),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Hủy'),
+                        child: const Text('Hủy'),
                       ),
                       TextButton(
                         onPressed: () async {
                           await createCustomerAndSetupIntent();
                           Navigator.of(context).pop();
                         },
-                        child: Text('Lưu'),
+                        child: const Text('Lưu'),
                       ),
                     ],
                   );
@@ -360,8 +413,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           },
           onSave: createCustomerAndSetupIntent,
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
+        const Padding(
+          padding: EdgeInsets.all(8.0),
           child: Text(
             'Golobe không sử dụng thông tin thẻ của khách hàng cho mục đích nào khác',
             style: TextStyle(color: Colors.grey),
@@ -372,7 +425,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget newCardForm() {
-    return Column(
+    return const Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         CardFormField(),

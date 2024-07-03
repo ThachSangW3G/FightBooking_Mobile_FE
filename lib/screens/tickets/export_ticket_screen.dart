@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flightbooking_mobile_fe/constants/app_colors.dart';
+import 'package:flightbooking_mobile_fe/constants/app_styles.dart';
 import 'package:flightbooking_mobile_fe/screens/tickets/ticket_details_screen.dart';
 import 'package:flightbooking_mobile_fe/screens/tickets/view_ticket_screen.dart';
 import 'package:flutter/material.dart';
@@ -57,28 +58,13 @@ class ExportTicketWidget extends StatelessWidget {
         backgroundColor: AppColors.dodger,
         leading: IconButton(
           color: AppColors.white,
-          icon: Image.asset('assets/icons/nav_back_icon.png'),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Get.back();
           },
         ),
-        actions: [
-          IconButton(
-            color: AppColors.white,
-            icon: Icon(Icons.more_vert),
-            onPressed: () {
-              // Xử lý cho nút menu ở đây
-            },
-          ),
-        ],
-        title: const Text(
-          'Vé của tôi',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Inter',
-            fontSize: 20.0,
-          ),
-        ),
+        title: Text('Lịch sử vé', style: kLableSize20w700White),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

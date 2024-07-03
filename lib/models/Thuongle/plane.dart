@@ -18,4 +18,11 @@ class Plane {
   String toString() {
     return 'Plane(id: $id, flightNumber: $planeNumber)';
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'planeNumber': planeNumber,
+    };
+  }
 }

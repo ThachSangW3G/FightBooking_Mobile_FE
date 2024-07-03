@@ -128,8 +128,24 @@ class FlightController extends GetxController {
     }
   }
 
-  Future<void> filterFlights(DateTime departureDate, int departureAirportId,
-      int arrivalAirportId, int classType, int selectSort) async {
+  List<Flight> filterFlightByAirline(
+      List<Flight> flights, List<int> selectedAirline) {
+    if (selectedAirline.isEmpty) {
+      return flights;
+    }
+
+    return flights
+        .where((flight) => selectedAirline.contains(flight.airlineId))
+        .toList();
+  }
+
+  Future<void> filterFlights(
+      DateTime departureDate,
+      int departureAirportId,
+      int arrivalAirportId,
+      int classType,
+      int selectSort,
+      List<int> selectedAirline) async {
     isLoading.value = true;
     final formatDepartureDate =
         DateFormat('yyyy-MM-dd HH:mm:ss').format(departureDate);
@@ -182,7 +198,8 @@ class FlightController extends GetxController {
           flightsResponse.add(flight);
         });
 
-        flights.value = filterFlightByPrice(flightsResponse, classType);
+        flights.value = filterFlightByAirline(
+            filterFlightByPrice(flightsResponse, classType), selectedAirline);
 
         switch (selectSort) {
           case 0:
@@ -214,11 +231,11 @@ class FlightController extends GetxController {
     }
   }
 
-  void setDepartureFlight(Flight flight) {
+  void setDepartureFlight(Flight? flight) {
     departureFlight.value = flight;
   }
 
-  void setReturnFlight(Flight flight) {
+  void setReturnFlight(Flight? flight) {
     returnFlight.value = flight;
   }
 

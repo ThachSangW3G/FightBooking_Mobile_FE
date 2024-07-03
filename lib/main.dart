@@ -51,6 +51,6 @@ class MyApp extends StatelessWidget {
         //     numChildren: 1,
         //     numInfants: 1));
         // home: DefaultScreen());
-        home: LoginScreen());
+        home: const SplashOneScreen());
   }
 }

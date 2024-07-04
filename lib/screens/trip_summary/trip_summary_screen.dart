@@ -205,9 +205,7 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
                 },
               ),
 
-
-            if (flightController.departureFlight.value == null &&
-                flightController.returnFlight.value == null)
+            if (departureFlightData == null && returnFlightData == null)
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 700,

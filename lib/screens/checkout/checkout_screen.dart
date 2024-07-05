@@ -390,7 +390,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
                 Divider(),
                 Text(
-                  '${bookingController.totalPrice.value} đ',
+                  '${bookingController.totalPrice.value} \$',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

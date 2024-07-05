@@ -243,7 +243,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               children: [
                 Text('Tổng cộng',
                     style: TextStyle(fontSize: 16, color: Colors.grey)),
-                Text('${widget.totalAmount.toStringAsFixed(0)} đ',
+                Text('${widget.totalAmount.toStringAsFixed(0)} \$',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

@@ -430,6 +430,7 @@ class _FlightListingState extends State<FlightListing> {
 
                             return ListView.builder(
                                 shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
                                 itemCount:
                                     flightController.flights.value.length,
                                 itemBuilder: (_, index) {

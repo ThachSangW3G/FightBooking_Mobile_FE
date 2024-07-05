@@ -578,14 +578,30 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                                     int.parse(priceMinController.text));
                               }
 
-                              flightController.filterFlights(
-                                  dateTimeController.selectDate.value!,
-                                  airportController.selectedDeparture.value!.id,
-                                  airportController
-                                      .selectedDestination.value!.id,
-                                  seatClassController.selectedSeatClass.value,
-                                  sortController.selectedSort.value,
-                                  airlineController.selectFilterAirline.value);
+                              if (flightController.departureFlight.value ==
+                                  null) {
+                                flightController.filterFlights(
+                                    dateTimeController.selectDate.value!,
+                                    airportController
+                                        .selectedDeparture.value!.id,
+                                    airportController
+                                        .selectedDestination.value!.id,
+                                    seatClassController.selectedSeatClass.value,
+                                    sortController.selectedSort.value,
+                                    airlineController
+                                        .selectFilterAirline.value);
+                              } else {
+                                flightController.filterFlights(
+                                    dateTimeController.selectDate.value!,
+                                    airportController
+                                        .selectedDestination.value!.id,
+                                    airportController
+                                        .selectedDeparture.value!.id,
+                                    seatClassController.selectedSeatClass.value,
+                                    sortController.selectedSort.value,
+                                    airlineController
+                                        .selectFilterAirline.value);
+                              }
 
                               Get.back();
                             })
